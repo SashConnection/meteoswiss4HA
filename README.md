@@ -2,6 +2,8 @@
 
 A Home Assistant custom integration that brings official [MeteoSwiss Open Data](https://opendatadocs.meteoswiss.ch/) into Home Assistant.
 
+**User guide with screenshots (French):** [docs/GUIDE.fr.md](docs/GUIDE.fr.md)
+
 ## Features
 
 - **Current conditions** from a SwissMetNet automatic weather station (nearest one preselected), updated every 10 minutes: temperature, humidity, dew point, precipitation, sunshine, global radiation, wind, gusts, wind direction and pressure.

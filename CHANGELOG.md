@@ -3,6 +3,11 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.1
+
+- Map: fixed the view sometimes off-center (mostly on narrow screens and cards); compact one-line legend on small cards; selected tab highlighted.
+- User guide with screenshots (docs/GUIDE.fr.md).
+
 ## 2026.11.0
 
 First official release.

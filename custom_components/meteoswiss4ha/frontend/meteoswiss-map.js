@@ -157,6 +157,12 @@ const STYLE = `
 .place.home { font-weight: 700; }
 .place.home::before { width: 9px; height: 9px; background: #f57c00; vertical-align: 1px; }
 .leaflet-bar a.ms-fit { font-size: 20px; line-height: 30px; }
+/* Small cards: legend as one compact line of colors. */
+.wrap.tiny .side { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; max-width: calc(100% - 70px); padding: 5px 8px; }
+.wrap.tiny .side h3 { display: none; }
+.wrap.tiny .side .row { margin: 0; gap: 3px; }
+.wrap.tiny .side .row b + span { display: none; }
+.wrap.tiny .side .row i { flex-basis: 12px; height: 12px; }
 .wrap.narrow .toolbar { left: 8px; max-width: calc(100% - 16px); overflow-x: auto; }
 .wrap.narrow .toolbar button { width: 40px; flex: 0 0 40px; }
 .wrap.narrow .heading { left: 12px; top: 66px; font-size: 16px; }
@@ -198,7 +204,7 @@ const STYLE = `
   padding: 10px 4px; cursor: pointer; font: inherit; font-size: 15px; }
 .tabs button ha-icon { --mdc-icon-size: 20px; }
 .ms-warn-tip { max-width: 320px; white-space: normal; }
-.tabs button.on { border-top-color: #fff; font-weight: 600; }
+.tabs button.on { border-top-color: #fff; font-weight: 600; background: rgba(255,255,255,.1); }
 .leaflet-pane.ms-tint, .leaflet-pane.ms-regions { mix-blend-mode: multiply; }
 .leaflet-container { background: #26323b; font: inherit; }
 .leaflet-tooltip { font-size: 13px; }
@@ -260,7 +266,6 @@ class MeteoSwissMap {
 
     this.map = L.map(mapEl, {
       zoomSnap: 0.25, minZoom: 6, maxZoom: 12, zoomControl: false,
-      maxBounds: [[44.8, 4.4], [48.8, 12.1]],
     });
     L.control.zoom({ position: "bottomright" }).addTo(this.map);
     // Button to re-center the map (whole Switzerland or the home region).
@@ -310,17 +315,20 @@ class MeteoSwissMap {
       const narrow = this.wrap.clientWidth < 900;
       const changed = narrow !== this.wrap.classList.contains("narrow");
       this.wrap.classList.toggle("narrow", narrow);
-      this.map.invalidateSize();
-      // New size (first layout, card resized): fit the view again, which also
-      // redraws the vector layers for the new size.
-      const size = `${this.wrap.clientWidth}x${this.wrap.clientHeight}`;
-      if (size !== this._size && this.wrap.clientWidth) {
+      this.wrap.classList.toggle("tiny", this.wrap.clientWidth < 560);
+      // New map size (first layout, card resized, day tabs or radar player
+      // shown or hidden): fit the view again, which also redraws the vector
+      // layers for the new size. No "pan": that would shift the view.
+      this.map.invalidateSize({ pan: false });
+      const size = `${mapEl.clientWidth}x${mapEl.clientHeight}`;
+      if (size !== this._size && mapEl.clientWidth && mapEl.clientHeight) {
         this._size = size;
         this._fitView();
       }
       if (changed) this._render(); // day names, legend placement
     });
     this._resize.observe(this.wrap);
+    this._resize.observe(mapEl);
   }
 
   async _loadCountry() {
@@ -468,7 +476,7 @@ class MeteoSwissMap {
     const sideShown = !this.side.hidden && !this.wrap.classList.contains("narrow");
     if (sideShown !== this._sideShown) {
       this._sideShown = sideShown;
-      this.map.invalidateSize();
+      this.map.invalidateSize({ pan: false });
       this._fitView();
     }
   }
