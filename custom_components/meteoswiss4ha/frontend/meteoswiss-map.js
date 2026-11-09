@@ -81,12 +81,23 @@ const STYLE = `
 .legend { position: absolute; z-index: 500; right: 10px; bottom: 22px; background: var(--card-background-color, #fff);
   border-radius: 8px; padding: 6px 10px; font-size: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.3); max-width: 220px; }
 .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; border: 1px solid rgba(0,0,0,.2); }
-.city { text-align: center; font-size: 12px; line-height: 1.15; color: #212121; text-shadow: 0 0 3px #fff, 0 0 3px #fff; white-space: nowrap; }
-.city img { width: 52px; height: 52px; display: block; margin: 0 auto -4px; }
-.city b { font-weight: 600; } .city .tmin { color: #1565c0; } .city .tmax { color: #c62828; }
-.city.home b { color: var(--primary-color, #03a9f4); }
+.pill { position: relative; display: inline-flex; flex-direction: column; padding: 4px 12px 5px 30px;
+  margin-left: 26px; border-radius: 16px; background: #2f6fe0; color: #fff; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35); font-size: 13px; line-height: 1.2; }
+.pill.mountain { background: #0f7a5c; }
+.pill.home { background: #f57c00; }
+.pill img { position: absolute; left: -30px; top: 50%; transform: translateY(-58%); width: 50px; height: 50px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+.pill .n { font-weight: 600; }
+.pill .t { display: flex; gap: 3px; margin-top: 3px; }
+.pill .t span { min-width: 26px; text-align: center; padding: 1px 4px; border-radius: 4px; background: rgba(0,0,0,.28); font-weight: 600; }
+.tabs { display: flex; border-top: 1px solid var(--divider-color, #e0e0e0); }
+.tabs button { flex: 1; border: 0; border-top: 4px solid transparent; background: transparent; color: inherit;
+  padding: 8px 4px; cursor: pointer; font: inherit; font-size: 14px; }
+.tabs button.on { border-top-color: var(--primary-color, #03a9f4); font-weight: 600; }
+.leaflet-pane.ms-tint { mix-blend-mode: multiply; }
 .note { padding: 6px 12px; font-size: 13px; color: var(--secondary-text-color, #727272); }
-.leaflet-container { background: #dfe6ec; font: inherit; }
+.leaflet-container { background: #26323b; font: inherit; }
 `;
 
 function lang(hass) {
@@ -112,33 +123,66 @@ class MeteoSwissMap {
       <style>${STYLE}</style>
       <div class="wrap">
         <div class="bar"></div>
-        <div class="days" hidden><input type="range" min="0" max="8" value="0"><span></span></div>
         <div class="note" hidden></div>
         <div class="map"><div class="legend" hidden></div></div>
+        <div class="tabs" hidden></div>
       </div>`;
     this.bar = this.root.querySelector(".bar");
-    this.daysBox = this.root.querySelector(".days");
-    this.slider = this.daysBox.querySelector("input");
-    this.dayLabel = this.daysBox.querySelector("span");
+    this.tabs = this.root.querySelector(".tabs");
     this.note = this.root.querySelector(".note");
     this.legend = this.root.querySelector(".legend");
     const mapEl = this.root.querySelector(".map");
 
-    this.map = L.map(mapEl, { zoomSnap: 0.25, attributionControl: true, minZoom: 6, maxZoom: 13 });
+    this.map = L.map(mapEl, {
+      zoomSnap: 0.25, attributionControl: true, minZoom: 6, maxZoom: 12,
+      maxBounds: [[44.8, 4.4], [48.8, 12.1]],
+    });
     this.map.attributionControl.setPrefix(false);
-    L.tileLayer(WMTS("ch.swisstopo.pixelkarte-grau", "jpeg"), {
+    // Panes, bottom to top: relief, green tint (multiply), warning rasters,
+    // lakes, dark mask outside Switzerland, then the regular overlay pane.
+    const pane = (name, z, cls) => {
+      const p = this.map.createPane(name);
+      p.style.zIndex = z;
+      if (cls) p.classList.add(cls);
+      p.style.pointerEvents = "none";
+    };
+    pane("ms-tint", 250, "ms-tint");
+    pane("ms-hazard", 260);
+    pane("ms-lakes", 270);
+    pane("ms-mask", 280);
+    L.tileLayer(WMTS("ch.swisstopo.leichte-basiskarte_reliefschattierung"), {
       attribution: "© swisstopo · Source: MeteoSwiss, SLF, FOEN",
       maxZoom: 18,
     }).addTo(this.map);
+    L.tileLayer(WMTS("ch.bafu.vec25-seen"), { pane: "ms-lakes", maxZoom: 18 }).addTo(this.map);
     this.map.fitBounds(CH_BOUNDS);
     this.overlay = L.layerGroup().addTo(this.map);
+    this._loadCountry();
     this.map.on("zoomend", () => this.layer === "weather" && this._render());
 
-    this.slider.addEventListener("input", () => {
-      this.day = Number(this.slider.value);
-      this._render();
-    });
     new ResizeObserver(() => this.map.invalidateSize()).observe(mapEl);
+  }
+
+  async _loadCountry() {
+    try {
+      const ch = await (await fetch(`${BASE}switzerland.json`)).json();
+      L.geoJSON(ch, {
+        pane: "ms-tint", interactive: false,
+        style: { stroke: false, fillColor: "#8fd1b0", fillOpacity: 0.85 },
+      }).addTo(this.map);
+      // Mask: a large rectangle with Switzerland as holes.
+      const world = [[30, -20], [30, 40], [65, 40], [65, -20]];
+      const holes = ch.geometry.coordinates.map((poly) => poly[0].map(([lon, lat]) => [lat, lon]));
+      L.polygon([world, ...holes], {
+        pane: "ms-mask", interactive: false, stroke: false, fillColor: "#1d2830", fillOpacity: 0.78,
+      }).addTo(this.map);
+      L.geoJSON(ch, {
+        pane: "ms-mask", interactive: false,
+        style: { color: "#ffffff", weight: 1.2, opacity: 0.55, fill: false },
+      }).addTo(this.map);
+    } catch (err) {
+      console.warn("MeteoSwiss: country outline unavailable", err);
+    }
   }
 
   set hass(hass) {
@@ -189,7 +233,7 @@ class MeteoSwissMap {
     this.overlay.clearLayers();
     this.note.hidden = true;
     this.legend.hidden = true;
-    this.daysBox.hidden = this.layer !== "weather";
+    this.tabs.hidden = this.layer !== "weather";
     ({
       weather: () => this._weather(),
       avalanche: () => this._avalanche(),
@@ -200,34 +244,64 @@ class MeteoSwissMap {
     })[this.layer]();
   }
 
-  _dayLabel(day) {
-    if (!day) return "";
-    if (this.day === 0) return this.t.today;
-    return new Date(`${day.date}T12:00:00`).toLocaleDateString(lang(this._hass), {
-      weekday: "long", day: "numeric", month: "long",
-    });
+  _dayName(day, index) {
+    if (index === 0) return this.t.today;
+    return new Date(`${day.date}T12:00:00`).toLocaleDateString(lang(this._hass), { weekday: "long" });
+  }
+
+  _dayTabs(days) {
+    const key = days.map((d) => d.date).join();
+    if (this._tabsKey !== key) {
+      this._tabsKey = key;
+      this.tabs.innerHTML = days.map((d, i) => `<button data-day="${i}">${this._dayName(d, i)}</button>`).join("");
+      this.tabs.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => {
+          this.day = Number(b.dataset.day);
+          this._render();
+        }));
+    }
+    this.tabs.querySelectorAll("button").forEach((b) => b.classList.toggle("on", Number(b.dataset.day) === this.day));
   }
 
   _weather() {
-    const zoom = this.map.getZoom();
     const home = this.data.home;
-    const places = this.data.cities.filter((c) => zoom + 0.01 >= c.min_zoom - 0.5);
-    places.push({ ...home, name: home.name || this.t.home, home: true });
+    // Most important first: home, then by min_zoom (big cities), cities
+    // before summits. A label overlapping one already placed is skipped
+    // until the map is zoomed in enough to make room.
+    const candidates = [
+      { ...home, name: home.name || this.t.home, kind: "home", min_zoom: 0 },
+      ...[...this.data.cities].sort(
+        (a, b) => a.min_zoom - b.min_zoom || (a.kind === "mountain") - (b.kind === "mountain"),
+      ),
+    ];
+    const placed = [];
+    const places = candidates.filter((p) => {
+      const pt = this.map.latLngToContainerPoint([p.lat, p.lon]);
+      const w = 70 + p.name.length * 7.5;
+      const box = { x1: pt.x - 26, y1: pt.y - 26, x2: pt.x - 26 + w, y2: pt.y + 20 };
+      if (placed.some((o) => box.x1 < o.x2 && box.x2 > o.x1 && box.y1 < o.y2 && box.y2 > o.y1)) {
+        return false;
+      }
+      placed.push(box);
+      return true;
+    });
     const ref = places.find((p) => p.days?.length);
-    const days = ref ? ref.days.length : 1;
-    this.slider.max = Math.max(0, days - 1);
-    this.dayLabel.textContent = this._dayLabel(ref?.days[this.day]);
+    if (ref) {
+      this.day = Math.min(this.day, ref.days.length - 1);
+      this._dayTabs(ref.days.slice(0, 8));
+    }
+    const round = (v) => (v != null ? `${Math.round(v)}°` : "–");
     for (const place of places) {
       const d = place.days?.[this.day];
       if (!d || d.symbol == null) continue;
-      const html = `<div class="city${place.home ? " home" : ""}">
+      const html = `<div class="pill ${place.kind || "city"}">
         <img src="${this.data.icons_url}/${d.symbol}.svg" alt="">
-        <b>${place.name}</b><br>
-        <span class="tmin">${d.tmin != null ? Math.round(d.tmin) : "–"}°</span> /
-        <span class="tmax">${d.tmax != null ? Math.round(d.tmax) : "–"}°</span></div>`;
+        <span class="n">${place.name}</span>
+        <span class="t"><span>${round(d.tmin)}</span><span>${round(d.tmax)}</span></span></div>`;
       L.marker([place.lat, place.lon], {
-        icon: L.divIcon({ html, className: "", iconSize: [96, 84], iconAnchor: [48, 36] }),
+        icon: L.divIcon({ html, className: "", iconSize: null, iconAnchor: [22, 22] }),
         keyboard: false,
+        zIndexOffset: place.kind === "home" ? 1000 : 0,
       }).addTo(this.overlay);
     }
   }
@@ -273,13 +347,13 @@ class MeteoSwissMap {
   }
 
   _drought() {
-    L.tileLayer(WMTS(DROUGHT_LAYER), { opacity: 0.7, maxZoom: 18 }).addTo(this.overlay);
+    L.tileLayer(WMTS(DROUGHT_LAYER), { pane: "ms-hazard", opacity: 0.75, maxZoom: 18 }).addTo(this.overlay);
     this._dangerLegend();
   }
 
   _fire() {
     L.tileLayer.wms("https://wms.geo.admin.ch/", {
-      layers: FIRE_LAYER, format: "image/png", transparent: true, opacity: 0.7, maxZoom: 18,
+      layers: FIRE_LAYER, format: "image/png", transparent: true, opacity: 0.75, maxZoom: 18, pane: "ms-hazard",
     }).addTo(this.overlay);
     this._dangerLegend();
   }

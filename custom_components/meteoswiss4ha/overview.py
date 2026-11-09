@@ -21,8 +21,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import dt as dt_util
 
-from .api import MeteoSwissClient, MeteoSwissError
-from .cities import CITIES
+from .api import (
+    POINT_TYPE_MOUNTAIN,
+    POINT_TYPE_POSTAL_CODE,
+    MeteoSwissClient,
+    MeteoSwissError,
+)
+from .cities import CITIES, MOUNTAINS
 from .const import (
     CONF_ICON_PACK,
     CONF_POINT_ID,
@@ -160,16 +165,23 @@ class OverviewView(_BaseView):
         cities = []
         if forecast is not None:
             main = (entry.data[CONF_POINT_ID], entry.data[CONF_POINT_TYPE_ID])
-            for point_id, name, lat, lon, zoom in CITIES:
+            places = [(c, POINT_TYPE_POSTAL_CODE, "city") for c in CITIES] + [
+                (m, POINT_TYPE_MOUNTAIN, "mountain") for m in MOUNTAINS
+            ]
+            for (point_id, name, lat, lon, zoom), point_type, kind in places:
+                point = (point_id, point_type)
                 # The configured point is not repeated in "others".
-                steps = (
-                    forecast.daily
-                    if (point_id, 2) == main
-                    else forecast.others.get((point_id, 2))
-                )
+                steps = forecast.daily if point == main else forecast.others.get(point)
                 if steps:
                     cities.append(
-                        {"name": name, "lat": lat, "lon": lon, "min_zoom": zoom, "days": _days(steps)}
+                        {
+                            "name": name,
+                            "kind": kind,
+                            "lat": lat,
+                            "lon": lon,
+                            "min_zoom": zoom,
+                            "days": _days(steps),
+                        }
                     )
 
         pollen, avalanche = await asyncio.gather(

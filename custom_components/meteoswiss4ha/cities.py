@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Final
 
-from .api import POINT_TYPE_POSTAL_CODE
+from .api import POINT_TYPE_MOUNTAIN, POINT_TYPE_POSTAL_CODE
 
 CITIES: Final[tuple[tuple[int, str, float, float, int], ...]] = (
     (400100, "Basel", 47.55675, 7.588633, 7),
@@ -46,4 +46,21 @@ CITIES: Final[tuple[tuple[int, str, float, float, int], ...]] = (
     (755000, "Scuol", 46.796786, 10.299706, 8),
 )
 
-CITY_POINTS: Final = tuple((c[0], POINT_TYPE_POSTAL_CODE) for c in CITIES)
+# Summits (point type 3), shown as green labels like on the MeteoSwiss map.
+MOUNTAINS: Final[tuple[tuple[int, str, float, float, int], ...]] = (
+    (711, "Säntis", 47.249425, 9.343242, 8),
+    (1021, "Pilatus", 46.97915, 8.256178, 8),
+    (717, "Titlis", 46.772033, 8.437781, 8),
+    (730, "Eiger", 46.5776, 8.005286, 8),
+    (800, "Galenstock", 46.612611, 8.416958, 8),
+    (892, "Matterhorn", 45.976411, 7.658603, 8),
+    (895, "Monte Leone", 46.249444, 8.110192, 8),
+    (675, "Piz Bernina", 46.382353, 9.90805, 8),
+    (1034, "Chasseral", 47.133044, 7.059333, 9),
+    (807, "Wildhorn", 46.354753, 7.360808, 9),
+    (1049, "Monte Generoso", 45.931325, 9.019925, 9),
+)
+
+CITY_POINTS: Final = tuple((c[0], POINT_TYPE_POSTAL_CODE) for c in CITIES) + tuple(
+    (m[0], POINT_TYPE_MOUNTAIN) for m in MOUNTAINS
+)
