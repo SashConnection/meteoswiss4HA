@@ -1,5 +1,7 @@
 # MeteoSwiss Complete For HA
 
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/logo.png" alt="Logo" width="96" align="right">
+
 Official MeteoSwiss weather in Home Assistant: current conditions, local forecast with animated pictograms, precipitation radar, weather warnings, natural hazards and pollen, with a Switzerland map for your dashboards.
 
 🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**

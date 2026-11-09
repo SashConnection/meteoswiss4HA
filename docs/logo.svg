@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a8fd8"/>
+      <stop offset="1" stop-color="#1f4f8f"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#ffe082"/>
+      <stop offset="1" stop-color="#ffb300"/>
+    </radialGradient>
+    <linearGradient id="cloud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dfe8f1"/>
+    </linearGradient>
+    <clipPath id="circle"><circle cx="256" cy="256" r="240"/></clipPath>
+  </defs>
+  <!-- Round background -->
+  <circle cx="256" cy="256" r="240" fill="url(#bg)"/>
+  <g clip-path="url(#circle)">
+    <!-- Mountain range at the bottom -->
+    <path d="M-10 430 L95 330 L150 375 L235 285 L300 350 L345 310 L430 390 L522 330 L522 522 L-10 522 Z" fill="#163d6e" opacity=".85"/>
+    <path d="M235 285 L262 312 L247 309 L236 321 L224 307 L210 312 Z" fill="#ffffff" opacity=".9"/>
+    <path d="M345 310 L366 330 L353 328 L344 337 L335 327 L326 329 Z" fill="#ffffff" opacity=".9"/>
+  </g>
+  <!-- Sun with rays -->
+  <g transform="translate(318 178)">
+    <g stroke="#ffca28" stroke-width="18" stroke-linecap="round">
+      <line x1="0" y1="-112" x2="0" y2="-86"/>
+      <line x1="79" y1="-79" x2="61" y2="-61"/>
+      <line x1="112" y1="0" x2="86" y2="0"/>
+      <line x1="79" y1="79" x2="61" y2="61"/>
+      <line x1="-79" y1="-79" x2="-61" y2="-61"/>
+      <line x1="-112" y1="0" x2="-86" y2="0"/>
+    </g>
+    <circle r="66" fill="url(#sun)"/>
+  </g>
+  <!-- Cloud -->
+  <path d="M138 352 a62 62 0 0 1 8-123 a86 86 0 0 1 160-18 a64 64 0 0 1 62 141 Z" fill="url(#cloud)"/>
+  <path d="M138 352 L368 352" stroke="#c9d6e3" stroke-width="2"/>
+  <!-- Rain drops -->
+  <g fill="#7fc4ff">
+    <path d="M186 382 q10 16 0 28 q-10 -12 0 -28 Z"/>
+    <path d="M246 382 q10 16 0 28 q-10 -12 0 -28 Z"/>
+    <path d="M306 382 q10 16 0 28 q-10 -12 0 -28 Z"/>
+  </g>
+</svg>

@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.3
+
+- Integration logo (original artwork), shown by Home Assistant 2026.3 and newer.
+
 ## 2026.11.2
 
 - New detailed weather card (`custom:meteoswiss-weather-card`): place and altitude, measurements chosen one by one, hourly chart with the temperature uncertainty band and precipitation, 9 days with rain probability and precipitation range.

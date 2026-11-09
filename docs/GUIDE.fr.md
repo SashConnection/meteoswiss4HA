@@ -1,5 +1,7 @@
 # Mode d'emploi – MeteoSwiss Complete For HA
 
+<img src="images/logo.png" alt="Logo" width="96" align="right">
+
 🇬🇧 **[English version](../README.md)**
 
 Ce guide explique comment installer l'intégration, la régler et afficher la météo, le radar et les dangers dans vos tableaux de bord Home Assistant.
