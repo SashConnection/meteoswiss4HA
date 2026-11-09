@@ -19,8 +19,9 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 | 🔥 **Natural hazards** | Forest fire, floods, drought (FOEN) and avalanches (SLF) |
 | 🌼 **Pollen** | 7 species, 15 measuring stations across Switzerland |
 | 🗺️ **Switzerland map** | All of the above on one map, or zoomed on your region |
+| 📍 **Your places** | Warnings for other places (e.g. Bern, Cernier) and **where you are** (follows your phone), with ready-made automation triggers |
 
-## Five ready-made cards
+## Ready-made cards
 
 <table>
 <tr>
@@ -31,6 +32,11 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 <tr>
 <td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards and pollen — one tap to switch</sub></td>
 <td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="100%" alt="Map of your region"><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home (here: radar over Neuchâtel)</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours: temperature with its uncertainty band, rain probability and amount</sub></td>
+<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One continuous temperature curve and rain over the next days</sub>
+<br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map with hazard chips, animated radar</sub></td>
 </tr>
 </table>
 
@@ -181,6 +187,45 @@ language: auto        # or de, fr, it, rm, en
 ```
 
 <br clear="right">
+
+## 3b. Now, Days and Tiles cards
+
+| Now | Days | Tiles |
+|---|---|---|
+| ![Now](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png) | ![Days](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png) | ![Tiles](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png) |
+
+```yaml
+type: custom:meteoswiss-now-card     # big pictogram + hour-by-hour chart
+hours: 24
+---
+type: custom:meteoswiss-days-card    # days above one continuous curve
+days: 6
+---
+type: custom:meteoswiss-tiles-card   # severe weather mini map + animated radar
+tap_path: /meteoswiss                # page opened on tap
+```
+
+The Days curve uses the hourly forecast where it exists (48 h by default) and continues through the daily minimum and maximum; set the hourly horizon to 120 h in the options for a full hourly curve.
+
+## 3c. Warnings for your places and where you are
+
+**Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Watched places and persons**:
+
+- **Postal codes or places**: e.g. `2053` or `Cernier`, `3000` or `Bern` (the nearest forecast point is used);
+- **Persons to follow**: a person or the device tracker of your phone (Home Assistant app). The warnings follow its position (in Switzerland).
+
+Each one becomes a device (e.g. *MeteoSwiss Bern (3004)*) with the 7 weather warning sensors.
+
+### Ready-made automation triggers
+
+**Settings → Automations → Create → Add trigger → Device →** a MeteoSwiss device, then choose:
+
+- *Thunderstorm warning announced* (an upcoming warning is published),
+- *Rain warning starts* / *ends*,
+- *Wind warning reaches a level* (2 to 5),
+- on the main device also: *Forest fire / Flood / Drought / Avalanche danger reaches a level*, *Pollen reaches a level*.
+
+Example: notify your phone when a thunderstorm warning is announced where you are — no YAML needed.
 
 ## 4. Switzerland map
 

@@ -3,6 +3,12 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.8
+
+- Watched places (postal codes or place names) and followed persons: weather warning sensors for each.
+- Ready-made automation triggers (device triggers) in 5 languages: warning announced, starts, ends, reaches a level; hazard and pollen levels.
+- New cards: Now (big pictogram + hourly chart), Days (continuous temperature curve and rain), Tiles (severe weather mini map + animated radar).
+
 ## 2026.11.7
 
 - New HACS page: everything in one, five languages, animated or static pictograms, ready in 2 minutes (examples: Neuchâtel and Bern).

@@ -19,6 +19,7 @@ Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à pro
 | 🔥 **Dangers naturels** | Incendies de forêt, crues, sécheresse (OFEV) et avalanches (SLF) |
 | 🌼 **Pollen** | 7 espèces, 15 stations de mesure en Suisse |
 | 🗺️ **Carte de la Suisse** | Tout cela sur une carte, ou zoomé sur votre région |
+| 📍 **Vos lieux** | Alertes pour d’autres lieux (p. ex. Berne, Cernier) et **là où vous êtes** (suit votre téléphone), avec des déclencheurs d’automatisation prêts à l’emploi |
 
 ## Cinq langues
 
@@ -143,6 +144,27 @@ language: auto        # ou de, fr, it, rm, en
 ```
 
 <br clear="right">
+
+### Panneaux « Maintenant », « Jours » et « Tuiles »
+
+| Maintenant | Jours | Tuiles |
+|---|---|---|
+| ![Maintenant](images/card-now.png) | ![Jours](images/card-days.png) | ![Tuiles](images/card-tiles.png) |
+
+- **MeteoSwiss now** : grand pictogramme, lieu, état du ciel et température, puis les prochaines heures (température avec sa bande d’incertitude, probabilité et quantité de pluie).
+- **MeteoSwiss days** : les jours (pictogramme, min | max) au-dessus d’une courbe de température continue et de la pluie. La courbe utilise les prévisions horaires (48 h par défaut), puis passe par les minimum et maximum du jour ; réglez l’horizon horaire sur 120 h pour une courbe complète.
+- **MeteoSwiss tiles** : mini-carte des intempéries avec les pastilles des dangers, et radar animé de la dernière heure. Un toucher ouvre la page choisie (p. ex. `/meteoswiss`).
+
+### Alertes pour vos lieux et là où vous êtes
+
+**Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Lieux et personnes surveillés** :
+
+- **Numéros postaux ou lieux** : p. ex. `2053` ou `Cernier`, `3000` ou `Berne` (le point de prévision le plus proche est utilisé) ;
+- **Personnes à suivre** : une personne ou le suivi de votre téléphone (application Home Assistant). Les alertes suivent sa position (en Suisse).
+
+Chacun devient un appareil (p. ex. *MeteoSwiss Bern (3004)*) avec les 7 capteurs d’alertes.
+
+**Déclencheurs prêts à l’emploi** : Paramètres → Automatisations → Créer → Ajouter un déclencheur → **Appareil** → un appareil MeteoSwiss, puis p. ex. *Alerte orages annoncée*, *Alerte pluie en vigueur* / *Fin de l’alerte pluie*, *L’alerte vent atteint un degré* (2 à 5) ; sur l’appareil principal aussi les dangers (incendie, crues, sécheresse, avalanches) et le pollen. Aucun YAML nécessaire.
 
 ## 4. Carte de la Suisse
 
