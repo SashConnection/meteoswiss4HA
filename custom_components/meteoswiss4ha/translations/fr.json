@@ -153,11 +153,7 @@
       "display": {
         "title": "Affichage",
         "data": {
-          "icon_pack": "Pack de pictogrammes",
-          "radar_url": "URL du serveur radar (facultatif)"
-        },
-        "data_description": {
-          "radar_url": "Adresse du flow radar MétéoSuisse dans Node-RED, par ex. http://a0d7b954-nodered:1880/endpoint/meteoswiss/radar. Laisser vide pour désactiver la couche radar."
+          "icon_pack": "Pack de pictogrammes"
         }
       },
       "forecast": {

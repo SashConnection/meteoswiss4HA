@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.01.6"
+VERSION: Final = "2026.01.7"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -47,8 +47,8 @@ CONF_HOURLY_INTERVAL: Final = "hourly_interval"
 CONF_ICON_PACK: Final = "icon_pack"
 CONF_POLLEN_STATION: Final = "pollen_station"
 CONF_AVALANCHE_REGION: Final = "avalanche_region"
-# Base URL of the radar frame server (Node-RED flow in nodered/), optional.
-CONF_RADAR_URL: Final = "radar_url"
+# Radar frame server (the Node-RED flow in nodered/, run by the project).
+RADAR_URL: Final = "https://ha.jesaispas.ch/endpoint/meteoswiss/radar"
 DEFAULT_ICON_PACK: Final = "animated"
 
 DEFAULT_HOURLY_FORECAST: Final = True

@@ -26,14 +26,12 @@ from .api import (
     POINT_TYPE_POSTAL_CODE,
     MeteoSwissClient,
     MeteoSwissError,
-    normalize_radar_url,
 )
 from .cities import CITIES, MOUNTAINS
 from .const import (
     CONF_ICON_PACK,
     CONF_POINT_ID,
     CONF_POINT_TYPE_ID,
-    CONF_RADAR_URL,
     DAILY_PRECIPITATION,
     DAILY_SYMBOL,
     DAILY_TEMP_MAX,
@@ -41,6 +39,7 @@ from .const import (
     DEFAULT_ICON_PACK,
     DOMAIN,
     ICONS_URL,
+    RADAR_URL,
 )
 from .hazards import (
     DROUGHT_LAYER,
@@ -121,7 +120,8 @@ class _BaseView(HomeAssistantView):
 
 
 def _radar_url(entry) -> str | None:
-    return normalize_radar_url(entry.options.get(CONF_RADAR_URL)) if entry else None
+    """The radar server is fixed (run by the project)."""
+    return RADAR_URL
 
 
 class RadarFramesView(_BaseView):

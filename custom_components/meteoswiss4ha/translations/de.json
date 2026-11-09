@@ -153,11 +153,7 @@
       "display": {
         "title": "Anzeige",
         "data": {
-          "icon_pack": "Piktogramm-Paket",
-          "radar_url": "URL des Radar-Servers (optional)"
-        },
-        "data_description": {
-          "radar_url": "Basis-URL des MeteoSchweiz-Radar-Flows in Node-RED, z. B. http://a0d7b954-nodered:1880/endpoint/meteoswiss/radar. Leer lassen, um die Radarebene zu deaktivieren."
+          "icon_pack": "Piktogramm-Paket"
         }
       },
       "forecast": {
