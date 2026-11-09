@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MeteoSwiss Complete For HA",
+        "description": "Choose the SwissMetNet station used for current conditions (sorted by distance from your home) and the postal code used for the local forecast.",
+        "data": {
+          "station": "Measurement station",
+          "postal_code": "Postal code (forecast)"
+        }
+      }
+    },
+    "error": {
+      "unknown_station": "Unknown station.",
+      "unknown_postal_code": "No MeteoSwiss forecast point for this postal code."
+    },
+    "abort": {
+      "cannot_connect": "Cannot reach MeteoSwiss open data.",
+      "already_configured": "This station and postal code are already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "dew_point": {
+        "name": "Dew point"
+      },
+      "precipitation": {
+        "name": "Precipitation (10 min)"
+      },
+      "sunshine": {
+        "name": "Sunshine (10 min)"
+      },
+      "global_radiation": {
+        "name": "Global radiation"
+      },
+      "wind_speed": {
+        "name": "Wind speed"
+      },
+      "wind_gust": {
+        "name": "Wind gust"
+      },
+      "wind_bearing": {
+        "name": "Wind direction"
+      },
+      "pressure_qff": {
+        "name": "Pressure (QFF)"
+      },
+      "pressure_qnh": {
+        "name": "Pressure (QNH)"
+      },
+      "pressure_qfe": {
+        "name": "Pressure at station (QFE)"
+      },
+      "measured_at": {
+        "name": "Measurement time"
+      },
+      "symbol": {
+        "name": "MeteoSwiss symbol"
+      },
+      "description": {
+        "name": "Weather description"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Forecast options",
+        "description": "Hourly forecast files are large (about 33 MB each, of which about 8 MB are read for 48 hours). Reduce the horizon or increase the interval to save bandwidth.",
+        "data": {
+          "hourly_forecast": "Hourly forecast",
+          "hourly_hours": "Hourly forecast horizon",
+          "hourly_interval": "Hourly forecast refresh interval"
+        }
+      }
+    }
+  }
+}

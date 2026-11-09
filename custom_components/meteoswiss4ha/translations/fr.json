@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MeteoSwiss Complete For HA",
+        "description": "Choisissez la station SwissMetNet pour les conditions actuelles (triées par distance de votre domicile) et le code postal pour les prévisions locales.",
+        "data": {
+          "station": "Station de mesure",
+          "postal_code": "Code postal (prévisions)"
+        }
+      }
+    },
+    "error": {
+      "unknown_station": "Station inconnue.",
+      "unknown_postal_code": "Aucun point de prévision MétéoSuisse pour ce code postal."
+    },
+    "abort": {
+      "cannot_connect": "Impossible de joindre les données ouvertes de MétéoSuisse.",
+      "already_configured": "Cette station et ce code postal sont déjà configurés."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Température"
+      },
+      "humidity": {
+        "name": "Humidité"
+      },
+      "dew_point": {
+        "name": "Point de rosée"
+      },
+      "precipitation": {
+        "name": "Précipitations (10 min)"
+      },
+      "sunshine": {
+        "name": "Ensoleillement (10 min)"
+      },
+      "global_radiation": {
+        "name": "Rayonnement global"
+      },
+      "wind_speed": {
+        "name": "Vitesse du vent"
+      },
+      "wind_gust": {
+        "name": "Rafales"
+      },
+      "wind_bearing": {
+        "name": "Direction du vent"
+      },
+      "pressure_qff": {
+        "name": "Pression (QFF)"
+      },
+      "pressure_qnh": {
+        "name": "Pression (QNH)"
+      },
+      "pressure_qfe": {
+        "name": "Pression à la station (QFE)"
+      },
+      "measured_at": {
+        "name": "Heure de la mesure"
+      },
+      "symbol": {
+        "name": "Symbole MétéoSuisse"
+      },
+      "description": {
+        "name": "Description météo"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options des prévisions",
+        "description": "Les fichiers de prévisions horaires sont volumineux (environ 33 Mo chacun, dont environ 8 Mo lus pour 48 heures). Réduisez l’horizon ou augmentez l’intervalle pour économiser de la bande passante.",
+        "data": {
+          "hourly_forecast": "Prévisions horaires",
+          "hourly_hours": "Horizon des prévisions horaires",
+          "hourly_interval": "Intervalle de mise à jour des prévisions horaires"
+        }
+      }
+    }
+  }
+}
