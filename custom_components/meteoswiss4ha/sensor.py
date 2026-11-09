@@ -43,6 +43,8 @@ from .coordinator import (
 from .hazards import LEVELS as HAZARD_LEVELS, WARNING_KINDS
 from .pollen import LEVELS, SPECIES, PollenSpecies
 from .entity import MeteoSwissEntity
+from .events import LevelEventMixin
+from .places import place_sensors
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
 from .symbols import symbol_to_condition
 
@@ -177,7 +179,22 @@ async def async_setup_entry(
         entities.extend(
             WeatherWarningSensor(hazards, entry, kind) for kind in WARNING_KINDS
         )
+    if (places := entry.runtime_data.places) is not None:
+        entities.extend(place_sensors(places[0], entry, places[1]))
     async_add_entities(entities)
+
+
+class _EventsOnUpdate(LevelEventMixin):
+    """Fire level events on every coordinator update (see events.py)."""
+
+    async def async_added_to_hass(self) -> None:
+        """Remember the current level (no event at start-up)."""
+        await super().async_added_to_hass()  # type: ignore[misc]
+        self._check_events()
+
+    def _handle_coordinator_update(self) -> None:
+        self._check_events()
+        super()._handle_coordinator_update()  # type: ignore[misc]
 
 
 class CurrentSensor(MeteoSwissEntity[CurrentCoordinator], SensorEntity):
@@ -355,13 +372,19 @@ class PollenSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
         }
 
 
-class PollenLevelSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
+class PollenLevelSensor(_EventsOnUpdate, MeteoSwissEntity[PollenCoordinator], SensorEntity):
     """Highest pollen level among all species (none .. very strong)."""
 
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = list(LEVELS)
     _attr_translation_key = "pollen_level"
     _attr_icon = "mdi:flower-pollen"
+    _event_type = "pollen"
+    _event_subtype = "pollen"
+
+    def _event_level(self) -> int | None:
+        data = self.coordinator.data
+        return data.overall()[0] if data is not None else None
 
     def __init__(self, coordinator: PollenCoordinator, entry: MeteoSwissConfigEntry) -> None:
         """Initialize the sensor."""
@@ -400,7 +423,7 @@ class PollenLevelSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
         return attrs
 
 
-class HazardSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
+class HazardSensor(_EventsOnUpdate, MeteoSwissEntity[HazardCoordinator], SensorEntity):
     """A natural hazard level (5-level scale) for the home location."""
 
     _attr_device_class = SensorDeviceClass.ENUM
@@ -411,12 +434,18 @@ class HazardSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
         """Initialize the sensor; kind is avalanche, forest_fire or drought."""
         super().__init__(coordinator, entry)
         self._kind = kind
+        self._event_type = "hazard"
+        self._event_subtype = kind
         self._attr_translation_key = f"{kind}_danger"
         self._attr_unique_id = f"{entry.entry_id}_{kind}_danger"
         self._attr_icon = HAZARD_ICONS[kind]
         self._attr_options = list(HAZARD_LEVELS) + (
             ["no_rating"] if kind == "avalanche" else []
         )
+
+    def _event_level(self) -> int | None:
+        item = self._item()
+        return item.level if item is not None else None
 
     def _item(self) -> Any:
         data = self.coordinator.data
@@ -473,7 +502,7 @@ WARNING_ICONS = {
 }
 
 
-class WeatherWarningSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
+class WeatherWarningSensor(_EventsOnUpdate, MeteoSwissEntity[HazardCoordinator], SensorEntity):
     """MeteoSwiss weather warning level of one kind at the home location.
 
     "low" (level 1) means no warning in force; upcoming warnings are listed in
@@ -489,9 +518,19 @@ class WeatherWarningSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
         """Initialize the sensor for one warning kind (rain, wind, ...)."""
         super().__init__(coordinator, entry)
         self._kind = kind
+        self._event_type = "warning"
+        self._event_subtype = kind
         self._attr_translation_key = f"{kind}_warning"
         self._attr_unique_id = f"{entry.entry_id}_{kind}_warning"
         self._attr_icon = WARNING_ICONS[kind]
+
+    def _event_level(self) -> int | None:
+        item = self._item()
+        return item.level if item is not None else None
+
+    def _event_upcoming(self) -> int:
+        item = self._item()
+        return len(item.upcoming) if item is not None else 0
 
     def _item(self) -> Any:
         data = self.coordinator.data

@@ -217,7 +217,8 @@
         "menu_options": {
           "display": "Preschentaziun",
           "forecast": "Prognosas",
-          "environment": "Pollen e privels"
+          "environment": "Pollen e privels",
+          "places": "Lieus e persunas survegliads"
         }
       },
       "display": {
@@ -243,6 +244,14 @@
           "pollen_station": "Staziun da pollen",
           "avalanche_region": "Regiun da lavinas (SLF)"
         }
+      },
+      "places": {
+        "title": "Lieus e persunas survegliads",
+        "description": "Avertiments d’aura per auters lieus: endatai numers postals u nums da lieus (p. ex. 2000 per Neuchâtel, 3000 per Berna) e/u tscherni persunas da las qualas la posiziun actuala vegn suandada. Mintgin survegn in agen apparat cun sensurs d’avertiment ed activaders pronts.",
+        "data": {
+          "places": "Numers postals u lieus",
+          "persons": "Persunas da suandar"
+        }
       }
     }
   },
@@ -253,6 +262,33 @@
         "vivid": "Viv",
         "classic": "Classic"
       }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "warning_announced": "Avertiment {subtype} annunzià",
+      "warning_started": "Avertiment {subtype} en vigur",
+      "warning_ended": "Fin da l’avertiment {subtype}",
+      "warning_level": "L’avertiment {subtype} cuntanscha in grad",
+      "hazard_level": "Il privel {subtype} cuntanscha in grad",
+      "pollen_level": "Il pollen cuntanscha in nivel"
+    },
+    "trigger_subtype": {
+      "rain": "plievgia",
+      "thunderstorm": "urizis",
+      "wind": "vent",
+      "snow": "naiv",
+      "slippery_roads": "vias sblundriusas",
+      "heat": "chalira",
+      "frost": "glatsch",
+      "forest_fire": "d’incendis da guaud",
+      "flood": "d’auazuns",
+      "drought": "da sitgira",
+      "avalanche": "da lavinas",
+      "pollen": "pollen"
+    },
+    "extra_fields": {
+      "level": "Grad (u pli aut)"
     }
   }
 }

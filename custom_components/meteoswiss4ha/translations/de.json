@@ -217,7 +217,8 @@
         "menu_options": {
           "display": "Anzeige",
           "forecast": "Prognosen",
-          "environment": "Pollen und Gefahren"
+          "environment": "Pollen und Gefahren",
+          "places": "Beobachtete Orte und Personen"
         }
       },
       "display": {
@@ -243,6 +244,14 @@
           "pollen_station": "Pollenstation",
           "avalanche_region": "Lawinenregion (SLF)"
         }
+      },
+      "places": {
+        "title": "Beobachtete Orte und Personen",
+        "description": "Wetterwarnungen für weitere Orte: Postleitzahlen oder Ortsnamen eingeben (z. B. 2000 für Neuenburg, 3000 für Bern) und/oder Personen wählen, deren aktueller Standort verfolgt wird. Jeder Ort erhält ein eigenes Gerät mit Warnsensoren und fertigen Automations-Auslösern.",
+        "data": {
+          "places": "Postleitzahlen oder Orte",
+          "persons": "Zu verfolgende Personen"
+        }
       }
     }
   },
@@ -253,6 +262,33 @@
         "vivid": "Farbig",
         "classic": "Klassisch"
       }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "warning_announced": "{subtype}warnung angekündigt",
+      "warning_started": "{subtype}warnung beginnt",
+      "warning_ended": "{subtype}warnung endet",
+      "warning_level": "{subtype}warnung erreicht eine Stufe",
+      "hazard_level": "{subtype}gefahr erreicht eine Stufe",
+      "pollen_level": "Pollen erreicht eine Stufe"
+    },
+    "trigger_subtype": {
+      "rain": "Regen",
+      "thunderstorm": "Gewitter",
+      "wind": "Wind",
+      "snow": "Schnee",
+      "slippery_roads": "Glätte",
+      "heat": "Hitze",
+      "frost": "Frost",
+      "forest_fire": "Waldbrand",
+      "flood": "Hochwasser",
+      "drought": "Trockenheits",
+      "avalanche": "Lawinen",
+      "pollen": "Pollen"
+    },
+    "extra_fields": {
+      "level": "Stufe (oder höher)"
     }
   }
 }

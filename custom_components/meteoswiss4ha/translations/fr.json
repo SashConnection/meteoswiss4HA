@@ -217,7 +217,8 @@
         "menu_options": {
           "display": "Affichage",
           "forecast": "Prévisions",
-          "environment": "Pollen et dangers"
+          "environment": "Pollen et dangers",
+          "places": "Lieux et personnes surveillés"
         }
       },
       "display": {
@@ -243,6 +244,14 @@
           "pollen_station": "Station pollen",
           "avalanche_region": "Région d’avalanche (SLF)"
         }
+      },
+      "places": {
+        "title": "Lieux et personnes surveillés",
+        "description": "Alertes météo pour d’autres lieux : tapez des numéros postaux ou des noms de lieux (p. ex. 2000 pour Neuchâtel, 3000 pour Berne) et/ou choisissez des personnes dont la position actuelle est suivie. Chacun a son propre appareil avec des capteurs d’alertes et des déclencheurs prêts à l’emploi.",
+        "data": {
+          "places": "Numéros postaux ou lieux",
+          "persons": "Personnes à suivre"
+        }
       }
     }
   },
@@ -253,6 +262,33 @@
         "vivid": "Vif",
         "classic": "Classique"
       }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "warning_announced": "Alerte {subtype} annoncée",
+      "warning_started": "Alerte {subtype} en vigueur",
+      "warning_ended": "Fin de l’alerte {subtype}",
+      "warning_level": "L’alerte {subtype} atteint un degré",
+      "hazard_level": "Le danger {subtype} atteint un degré",
+      "pollen_level": "Le pollen atteint un niveau"
+    },
+    "trigger_subtype": {
+      "rain": "pluie",
+      "thunderstorm": "orages",
+      "wind": "vent",
+      "snow": "neige",
+      "slippery_roads": "routes glissantes",
+      "heat": "canicule",
+      "frost": "gel",
+      "forest_fire": "d’incendie de forêt",
+      "flood": "de crues",
+      "drought": "de sécheresse",
+      "avalanche": "d’avalanches",
+      "pollen": "pollen"
+    },
+    "extra_fields": {
+      "level": "Degré (ou plus)"
     }
   }
 }

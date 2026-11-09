@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, replace
+from typing import Any
 from datetime import date, datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
@@ -67,6 +68,8 @@ class MeteoSwissData:
     forecast: ForecastCoordinator
     pollen: PollenCoordinator | None = None
     hazards: HazardCoordinator | None = None
+    # Watched places and followed persons: (WarningsCoordinator, [Place]).
+    places: Any = None
 
 
 class PollenCoordinator(DataUpdateCoordinator[PollenData]):

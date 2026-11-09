@@ -217,7 +217,8 @@
         "menu_options": {
           "display": "Display",
           "forecast": "Forecasts",
-          "environment": "Pollen and hazards"
+          "environment": "Pollen and hazards",
+          "places": "Watched places and persons"
         }
       },
       "display": {
@@ -243,6 +244,14 @@
           "pollen_station": "Pollen station",
           "avalanche_region": "Avalanche region (SLF)"
         }
+      },
+      "places": {
+        "title": "Watched places and persons",
+        "description": "Weather warnings for other places: type postal codes or place names (e.g. 2000 for Neuchâtel, 3000 for Bern), and/or choose persons whose current position is followed. Each one gets its own device with warning sensors and ready-made automation triggers.",
+        "data": {
+          "places": "Postal codes or places",
+          "persons": "Persons to follow"
+        }
       }
     }
   },
@@ -253,6 +262,33 @@
         "vivid": "Vivid",
         "classic": "Classic"
       }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "warning_announced": "{subtype} warning announced",
+      "warning_started": "{subtype} warning starts",
+      "warning_ended": "{subtype} warning ends",
+      "warning_level": "{subtype} warning reaches a level",
+      "hazard_level": "{subtype} danger reaches a level",
+      "pollen_level": "Pollen reaches a level"
+    },
+    "trigger_subtype": {
+      "rain": "Rain",
+      "thunderstorm": "Thunderstorm",
+      "wind": "Wind",
+      "snow": "Snow",
+      "slippery_roads": "Slippery roads",
+      "heat": "Heat",
+      "frost": "Frost",
+      "forest_fire": "Forest fire",
+      "flood": "Flood",
+      "drought": "Drought",
+      "avalanche": "Avalanche",
+      "pollen": "Pollen"
+    },
+    "extra_fields": {
+      "level": "Level (or higher)"
     }
   }
 }

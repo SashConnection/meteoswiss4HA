@@ -39,6 +39,7 @@ CURRENT_UPDATE_INTERVAL: Final = timedelta(minutes=10)
 FORECAST_UPDATE_INTERVAL: Final = timedelta(minutes=60)
 POLLEN_UPDATE_INTERVAL: Final = timedelta(minutes=60)
 HAZARD_UPDATE_INTERVAL: Final = timedelta(minutes=30)
+WARNINGS_UPDATE_INTERVAL: Final = timedelta(minutes=10)
 
 # Options
 CONF_HOURLY_FORECAST: Final = "hourly_forecast"
@@ -47,6 +48,9 @@ CONF_HOURLY_INTERVAL: Final = "hourly_interval"
 CONF_ICON_PACK: Final = "icon_pack"
 CONF_POLLEN_STATION: Final = "pollen_station"
 CONF_AVALANCHE_REGION: Final = "avalanche_region"
+# Watched places (postal codes) and followed persons / device trackers.
+CONF_PLACES: Final = "places"
+CONF_PERSONS: Final = "persons"
 # Radar frame server (the Node-RED flow in nodered/, run by the project).
 RADAR_URL: Final = "https://ha.jesaispas.ch/endpoint/meteoswiss/radar"
 DEFAULT_ICON_PACK: Final = "animated"

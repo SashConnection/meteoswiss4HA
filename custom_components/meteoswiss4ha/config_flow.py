@@ -17,6 +17,8 @@ from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     BooleanSelector,
+    EntitySelector,
+    EntitySelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -40,6 +42,8 @@ from .const import (
     CONF_AVALANCHE_REGION,
     CONF_POLLEN_STATION,
     CONF_ICON_PACK,
+    CONF_PERSONS,
+    CONF_PLACES,
     CONF_SIDEBAR_PANEL,
     DEFAULT_ICON_PACK,
     DEFAULT_SIDEBAR_PANEL,
@@ -236,7 +240,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Show the options menu."""
         return self.async_show_menu(
-            step_id="init", menu_options=["display", "forecast", "environment"]
+            step_id="init", menu_options=["display", "forecast", "environment", "places"]
         )
 
     def _save(self, values: dict[str, Any]) -> ConfigFlowResult:
@@ -244,6 +248,30 @@ class MeteoSwissOptionsFlow(OptionsFlow):
         # "auto" means: let the integration choose (nearest), so drop the key.
         options = {k: v for k, v in options.items() if v != AUTO}
         return self.async_create_entry(data=options)
+
+    async def async_step_places(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Watched places (postal codes) and followed persons."""
+        if user_input is not None:
+            codes = [str(c).strip() for c in user_input.get(CONF_PLACES, []) if str(c).strip()]
+            return self._save(
+                {CONF_PLACES: codes, CONF_PERSONS: user_input.get(CONF_PERSONS, [])}
+            )
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_PLACES, default=[]): SelectSelector(
+                    SelectSelectorConfig(options=[], multiple=True, custom_value=True)
+                ),
+                vol.Optional(CONF_PERSONS, default=[]): EntitySelector(
+                    EntitySelectorConfig(domain=["person", "device_tracker"], multiple=True)
+                ),
+            }
+        )
+        return self.async_show_form(
+            step_id="places",
+            data_schema=self.add_suggested_values_to_schema(schema, self.config_entry.options),
+        )
 
     async def async_step_display(
         self, user_input: dict[str, Any] | None = None

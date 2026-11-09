@@ -17,6 +17,8 @@ from homeassistant.helpers.typing import ConfigType
 
 from .api import MeteoSwissClient, MeteoSwissError, distance_km
 from .const import (
+    CONF_PERSONS,
+    CONF_PLACES,
     CONF_POLLEN_STATION,
     CONF_SIDEBAR_PANEL,
     DEFAULT_SIDEBAR_PANEL,
@@ -36,6 +38,7 @@ from .coordinator import (
 )
 from .hazards import HazardClient
 from .overview import async_register_views
+from .places import Place, WarningsCoordinator, async_resolve_places
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,6 +110,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
         forecast=forecast,
         pollen=await _async_setup_pollen(hass, entry, client),
         hazards=await _async_setup_hazards(hass, entry),
+        places=await _async_setup_places(hass, entry, client),
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -124,6 +128,25 @@ async def _async_setup_hazards(
     )
     await hazards.async_refresh()
     return hazards
+
+
+async def _async_setup_places(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry, client: MeteoSwissClient
+) -> tuple[WarningsCoordinator, list[Place]] | None:
+    """Watched places and followed persons (never blocking)."""
+    places = await async_resolve_places(client, entry.options.get(CONF_PLACES) or [])
+    for entity_id in entry.options.get(CONF_PERSONS) or []:
+        state = hass.states.get(entity_id)
+        name = state.name if state is not None else entity_id
+        places.append(Place(f"person_{entity_id.replace('.', '_')}", name, entity_id=entity_id))
+    if not places:
+        return None
+    language = (hass.config.language or "en").split("-")[0].lower()
+    coordinator = WarningsCoordinator(
+        hass, entry, HazardClient(async_get_clientsession(hass), language)
+    )
+    await coordinator.async_refresh()
+    return coordinator, places
 
 
 async def _async_setup_pollen(

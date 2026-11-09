@@ -217,7 +217,8 @@
         "menu_options": {
           "display": "Visualizzazione",
           "forecast": "Previsioni",
-          "environment": "Polline e pericoli"
+          "environment": "Polline e pericoli",
+          "places": "Luoghi e persone sorvegliati"
         }
       },
       "display": {
@@ -243,6 +244,14 @@
           "pollen_station": "Stazione dei pollini",
           "avalanche_region": "Regione valanghe (SLF)"
         }
+      },
+      "places": {
+        "title": "Luoghi e persone sorvegliati",
+        "description": "Allerte meteo per altri luoghi: inserite numeri postali o nomi di luoghi (p. es. 2000 per Neuchâtel, 3000 per Berna) e/o scegliete persone di cui seguire la posizione attuale. Ognuno riceve un proprio dispositivo con sensori di allerta e attivatori pronti all’uso.",
+        "data": {
+          "places": "Numeri postali o luoghi",
+          "persons": "Persone da seguire"
+        }
       }
     }
   },
@@ -253,6 +262,33 @@
         "vivid": "Vivace",
         "classic": "Classico"
       }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "warning_announced": "Allerta {subtype} annunciata",
+      "warning_started": "Allerta {subtype} in vigore",
+      "warning_ended": "Fine dell’allerta {subtype}",
+      "warning_level": "L’allerta {subtype} raggiunge un grado",
+      "hazard_level": "Il pericolo {subtype} raggiunge un grado",
+      "pollen_level": "Il polline raggiunge un livello"
+    },
+    "trigger_subtype": {
+      "rain": "pioggia",
+      "thunderstorm": "temporali",
+      "wind": "vento",
+      "snow": "neve",
+      "slippery_roads": "strade sdrucciolevoli",
+      "heat": "canicola",
+      "frost": "gelo",
+      "forest_fire": "d’incendi boschivi",
+      "flood": "di piene",
+      "drought": "di siccità",
+      "avalanche": "di valanghe",
+      "pollen": "polline"
+    },
+    "extra_fields": {
+      "level": "Grado (o superiore)"
     }
   }
 }
