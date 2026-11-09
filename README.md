@@ -4,7 +4,27 @@ Official MeteoSwiss weather in Home Assistant: current conditions, local forecas
 
 🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**
 
-![Switzerland map](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg)
+![MeteoSwiss Complete For HA](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.jpg)
+
+## At a glance
+
+<table>
+<tr>
+<td width="33%" valign="top"><a href="#weather"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="260" alt="Weather map"></a><br><b>Weather map</b><br><sub>Pictograms and temperatures for 31 towns, 9 days</sub></td>
+<td width="33%" valign="top"><a href="#precipitation-radar"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar.jpg" width="260" alt="Precipitation radar"></a><br><b>Precipitation radar</b><br><sub>Last 3 hours, every 5 minutes</sub></td>
+<td width="33%" valign="top"><a href="#precipitation-radar"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar-forecast.jpg" width="260" alt="Radar forecast"></a><br><b>Radar forecast</b><br><sub>Hourly rain forecast after the radar</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><a href="#weather-warnings"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-warnings.jpg" width="260" alt="Weather warnings"></a><br><b>Weather warnings</b><br><sub>Rain, storms, wind, snow, ice, heat, frost</sub></td>
+<td width="33%" valign="top"><a href="#forest-fire-floods-drought"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-fire.jpg" width="260" alt="Forest fire"></a><br><b>Forest fire</b><br><sub>FOEN danger by region</sub></td>
+<td width="33%" valign="top"><a href="#forest-fire-floods-drought"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-flood.jpg" width="260" alt="Floods and drought"></a><br><b>Floods and drought</b><br><sub>FOEN danger by region and river</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><a href="#3-forecast-card"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="220" alt="Forecast card"></a><br><b>Forecast card</b><br><sub>Animated pictograms, hours and days</sub></td>
+<td width="33%" valign="top"><a href="#5-one-map-per-hazard-or-zoomed-on-your-region"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="220" alt="Map of your region"></a><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home</sub></td>
+<td width="33%" valign="top"><a href="#6-on-a-phone"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/mobile.jpg" width="130" alt="On a phone"></a><br><b>On a phone</b><br><sub>Compact legend, icon tabs</sub></td>
+</tr>
+</table>
 
 > Screenshots were taken with the integration; some values (forecasts, pollen) are examples.
 
@@ -86,7 +106,7 @@ Buttons under the zoom: **⌖** re-centers the map, **+ / −** zoom.
 
 ### Weather
 
-Pictogram, minimum and maximum for 31 towns and a few summits (green); your home is orange (see the picture at the top). The tabs at the bottom choose the day. More places appear when you zoom in.
+Pictogram, minimum and maximum for 31 towns and a few summits (green); your home is orange (see "At a glance" at the top). The tabs at the bottom choose the day. More places appear when you zoom in.
 
 ### Precipitation radar
 

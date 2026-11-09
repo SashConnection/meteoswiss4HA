@@ -6,6 +6,28 @@ Ce guide explique comment installer l'intégration, la régler et afficher la m�
 
 > Les captures ont été faites avec l'intégration ; certaines valeurs (prévisions, pollen) sont des exemples.
 
+![MeteoSwiss Complete For HA](images/overview.jpg)
+
+## En images
+
+<table>
+<tr>
+<td width="33%" valign="top"><a href="#météo"><img src="images/map-weather.jpg" width="260" alt="Carte météo"></a><br><b>Carte météo</b><br><sub>Pictogrammes et températures de 31 villes, 9 jours</sub></td>
+<td width="33%" valign="top"><a href="#radar-des-précipitations"><img src="images/map-radar.jpg" width="260" alt="Radar des précipitations"></a><br><b>Radar des précipitations</b><br><sub>3 dernières heures, toutes les 5 minutes</sub></td>
+<td width="33%" valign="top"><a href="#radar-des-précipitations"><img src="images/map-radar-forecast.jpg" width="260" alt="Prévision radar"></a><br><b>Prévision radar</b><br><sub>Pluie heure par heure après le radar</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><a href="#alertes-intempéries"><img src="images/map-warnings.jpg" width="260" alt="Alertes intempéries"></a><br><b>Alertes intempéries</b><br><sub>Pluie, orages, vent, neige, verglas, canicule, gel</sub></td>
+<td width="33%" valign="top"><a href="#incendies-de-forêt-crues-sécheresse"><img src="images/map-fire.jpg" width="260" alt="Incendies de forêt"></a><br><b>Incendies de forêt</b><br><sub>Danger OFEV par région</sub></td>
+<td width="33%" valign="top"><a href="#incendies-de-forêt-crues-sécheresse"><img src="images/map-flood.jpg" width="260" alt="Crues et sécheresse"></a><br><b>Crues et sécheresse</b><br><sub>Danger OFEV par région et cours d'eau</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><a href="#3-carte-prévisions"><img src="images/card-forecast.png" width="220" alt="Carte prévisions"></a><br><b>Carte prévisions</b><br><sub>Pictogrammes animés, heures et jours</sub></td>
+<td width="33%" valign="top"><a href="#5-une-carte-par-danger-ou-zoomée-sur-votre-région"><img src="images/card-map-home-radar.png" width="220" alt="Carte de votre région"></a><br><b>Carte de votre région</b><br><sub>N'importe quelle couche, zoomée sur le domicile</sub></td>
+<td width="33%" valign="top"><a href="#6-sur-téléphone"><img src="images/mobile.jpg" width="130" alt="Sur téléphone"></a><br><b>Sur téléphone</b><br><sub>Légende compacte, onglets en icônes</sub></td>
+</tr>
+</table>
+
 ## Sommaire
 
 1. [Installation](#1-installation)
