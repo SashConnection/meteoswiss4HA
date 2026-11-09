@@ -1,0 +1,258 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MeteoSwiss Complete For HA",
+        "description": "Scegliete la stazione SwissMetNet per le condizioni attuali (ordinate per distanza da casa vostra) e il numero postale per le previsioni locali.",
+        "data": {
+          "station": "Stazione di misura",
+          "postal_code": "Numero postale (previsioni)"
+        }
+      }
+    },
+    "error": {
+      "unknown_station": "Stazione sconosciuta.",
+      "unknown_postal_code": "Nessun punto di previsione MeteoSvizzera per questo numero postale."
+    },
+    "abort": {
+      "cannot_connect": "Impossibile raggiungere i dati aperti di MeteoSvizzera.",
+      "already_configured": "Questa stazione e questo numero postale sono già configurati."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Umidità"
+      },
+      "dew_point": {
+        "name": "Punto di rugiada"
+      },
+      "precipitation": {
+        "name": "Precipitazioni (10 min)"
+      },
+      "sunshine": {
+        "name": "Soleggiamento (10 min)"
+      },
+      "global_radiation": {
+        "name": "Radiazione globale"
+      },
+      "wind_speed": {
+        "name": "Velocità del vento"
+      },
+      "wind_gust": {
+        "name": "Raffiche"
+      },
+      "wind_bearing": {
+        "name": "Direzione del vento"
+      },
+      "pressure_qff": {
+        "name": "Pressione (QFF)"
+      },
+      "pressure_qnh": {
+        "name": "Pressione (QNH)"
+      },
+      "pressure_qfe": {
+        "name": "Pressione alla stazione (QFE)"
+      },
+      "measured_at": {
+        "name": "Ora della misura"
+      },
+      "symbol": {
+        "name": "Simbolo MeteoSvizzera"
+      },
+      "description": {
+        "name": "Descrizione meteo"
+      },
+      "pollen_hazel": {
+        "name": "Polline di nocciolo"
+      },
+      "pollen_alder": {
+        "name": "Polline di ontano"
+      },
+      "pollen_birch": {
+        "name": "Polline di betulla"
+      },
+      "pollen_ash": {
+        "name": "Polline di frassino"
+      },
+      "pollen_beech": {
+        "name": "Polline di faggio"
+      },
+      "pollen_oak": {
+        "name": "Polline di quercia"
+      },
+      "pollen_grasses": {
+        "name": "Polline di graminacee"
+      },
+      "pollen_level": {
+        "name": "Livello di polline",
+        "state": {
+          "none": "Nessuno",
+          "weak": "Debole",
+          "moderate": "Medio",
+          "strong": "Forte",
+          "very_strong": "Molto forte"
+        }
+      },
+      "avalanche_danger": {
+        "name": "Pericolo di valanghe",
+        "state": {
+          "low": "Debole",
+          "moderate": "Moderato",
+          "considerable": "Marcato",
+          "high": "Forte",
+          "very_high": "Molto forte",
+          "no_rating": "Nessun bollettino"
+        }
+      },
+      "forest_fire_danger": {
+        "name": "Pericolo d’incendi boschivi",
+        "state": {
+          "low": "Debole",
+          "moderate": "Moderato",
+          "considerable": "Marcato",
+          "high": "Forte",
+          "very_high": "Molto forte"
+        }
+      },
+      "drought_danger": {
+        "name": "Pericolo di siccità",
+        "state": {
+          "low": "Debole",
+          "moderate": "Moderato",
+          "considerable": "Marcato",
+          "high": "Forte",
+          "very_high": "Molto forte"
+        }
+      },
+      "flood_danger": {
+        "name": "Pericolo di piene",
+        "state": {
+          "low": "Debole",
+          "moderate": "Moderato",
+          "considerable": "Marcato",
+          "high": "Forte",
+          "very_high": "Molto forte"
+        }
+      },
+      "rain_warning": {
+        "name": "Allerta pioggia",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "thunderstorm_warning": {
+        "name": "Allerta temporali",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "wind_warning": {
+        "name": "Allerta vento",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "snow_warning": {
+        "name": "Allerta neve",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "slippery_roads_warning": {
+        "name": "Allerta strade sdrucciolevoli",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "heat_warning": {
+        "name": "Allerta canicola",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      },
+      "frost_warning": {
+        "name": "Allerta gelo",
+        "state": {
+          "low": "Nessuna allerta",
+          "moderate": "Pericolo moderato",
+          "considerable": "Pericolo marcato",
+          "high": "Pericolo forte",
+          "very_high": "Pericolo molto forte"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "menu_options": {
+          "display": "Visualizzazione",
+          "forecast": "Previsioni",
+          "environment": "Polline e pericoli"
+        }
+      },
+      "display": {
+        "title": "Visualizzazione",
+        "data": {
+          "icon_pack": "Pacchetto di pittogrammi",
+          "sidebar_panel": "Mostrare la pagina della carta nella barra laterale"
+        }
+      },
+      "forecast": {
+        "title": "Previsioni",
+        "description": "I file delle previsioni orarie sono voluminosi (circa 33 MB ciascuno, di cui circa 8 MB letti per 48 ore). Riducete l’orizzonte o aumentate l’intervallo per risparmiare larghezza di banda.",
+        "data": {
+          "hourly_forecast": "Previsioni orarie",
+          "hourly_hours": "Orizzonte delle previsioni orarie",
+          "hourly_interval": "Intervallo di aggiornamento delle previsioni orarie"
+        }
+      },
+      "environment": {
+        "title": "Polline e pericoli",
+        "description": "Per impostazione predefinita vengono usate la stazione dei pollini più vicina e la regione valanghe di casa vostra.",
+        "data": {
+          "pollen_station": "Stazione dei pollini",
+          "avalanche_region": "Regione valanghe (SLF)"
+        }
+      }
+    }
+  },
+  "selector": {
+    "icon_pack": {
+      "options": {
+        "animated": "Animato",
+        "vivid": "Vivace",
+        "classic": "Classico"
+      }
+    }
+  }
+}

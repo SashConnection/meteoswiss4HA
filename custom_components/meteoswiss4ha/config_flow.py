@@ -189,6 +189,7 @@ AUTO_LABELS = {
     "fr": "Automatique (le plus proche)",
     "de": "Automatisch (nächstgelegen)",
     "it": "Automatico (il più vicino)",
+    "rm": "Automatic (il pli datiers)",
 }
 
 DISPLAY_SCHEMA = vol.Schema(

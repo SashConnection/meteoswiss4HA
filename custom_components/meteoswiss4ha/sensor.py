@@ -294,7 +294,10 @@ class DescriptionSensor(_SymbolBase):
     ) -> None:
         """Initialize the sensor in the Home Assistant language."""
         super().__init__(coordinator, entry, "description")
-        self._index = LANGUAGE_INDEX.get(language.split("-")[0].lower(), LANGUAGE_INDEX["en"])
+        lang = language.split("-")[0].lower()
+        # MeteoSwiss publishes no Romansh descriptions: use German.
+        lang = "de" if lang == "rm" else lang
+        self._index = LANGUAGE_INDEX.get(lang, LANGUAGE_INDEX["en"])
 
     @property
     def native_value(self) -> str | None:

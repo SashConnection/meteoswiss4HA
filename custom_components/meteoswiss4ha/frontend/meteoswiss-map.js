@@ -54,6 +54,7 @@ const LINKS = {
   fr: { warnings: "https://www.meteosuisse.admin.ch/services-et-publications/applications/dangers.html", hazards: "https://www.dangers-naturels.ch", avalanche: "https://www.slf.ch/fr/" },
   de: { warnings: "https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/gefahren.html", hazards: "https://www.naturgefahren.ch", avalanche: "https://www.slf.ch/de/" },
   it: { warnings: "https://www.meteosvizzera.admin.ch/servizi-e-pubblicazioni/applicazioni/pericoli.html", hazards: "https://www.pericoli-naturali.ch", avalanche: "https://www.slf.ch/it/" },
+  rm: { warnings: "https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/gefahren.html", hazards: "https://www.naturgefahren.ch", avalanche: "https://www.slf.ch/de/" },
   en: { warnings: "https://www.meteoswiss.admin.ch/services-and-publications/applications/hazards.html", hazards: "https://www.natural-hazards.ch", avalanche: "https://www.slf.ch/en/" },
 };
 
@@ -108,6 +109,23 @@ const I18N = {
     pollenNote: "Misure delle 15 stazioni SwissPollen, media su 24 ore.",
     noBulletin: "Nessun bollettino valanghe pubblicato (fuori stagione).",
     species: { hazel: "Nocciolo", alder: "Ontano", birch: "Betulla", ash: "Frassino", beech: "Faggio", oak: "Quercia", grasses: "Graminacee" },
+  },
+  rm: {
+    title: "MeteoSvizra", recenter: "Centrar", today: "Oz", home: "Chasa", error: "Datas betg disponiblas",
+    layer: { weather: "Aura", radar: "Radar", warnings: "Malaura", fire: "Incendis da guaud", flood: "Auazuns", drought: "Sitgira", avalanche: "Lavinas", pollen: "Pollen" },
+    heading: {
+      weather: "Prognosa da l’aura", radar: "Radar da precipitaziuns", warnings: "Avertiments da malaura", fire: "Privel d’incendis da guaud", flood: "Privel d’auazuns",
+      drought: "Privel da sitgira", avalanche: "Privel da lavinas", pollen: "Pollen (mesiraziuns)",
+    },
+    warnNone: "Nagin avertiment", warnFrom: "da", warnTo: "fin", warnSoon: "previs", warnNote: "Avertiments uffizials da MeteoSvizra (via MeteoAlarm). Avertiments previs èn punctads.", warnLink: "Privels actuals (MeteoSvizra)",
+    warnKinds: { rain: "Plievgia", thunderstorm: "Urizis", wind: "Vent", snow: "Naiv", slippery_roads: "Vias sblundriusas", heat: "Chalira", frost: "Glatsch" },
+    legend: "Legenda", rain: "Intensitad (mm/h)", radarNote: "Radar da MeteoSvizra, las ultimas 3 uras, in maletg mintga 5 minutas.", noRadar: "Il radar n’è actualmain betg disponibel.", forecastLabel: "Prognosa", forecastNote: "Suenter, oransch sin il cursur: prognosa da precipitaziuns per ura (prognosas localas da MeteoSvizra, interpoladas).", radarSetup: "Il radar n’è betg disponibel.", levels: "Grads da privel", updated: "Actualisà ils",
+    explain: "Explicaziun dals grads da privel", bulletin: "Bulletin da lavinas (SLF)",
+    danger: ["Nagin bulletin", "Nagin u pitschen privel", "Privel moderà", "Privel considerabel", "Grond privel", "Fitg grond privel"],
+    pollenLevels: ["Nagin", "Flaivel", "Moderà", "Ferm", "Fitg ferm"],
+    pollenNote: "Mesiraziuns da las 15 staziuns SwissPollen, media da 24 uras.",
+    noBulletin: "Actualmain nagin bulletin da lavinas publitgà (ordaifer la stagiun).",
+    species: { hazel: "Coller", alder: "Ogn", birch: "Badugn", ash: "Fraissen", beech: "Fau", oak: "Ruver", grasses: "Gramineas" },
   },
   en: {
     title: "MeteoSwiss", recenter: "Re-center", today: "Today", home: "Home", error: "Data unavailable",
@@ -212,8 +230,8 @@ const STYLE = `
 .leaflet-tooltip { font-size: 13px; }
 `;
 
-function lang(hass) {
-  const l = (hass?.locale?.language || hass?.language || "en").split("-")[0];
+function lang(hass, override) {
+  const l = override && override !== "auto" ? override : (hass?.locale?.language || hass?.language || "en").split("-")[0];
   return I18N[l] ? l : "en";
 }
 
@@ -359,7 +377,7 @@ class MeteoSwissMap {
   set hass(hass) {
     const first = !this._hass;
     this._hass = hass;
-    this.t = I18N[lang(hass)];
+    this.t = I18N[lang(hass, this.options?.language)];
     if (this._fitBtn) this._fitBtn.title = this.t.recenter;
     if (first) {
       this.refresh();
@@ -516,7 +534,7 @@ class MeteoSwissMap {
       this._tabsKey = key;
       this.tabs.innerHTML = days.map((d, i) => `<button data-day="${i}">${
         i === 0 ? this.t.today
-          : new Date(`${d.date}T12:00:00`).toLocaleDateString(lang(this._hass), { weekday: narrow ? "short" : "long" })
+          : new Date(`${d.date}T12:00:00`).toLocaleDateString(lang(this._hass, this.options?.language), { weekday: narrow ? "short" : "long" })
       }</button>`).join("");
       this.tabs.querySelectorAll("button").forEach((b) =>
         b.addEventListener("click", () => {
@@ -611,7 +629,7 @@ class MeteoSwissMap {
 
     const rows = [1, 2, 3, 4, 5].map((i) =>
       `<div class="row"><i style="background:${DANGER_COLORS[i]}"></i><b>${i}</b><span>${this.t.danger[i]}</span></div>`).join("");
-    const links = LINKS[lang(this._hass)];
+    const links = LINKS[lang(this._hass, this.options?.language)];
     const extra = kind === "avalanche"
       ? `<a href="${links.avalanche}" target="_blank" rel="noreferrer">${this.t.bulletin}</a>`
       : `<a href="${links.hazards}" target="_blank" rel="noreferrer">${this.t.explain}</a>`;
@@ -658,7 +676,7 @@ class MeteoSwissMap {
     const geo = await this.geo.warnings;
     if (token !== this._token) return;
     const kind = this.warnKind;
-    const loc = lang(this._hass);
+    const loc = lang(this._hass, this.options?.language);
     const fmt = (s) => (s ? new Date(s).toLocaleString(loc, {
       weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit",
     }) : "");
@@ -802,7 +820,7 @@ class MeteoSwissMap {
     const frame = this._radarFrames[index];
     this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? (f.forecast ? 0.75 : 0.85) : 0));
     this.player.querySelector("input").value = index;
-    const t = new Date(frame.time).toLocaleTimeString(lang(this._hass), { hour: "2-digit", minute: "2-digit" });
+    const t = new Date(frame.time).toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit" });
     const label = this.player.querySelector(".time");
     label.textContent = frame.forecast ? `${this.t.forecastLabel} ${t}` : t;
     label.classList.toggle("fc", frame.forecast);
@@ -869,8 +887,8 @@ class MeteoSwissMap {
     const dates = validFrom.map(parse).filter((d) => d && !isNaN(d));
     const when = dates.length ? new Date(Math.max(...dates)) : new Date(this.data.updated);
     this.updated.hidden = false;
-    this.updated.textContent = `${this.t.updated} ${when.toLocaleDateString(lang(this._hass))}${
-      dates.length ? "" : ", " + when.toLocaleTimeString(lang(this._hass), { hour: "2-digit", minute: "2-digit" })
+    this.updated.textContent = `${this.t.updated} ${when.toLocaleDateString(lang(this._hass, this.options?.language))}${
+      dates.length ? "" : ", " + when.toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit" })
     }`;
   }
 }
@@ -950,13 +968,15 @@ class MeteoSwissMapCard extends HTMLElement {
 }
 
 const EDITOR = {
-  fr: { layers: "Couches affichées (vide = toutes ; une seule = carte d’un seul danger)", layer: "Couche au démarrage", area: "Zone", zoom: "Zoom sur la région (7 – 12)", legend: "Légende", height: "Hauteur (px)",
+  fr: { layers: "Couches affichées (vide = toutes ; une seule = carte d’un seul danger)", layer: "Couche au démarrage", area: "Zone", zoom: "Zoom sur la région (7 – 12)", legend: "Légende", height: "Hauteur (px)", language: "Langue",
         areas: { switzerland: "Toute la Suisse", home: "Ma région (domicile)" } },
-  de: { layers: "Angezeigte Ebenen (leer = alle; eine = Karte einer Gefahr)", layer: "Ebene beim Start", area: "Bereich", zoom: "Zoom auf die Region (7 – 12)", legend: "Legende", height: "Höhe (px)",
+  de: { layers: "Angezeigte Ebenen (leer = alle; eine = Karte einer Gefahr)", layer: "Ebene beim Start", area: "Bereich", zoom: "Zoom auf die Region (7 – 12)", legend: "Legende", height: "Höhe (px)", language: "Sprache",
         areas: { switzerland: "Ganze Schweiz", home: "Meine Region (Zuhause)" } },
-  it: { layers: "Livelli mostrati (vuoto = tutti; uno = carta di un solo pericolo)", layer: "Livello iniziale", area: "Zona", zoom: "Zoom sulla regione (7 – 12)", legend: "Legenda", height: "Altezza (px)",
+  it: { layers: "Livelli mostrati (vuoto = tutti; uno = carta di un solo pericolo)", layer: "Livello iniziale", area: "Zona", zoom: "Zoom sulla regione (7 – 12)", legend: "Legenda", height: "Altezza (px)", language: "Lingua",
         areas: { switzerland: "Tutta la Svizzera", home: "La mia regione (casa)" } },
-  en: { layers: "Layers shown (empty = all; one = single-hazard map)", layer: "Layer at start", area: "Area", zoom: "Zoom on the region (7 – 12)", legend: "Legend", height: "Height (px)",
+  rm: { layers: "Nivels mussads (vid = tuts; in = charta d’in sulet privel)", layer: "Nivel a l’entschatta", area: "Zona", zoom: "Zoom sin la regiun (7 – 12)", legend: "Legenda", height: "Autezza (px)", language: "Lingua",
+        areas: { switzerland: "Tut la Svizra", home: "Mia regiun (chasa)" } },
+  en: { layers: "Layers shown (empty = all; one = single-hazard map)", layer: "Layer at start", area: "Area", zoom: "Zoom on the region (7 – 12)", legend: "Legend", height: "Height (px)", language: "Language",
         areas: { switzerland: "Whole Switzerland", home: "My region (home)" } },
 };
 
@@ -971,7 +991,7 @@ class MeteoSwissMapCardEditor extends HTMLElement {
   }
   _render() {
     if (!this._hass || !this._config) return;
-    const l = lang(this._hass);
+    const l = lang(this._hass, this._config.language);
     const e = EDITOR[l];
     const t = I18N[l];
     if (!this._form) {
@@ -995,6 +1015,7 @@ class MeteoSwissMapCardEditor extends HTMLElement {
       ...(this._config.area === "home" ? [{ name: "zoom", selector: { number: { min: 7, max: 12, step: 0.5, mode: "slider" } } }] : []),
       { name: "legend", selector: { boolean: {} } },
       { name: "height", selector: { number: { min: 200, max: 1200, step: 10, mode: "box" } } },
+      { name: "language", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: "Auto" }, { value: "de", label: "Deutsch" }, { value: "fr", label: "Français" }, { value: "it", label: "Italiano" }, { value: "rm", label: "Rumantsch" }, { value: "en", label: "English" }] } } },
     ];
   }
 }

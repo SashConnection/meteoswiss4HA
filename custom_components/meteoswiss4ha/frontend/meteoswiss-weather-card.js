@@ -42,7 +42,7 @@ const T = {
          freezing_level: "Isotherme 0 °C", pollen: "Pollen", precipitation: "Pluie (10 min)", sunshine: "Soleil (10 min)", global_radiation: "Rayonnement",
          pressure_qnh: "Pression QNH", pressure_qfe: "Pression station", warnings: "Alertes" },
     f: { entity: "Entité météo", name: "Titre (par défaut : lieu et altitude)", details: "Mesures affichées (cochez et ordonnez)", show_header: "En-tête",
-         show_chart: "Graphique heure par heure", hours: "Heures du graphique", show_daily: "Prévisions par jour", days: "Jours" },
+         show_chart: "Graphique heure par heure", hours: "Heures du graphique", show_daily: "Prévisions par jour", days: "Jours", language: "Langue" },
   },
   de: {
     altitude: "m ü. M.", station: "Station", today: "Heute", source: "Quelle: MeteoSchweiz, Lauf", noEntity: "Keine MeteoSwiss-Wetterentität gefunden.",
@@ -51,7 +51,7 @@ const T = {
          freezing_level: "Nullgradgrenze", pollen: "Pollen", precipitation: "Regen (10 min)", sunshine: "Sonne (10 min)", global_radiation: "Strahlung",
          pressure_qnh: "Druck QNH", pressure_qfe: "Stationsdruck", warnings: "Warnungen" },
     f: { entity: "Wetter-Entität", name: "Titel (Standard: Ort und Höhe)", details: "Angezeigte Messwerte (auswählen und ordnen)", show_header: "Kopfzeile",
-         show_chart: "Stündliche Grafik", hours: "Stunden der Grafik", show_daily: "Tagesprognose", days: "Tage" },
+         show_chart: "Stündliche Grafik", hours: "Stunden der Grafik", show_daily: "Tagesprognose", days: "Tage", language: "Sprache" },
   },
   it: {
     altitude: "m s.l.m.", station: "Stazione", today: "Oggi", source: "Fonte: MeteoSvizzera, corsa del", noEntity: "Nessuna entità meteo MeteoSwiss trovata.",
@@ -60,7 +60,16 @@ const T = {
          freezing_level: "Limite dello zero", pollen: "Polline", precipitation: "Pioggia (10 min)", sunshine: "Sole (10 min)", global_radiation: "Radiazione",
          pressure_qnh: "Pressione QNH", pressure_qfe: "Pressione stazione", warnings: "Allerte" },
     f: { entity: "Entità meteo", name: "Titolo (predefinito: luogo e altitudine)", details: "Misure mostrate (selezionare e ordinare)", show_header: "Intestazione",
-         show_chart: "Grafico orario", hours: "Ore del grafico", show_daily: "Previsioni giornaliere", days: "Giorni" },
+         show_chart: "Grafico orario", hours: "Ore del grafico", show_daily: "Previsioni giornaliere", days: "Giorni", language: "Lingua" },
+  },
+  rm: {
+    altitude: "m s. m.", station: "Staziun", today: "Oz", source: "Funtauna: MeteoSvizra, prognosa dals", noEntity: "Nagina entitad d’aura MeteoSwiss chattada.",
+    noWarning: "Nagin avertiment",
+    d: { humidity: "Umiditad", wind: "Vent", gust: "Buffadas", pressure: "Pressiun", dew_point: "Punct da rosada", precipitation_probability: "Ristg da plievgia",
+         freezing_level: "Cunfin da zero grads", pollen: "Pollen", precipitation: "Plievgia (10 min)", sunshine: "Sulegl (10 min)", global_radiation: "Radiaziun",
+         pressure_qnh: "Pressiun QNH", pressure_qfe: "Pressiun da la staziun", warnings: "Avertiments" },
+    f: { entity: "Entitad d’aura", name: "Titel (standard: lieu ed autezza)", details: "Mesiraziuns mussadas (tscherner ed ordinar)", show_header: "Chau",
+         show_chart: "Grafica per ura", hours: "Uras da la grafica", show_daily: "Prognosa per di", days: "Dis", language: "Lingua" },
   },
   en: {
     altitude: "m", station: "Station", today: "Today", source: "Source: MeteoSwiss, run of", noEntity: "No MeteoSwiss weather entity found.",
@@ -69,13 +78,13 @@ const T = {
          freezing_level: "Freezing level", pollen: "Pollen", precipitation: "Rain (10 min)", sunshine: "Sunshine (10 min)", global_radiation: "Radiation",
          pressure_qnh: "Pressure QNH", pressure_qfe: "Station pressure", warnings: "Warnings" },
     f: { entity: "Weather entity", name: "Title (default: place and altitude)", details: "Measurements shown (tick and order)", show_header: "Header",
-         show_chart: "Hourly chart", hours: "Chart hours", show_daily: "Daily forecast", days: "Days" },
+         show_chart: "Hourly chart", hours: "Chart hours", show_daily: "Daily forecast", days: "Days", language: "Language" },
   },
 };
 const DANGER_COLORS = ["#c8c8c8", "#ccff66", "#ffff00", "#ff9900", "#ff0000", "#8b0000"];
 
-const lang = (hass) => {
-  const l = (hass?.locale?.language || hass?.language || "en").split("-")[0];
+const lang = (hass, override) => {
+  const l = override && override !== "auto" ? override : (hass?.locale?.language || hass?.language || "en").split("-")[0];
   return T[l] ? l : "en";
 };
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -281,8 +290,9 @@ class MeteoSwissWeatherCard extends HTMLElement {
   _render() {
     if (!this._config || !this._hass) return;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
-    const t = T[lang(this._hass)];
-    const loc = this._hass.locale?.language || this._hass.language || "en";
+    const t = T[lang(this._hass, this._config?.language)];
+    const forced = this._config.language && this._config.language !== "auto" ? this._config.language : null;
+    const loc = forced || this._hass.locale?.language || this._hass.language || "en";
     const st = this._entity ? this._hass.states[this._entity] : undefined;
     if (!st) {
       this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card><div class="empty">${t.noEntity}</div></ha-card>`;
@@ -372,7 +382,7 @@ class MeteoSwissWeatherCardEditor extends HTMLElement {
 
   _render() {
     if (!this._hass || !this._config) return;
-    const t = T[lang(this._hass)];
+    const t = T[lang(this._hass, this._config?.language)];
     if (!this._form) {
       this._form = document.createElement("ha-form");
       this._form.addEventListener("value-changed", (e) =>
@@ -394,6 +404,7 @@ class MeteoSwissWeatherCardEditor extends HTMLElement {
         { name: "show_daily", selector: { boolean: {} } },
         { name: "days", selector: { number: { min: 1, max: 9, mode: "box" } } },
       ] },
+      { name: "language", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: "Auto" }, { value: "de", label: "Deutsch" }, { value: "fr", label: "Français" }, { value: "it", label: "Italiano" }, { value: "rm", label: "Rumantsch" }, { value: "en", label: "English" }] } } },
     ];
   }
 }

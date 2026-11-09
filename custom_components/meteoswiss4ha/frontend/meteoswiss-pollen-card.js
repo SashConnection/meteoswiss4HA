@@ -175,7 +175,7 @@ class MeteoSwissPollenCard extends HTMLElement {
     if (!this._config) return;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const t = T[langOf(this._hass, this._config)];
-    this._loc = langOf(this._hass, this._config) === "rm" ? "de-CH" : (this._hass?.locale?.language || "en");
+    this._loc = this._config.language && this._config.language !== "auto" ? this._config.language : (this._hass?.locale?.language || "en");
     const title = this._config.title ?? t.title;
     const head = title ? `<div class="title"><ha-icon icon="mdi:tree"></ha-icon>${esc(title)}</div>` : "";
     if (!this._data) {

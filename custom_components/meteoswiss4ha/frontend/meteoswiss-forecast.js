@@ -15,21 +15,24 @@ const DOMAIN = "meteoswiss4ha";
 
 const T = {
   fr: { today: "Auj.", humidity: "Humidité", wind: "Vent", gust: "Rafales", pressure: "Pression", noEntity: "Aucune entité météo MeteoSwiss trouvée.",
-        f: { entity: "Entité météo", name: "Titre", forecast: "Prévisions", days: "Jours", hours: "Heures", show_current: "Météo actuelle", show_details: "Détails (humidité, vent, pression)" },
+        f: { entity: "Entité météo", name: "Titre", forecast: "Prévisions", days: "Jours", hours: "Heures", show_current: "Météo actuelle", show_details: "Détails (humidité, vent, pression)", language: "Langue" },
         modes: { both: "Heures et jours", daily: "Jours", hourly: "Heures", none: "Aucune" } },
   de: { today: "Heute", humidity: "Feuchte", wind: "Wind", gust: "Böen", pressure: "Druck", noEntity: "Keine MeteoSwiss-Wetterentität gefunden.",
-        f: { entity: "Wetter-Entität", name: "Titel", forecast: "Prognose", days: "Tage", hours: "Stunden", show_current: "Aktuelles Wetter", show_details: "Details (Feuchte, Wind, Druck)" },
+        f: { entity: "Wetter-Entität", name: "Titel", forecast: "Prognose", days: "Tage", hours: "Stunden", show_current: "Aktuelles Wetter", show_details: "Details (Feuchte, Wind, Druck)", language: "Sprache" },
         modes: { both: "Stunden und Tage", daily: "Tage", hourly: "Stunden", none: "Keine" } },
   it: { today: "Oggi", humidity: "Umidità", wind: "Vento", gust: "Raffiche", pressure: "Pressione", noEntity: "Nessuna entità meteo MeteoSwiss trovata.",
-        f: { entity: "Entità meteo", name: "Titolo", forecast: "Previsioni", days: "Giorni", hours: "Ore", show_current: "Meteo attuale", show_details: "Dettagli (umidità, vento, pressione)" },
+        f: { entity: "Entità meteo", name: "Titolo", forecast: "Previsioni", days: "Giorni", hours: "Ore", show_current: "Meteo attuale", show_details: "Dettagli (umidità, vento, pressione)", language: "Lingua" },
         modes: { both: "Ore e giorni", daily: "Giorni", hourly: "Ore", none: "Nessuna" } },
+  rm: { today: "Oz", humidity: "Umiditad", wind: "Vent", gust: "Buffadas", pressure: "Pressiun", noEntity: "Nagina entitad d’aura MeteoSwiss chattada.",
+        f: { entity: "Entitad d’aura", name: "Titel", forecast: "Prognosas", days: "Dis", hours: "Uras", show_current: "Aura actuala", show_details: "Detagls (umiditad, vent, pressiun)", language: "Lingua" },
+        modes: { both: "Uras e dis", daily: "Dis", hourly: "Uras", none: "Nagina" } },
   en: { today: "Today", humidity: "Humidity", wind: "Wind", gust: "Gusts", pressure: "Pressure", noEntity: "No MeteoSwiss weather entity found.",
-        f: { entity: "Weather entity", name: "Title", forecast: "Forecast", days: "Days", hours: "Hours", show_current: "Current weather", show_details: "Details (humidity, wind, pressure)" },
+        f: { entity: "Weather entity", name: "Title", forecast: "Forecast", days: "Days", hours: "Hours", show_current: "Current weather", show_details: "Details (humidity, wind, pressure)", language: "Language" },
         modes: { both: "Hours and days", daily: "Days", hourly: "Hours", none: "None" } },
 };
 
-const lang = (hass) => {
-  const l = (hass?.locale?.language || hass?.language || "en").split("-")[0];
+const lang = (hass, override) => {
+  const l = override && override !== "auto" ? override : (hass?.locale?.language || hass?.language || "en").split("-")[0];
   return T[l] ? l : "en";
 };
 
@@ -129,8 +132,9 @@ class MeteoSwissForecastCard extends HTMLElement {
   _render() {
     if (!this._config || !this._hass) return;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
-    const t = T[lang(this._hass)];
-    const loc = this._hass.locale?.language || this._hass.language || "en";
+    const t = T[lang(this._hass, this._config?.language)];
+    const forced = this._config.language && this._config.language !== "auto" ? this._config.language : null;
+    const loc = forced || this._hass.locale?.language || this._hass.language || "en";
     const st = this._state;
     if (!st) {
       this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card><div class="empty">${t.noEntity}</div></ha-card>`;
@@ -212,7 +216,7 @@ class MeteoSwissForecastCardEditor extends HTMLElement {
 
   _render() {
     if (!this._hass || !this._config) return;
-    const t = T[lang(this._hass)];
+    const t = T[lang(this._hass, this._config?.language)];
     if (!this._form) {
       this._form = document.createElement("ha-form");
       this._form.addEventListener("value-changed", (e) =>
@@ -232,6 +236,7 @@ class MeteoSwissForecastCardEditor extends HTMLElement {
       ] },
       { name: "show_current", selector: { boolean: {} } },
       { name: "show_details", selector: { boolean: {} } },
+      { name: "language", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: "Auto" }, { value: "de", label: "Deutsch" }, { value: "fr", label: "Français" }, { value: "it", label: "Italiano" }, { value: "rm", label: "Rumantsch" }, { value: "en", label: "English" }] } } },
     ];
   }
 }

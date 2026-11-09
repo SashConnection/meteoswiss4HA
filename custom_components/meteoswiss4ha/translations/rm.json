@@ -1,0 +1,258 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MeteoSwiss Complete For HA",
+        "description": "Tscherni la staziun SwissMetNet per las cundiziuns actualas (zavradas tenor la distanza da vossa chasa) ed il numer postal per las prognosas localas.",
+        "data": {
+          "station": "Staziun da mesira",
+          "postal_code": "Numer postal (prognosas)"
+        }
+      }
+    },
+    "error": {
+      "unknown_station": "Staziun nunenconuschenta.",
+      "unknown_postal_code": "Nagin punct da prognosa da MeteoSvizra per quest numer postal."
+    },
+    "abort": {
+      "cannot_connect": "Impussibel da cuntanscher las datas averts da MeteoSvizra.",
+      "already_configured": "Questa staziun e quest numer postal èn gia configurads."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Umiditad"
+      },
+      "dew_point": {
+        "name": "Punct da rosada"
+      },
+      "precipitation": {
+        "name": "Precipitaziuns (10 min)"
+      },
+      "sunshine": {
+        "name": "Durada dal sulegl (10 min)"
+      },
+      "global_radiation": {
+        "name": "Radiaziun globala"
+      },
+      "wind_speed": {
+        "name": "Sveltezza dal vent"
+      },
+      "wind_gust": {
+        "name": "Buffadas"
+      },
+      "wind_bearing": {
+        "name": "Direcziun dal vent"
+      },
+      "pressure_qff": {
+        "name": "Pressiun (QFF)"
+      },
+      "pressure_qnh": {
+        "name": "Pressiun (QNH)"
+      },
+      "pressure_qfe": {
+        "name": "Pressiun a la staziun (QFE)"
+      },
+      "measured_at": {
+        "name": "Ura da la mesiraziun"
+      },
+      "symbol": {
+        "name": "Simbol MeteoSvizra"
+      },
+      "description": {
+        "name": "Descripziun da l’aura"
+      },
+      "pollen_hazel": {
+        "name": "Pollen da coller"
+      },
+      "pollen_alder": {
+        "name": "Pollen d’ogn"
+      },
+      "pollen_birch": {
+        "name": "Pollen da badugn"
+      },
+      "pollen_ash": {
+        "name": "Pollen da fraissen"
+      },
+      "pollen_beech": {
+        "name": "Pollen da fau"
+      },
+      "pollen_oak": {
+        "name": "Pollen da ruver"
+      },
+      "pollen_grasses": {
+        "name": "Pollen da gramineas"
+      },
+      "pollen_level": {
+        "name": "Nivel da pollen",
+        "state": {
+          "none": "Nagin",
+          "weak": "Flaivel",
+          "moderate": "Moderà",
+          "strong": "Ferm",
+          "very_strong": "Fitg ferm"
+        }
+      },
+      "avalanche_danger": {
+        "name": "Privel da lavinas",
+        "state": {
+          "low": "Flaivel",
+          "moderate": "Moderà",
+          "considerable": "Considerabel",
+          "high": "Grond",
+          "very_high": "Fitg grond",
+          "no_rating": "Nagin bulletin"
+        }
+      },
+      "forest_fire_danger": {
+        "name": "Privel d’incendis da guaud",
+        "state": {
+          "low": "Flaivel",
+          "moderate": "Moderà",
+          "considerable": "Considerabel",
+          "high": "Grond",
+          "very_high": "Fitg grond"
+        }
+      },
+      "drought_danger": {
+        "name": "Privel da sitgira",
+        "state": {
+          "low": "Flaivel",
+          "moderate": "Moderà",
+          "considerable": "Considerabel",
+          "high": "Grond",
+          "very_high": "Fitg grond"
+        }
+      },
+      "flood_danger": {
+        "name": "Privel d’auazuns",
+        "state": {
+          "low": "Flaivel",
+          "moderate": "Moderà",
+          "considerable": "Considerabel",
+          "high": "Grond",
+          "very_high": "Fitg grond"
+        }
+      },
+      "rain_warning": {
+        "name": "Avertiment plievgia",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "thunderstorm_warning": {
+        "name": "Avertiment urizis",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "wind_warning": {
+        "name": "Avertiment vent",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "snow_warning": {
+        "name": "Avertiment naiv",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "slippery_roads_warning": {
+        "name": "Avertiment vias sblundriusas",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "heat_warning": {
+        "name": "Avertiment chalira",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      },
+      "frost_warning": {
+        "name": "Avertiment glatsch",
+        "state": {
+          "low": "Nagin avertiment",
+          "moderate": "Privel moderà",
+          "considerable": "Privel considerabel",
+          "high": "Grond privel",
+          "very_high": "Fitg grond privel"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opziuns",
+        "menu_options": {
+          "display": "Preschentaziun",
+          "forecast": "Prognosas",
+          "environment": "Pollen e privels"
+        }
+      },
+      "display": {
+        "title": "Preschentaziun",
+        "data": {
+          "icon_pack": "Pachet da pictograms",
+          "sidebar_panel": "Mussar la pagina da la charta en la trav laterala"
+        }
+      },
+      "forecast": {
+        "title": "Prognosas",
+        "description": "Las datotecas da las prognosas per ura èn grondas (circa 33 MB mintgina, da quai vegnan legids circa 8 MB per 48 uras). Reducì l’orizont u augmentai l’interval per spargnar ladezza da banda.",
+        "data": {
+          "hourly_forecast": "Prognosas per ura",
+          "hourly_hours": "Orizont da las prognosas per ura",
+          "hourly_interval": "Interval d’actualisaziun da las prognosas per ura"
+        }
+      },
+      "environment": {
+        "title": "Pollen e privels",
+        "description": "Sco standard vegnan duvradas la staziun da pollen la pli datiers e la regiun da lavinas da vossa chasa.",
+        "data": {
+          "pollen_station": "Staziun da pollen",
+          "avalanche_region": "Regiun da lavinas (SLF)"
+        }
+      }
+    }
+  },
+  "selector": {
+    "icon_pack": {
+      "options": {
+        "animated": "Animà",
+        "vivid": "Viv",
+        "classic": "Classic"
+      }
+    }
+  }
+}
