@@ -356,6 +356,47 @@ class HazardClient:
         """Return the flood danger at a point."""
         return parse_flood(await self.async_get_flood_map(), lat, lon)
 
+    async def async_get_layer_regions(self, layer: str) -> dict[str, Any]:
+        """Return all regions of a FOEN warning layer (WGS84 GeoJSON).
+
+        Each feature gets "level", "name", "text" and "valid_from" properties.
+        """
+        data = await self._get_json(
+            IDENTIFY_URL,
+            {
+                "geometry": "5.9,45.8,10.6,47.9",
+                "geometryType": "esriGeometryEnvelope",
+                "sr": "4326",
+                "layers": f"all:{layer}",
+                "tolerance": "0",
+                "returnGeometry": "true",
+                "geometryFormat": "geojson",
+                "limit": "500",
+                "lang": self._lang,
+            },
+        )
+        features = []
+        for result in data.get("results") or []:
+            props = result.get("properties") or result.get("attributes") or {}
+            level = parse_identify(
+                {"results": [{"layerBodId": layer, "attributes": props}]}, layer, self._lang
+            )
+            if result.get("geometry") is None or level is None:
+                continue
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": result["geometry"],
+                    "properties": {
+                        "level": level.level,
+                        "name": level.region,
+                        "text": level.title,
+                        "valid_from": level.valid_from,
+                    },
+                }
+            )
+        return {"type": "FeatureCollection", "features": features}
+
     async def async_get_level(self, layer: str, lat: float, lon: float) -> HazardLevel | None:
         """Return the FOEN warning level of a layer at a point."""
         data = await self._get_json(

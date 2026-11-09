@@ -40,7 +40,12 @@ from .const import (
     DOMAIN,
     ICONS_URL,
 )
-from .hazards import HazardClient, flood_to_wgs84
+from .hazards import (
+    DROUGHT_LAYER,
+    FOREST_FIRE_LAYER,
+    HazardClient,
+    flood_to_wgs84,
+)
 from .pollen import SPECIES, level_index, summarize
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,7 +53,7 @@ _LOGGER = logging.getLogger(__name__)
 AVALANCHE_TTL = 30 * 60
 POLLEN_TTL = 60 * 60
 REGIONS_TTL = 24 * 60 * 60
-FLOOD_TTL = 30 * 60
+HAZARD_TTL = 30 * 60
 
 
 class _Cache:
@@ -127,23 +132,36 @@ class AvalancheRegionsView(_BaseView):
         return self.json(regions)
 
 
-class FloodRegionsView(_BaseView):
-    """FOEN flood warning regions with their current level (WGS84)."""
+HAZARD_KINDS = ("fire", "drought", "flood")
 
-    url = f"/api/{DOMAIN}/flood_regions"
-    name = f"api:{DOMAIN}:flood_regions"
 
-    async def get(self, request: web.Request) -> web.Response:
-        """Return the flood warning map as WGS84 GeoJSON."""
-        language = (self.hass.config.language or "en").split("-")[0].lower()
-        client = HazardClient(async_get_clientsession(self.hass), language)
+async def hazard_regions(hass: HomeAssistant, cache: _Cache, kind: str) -> dict[str, Any] | None:
+    """Warning regions of a FOEN hazard (WGS84 GeoJSON with a "level"), cached."""
+    language = (hass.config.language or "en").split("-")[0].lower()
+    client = HazardClient(async_get_clientsession(hass), language)
 
-        async def load():
+    async def load():
+        if kind == "flood":
             return flood_to_wgs84(await client.async_get_flood_map())
+        layer = FOREST_FIRE_LAYER if kind == "fire" else DROUGHT_LAYER
+        return await client.async_get_layer_regions(layer)
 
-        regions = await self.cache.get(f"flood_{language}", FLOOD_TTL, load)
+    return await cache.get(f"{kind}_{language}", HAZARD_TTL, load)
+
+
+class HazardRegionsView(_BaseView):
+    """FOEN warning regions (fire, drought, flood) with their current level."""
+
+    url = f"/api/{DOMAIN}/hazard_regions/{{kind}}"
+    name = f"api:{DOMAIN}:hazard_regions"
+
+    async def get(self, request: web.Request, kind: str) -> web.Response:
+        """Return the regions of one hazard as WGS84 GeoJSON."""
+        if kind not in HAZARD_KINDS:
+            return self.json_message("Unknown hazard", 404)
+        regions = await hazard_regions(self.hass, self.cache, kind)
         if regions is None:
-            return self.json_message("Flood warnings unavailable", 503)
+            return self.json_message("Warnings unavailable", 503)
         return self.json(regions)
 
 
@@ -184,10 +202,24 @@ class OverviewView(_BaseView):
                         }
                     )
 
-        pollen, avalanche = await asyncio.gather(
+        pollen, avalanche, *regions = await asyncio.gather(
             self.cache.get("pollen", POLLEN_TTL, self._pollen),
             self.cache.get(f"avalanche_{language}", AVALANCHE_TTL, lambda: self._avalanche(language)),
+            *(hazard_regions(self.hass, self.cache, kind) for kind in HAZARD_KINDS),
         )
+        # Highest level of each hazard anywhere in Switzerland (icon bar).
+        maxima: dict[str, int | None] = {
+            kind: max(
+                (f["properties"].get("level") or 0 for f in (geo or {}).get("features", [])),
+                default=0,
+            )
+            or None
+            for kind, geo in zip(HAZARD_KINDS, regions, strict=True)
+        }
+        maxima["avalanche"] = max(
+            (r.get("level") or 0 for r in (avalanche or {}).values()), default=0
+        ) or None
+        maxima["pollen"] = max((p.get("level") or 0 for p in pollen or []), default=0) or None
 
         hazards = data.hazards.data if data.hazards else None
         return self.json(
@@ -207,6 +239,7 @@ class OverviewView(_BaseView):
                 "cities": cities,
                 "pollen": pollen or [],
                 "avalanche": avalanche or {},
+                "maxima": maxima,
             }
         )
 
@@ -262,4 +295,4 @@ def async_register_views(hass: HomeAssistant) -> None:
     cache = _Cache()
     hass.http.register_view(OverviewView(hass, cache))
     hass.http.register_view(AvalancheRegionsView(hass, cache))
-    hass.http.register_view(FloodRegionsView(hass, cache))
+    hass.http.register_view(HazardRegionsView(hass, cache))
