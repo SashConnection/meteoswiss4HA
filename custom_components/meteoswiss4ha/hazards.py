@@ -10,6 +10,7 @@ Sources (all public):
 from __future__ import annotations
 
 import json
+from datetime import datetime
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -92,6 +93,7 @@ class HazardData:
     forest_fire: HazardLevel | None
     drought: HazardLevel | None
     flood: HazardLevel | None = None
+    weather: dict[str, "WeatherWarning"] | None = None
 
 
 # --------------------------------------------------------------- geometry
@@ -397,6 +399,10 @@ class HazardClient:
             )
         return {"type": "FeatureCollection", "features": features}
 
+    async def async_get_weather_warnings(self, now: datetime) -> dict[str, Any]:
+        """Return the MeteoSwiss weather warnings (WGS84 GeoJSON, see parse_meteoalarm)."""
+        return parse_meteoalarm(await self._get_json(METEOALARM_URL), self._lang, now)
+
     async def async_get_level(self, layer: str, lat: float, lon: float) -> HazardLevel | None:
         """Return the FOEN warning level of a layer at a point."""
         data = await self._get_json(
@@ -412,3 +418,156 @@ class HazardClient:
             },
         )
         return parse_identify(data, layer, self._lang)
+
+
+# ------------------------------------------------------- weather warnings
+#
+# MeteoSwiss publishes its official weather warnings (rain, thunderstorms,
+# wind, snow, slippery roads, heat, frost) as CAP messages on MeteoAlarm, the
+# EUMETNET warning service (CC BY 4.0), with the outline of each warning
+# region. They are not part of the MeteoSwiss Open Data catalogue.
+
+METEOALARM_URL = "https://feeds.meteoalarm.org/api/v1/warnings/feeds-switzerland"
+
+WARNING_KINDS = (
+    "rain", "thunderstorm", "wind", "snow", "slippery_roads", "heat", "frost",
+)
+
+# MeteoAlarm "awareness_type" codes.
+_AWARENESS_TYPES = {
+    1: "wind", 2: "snow", 3: "thunderstorm", 5: "heat", 6: "frost", 10: "rain", 13: "rain",
+}
+
+
+def _leading_int(value: Any) -> int | None:
+    try:
+        return int(str(value).split(";", 1)[0].strip())
+    except ValueError:
+        return None
+
+
+def _parse_time(value: Any) -> datetime | None:
+    try:
+        return datetime.fromisoformat(str(value))
+    except ValueError:
+        return None
+
+
+def _parse_polygon(text: str) -> list[list[float]]:
+    """CAP polygon "lat,lon lat,lon ..." -> GeoJSON ring [[lon, lat], ...]."""
+    ring = []
+    for pair in text.split():
+        try:
+            lat, lon = (float(v) for v in pair.split(","))
+        except ValueError:
+            continue
+        ring.append([round(lon, 4), round(lat, 4)])
+    return ring
+
+
+def _warning_kind(code: int | None, event_en: str) -> str | None:
+    kind = _AWARENESS_TYPES.get(code or 0)
+    if kind == "snow" and re.search(r"slip|ice|icy|glaze|black", event_en, re.I):
+        return "slippery_roads"
+    return kind
+
+
+def parse_meteoalarm(data: dict[str, Any], lang: str, now: datetime) -> dict[str, Any]:
+    """Convert the MeteoAlarm feed to WGS84 GeoJSON, one feature per region.
+
+    Properties: kind, level (Swiss 5-level scale, 2-4; MeteoAlarm has no
+    separate level 5), name, event, description, instruction, onset, expires.
+    Expired and cancelled warnings are left out.
+    """
+    features = []
+    for warning in data.get("warnings") or []:
+        alert = warning.get("alert") or {}
+        if alert.get("status", "Actual") != "Actual" or alert.get("msgType") == "Cancel":
+            continue
+        infos = alert.get("info") or []
+        if not infos:
+            continue
+        by_lang = {str(i.get("language", ""))[:2].lower(): i for i in infos}
+        info = by_lang.get(lang) or by_lang.get("en") or infos[0]
+        english = by_lang.get("en") or info
+        params = {
+            p.get("valueName"): p.get("value") for p in info.get("parameter") or []
+        }
+        level = _leading_int(params.get("awareness_level"))
+        kind = _warning_kind(
+            _leading_int(params.get("awareness_type")), english.get("event") or ""
+        )
+        if kind is None or level is None or level < 2:
+            continue
+        expires = _parse_time(info.get("expires"))
+        if expires is not None and expires <= now:
+            continue
+        for area in info.get("area") or []:
+            rings = [r for r in (_parse_polygon(p) for p in area.get("polygon") or []) if len(r) > 3]
+            if not rings:
+                continue
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "MultiPolygon", "coordinates": [[r] for r in rings]},
+                    "properties": {
+                        "kind": kind,
+                        "level": min(level, 5),
+                        "name": area.get("areaDesc"),
+                        "event": info.get("event") or info.get("headline"),
+                        "description": info.get("description"),
+                        "instruction": info.get("instruction"),
+                        "onset": info.get("onset") or info.get("effective"),
+                        "expires": info.get("expires"),
+                    },
+                }
+            )
+    return {"type": "FeatureCollection", "features": features}
+
+
+@dataclass(slots=True)
+class WeatherWarning:
+    """Weather warning of one kind at the home location."""
+
+    kind: str
+    level: int = 1  # 1: no warning in force
+    event: str | None = None
+    region: str | None = None
+    description: str | None = None
+    instruction: str | None = None
+    onset: str | None = None
+    expires: str | None = None
+    upcoming: list[dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def state(self) -> str:
+        """Level as a name of the 5-level scale ("low": no warning)."""
+        return LEVELS[max(1, min(self.level, 5)) - 1]
+
+
+def warnings_at(
+    geo: dict[str, Any], lat: float, lon: float, now: datetime
+) -> dict[str, WeatherWarning]:
+    """Warnings in force (and upcoming) at a point, for every kind."""
+    result = {kind: WeatherWarning(kind) for kind in WARNING_KINDS}
+    for feature in geo.get("features") or []:
+        props = feature["properties"]
+        item = result.get(props["kind"])
+        if item is None or not _point_in_geometry(lon, lat, feature["geometry"]):
+            continue
+        onset = _parse_time(props.get("onset"))
+        if onset is not None and onset > now:
+            item.upcoming.append(
+                {k: props.get(k) for k in ("level", "event", "onset", "expires")}
+            )
+        elif props["level"] > item.level:
+            item.level = props["level"]
+            item.event = props.get("event")
+            item.region = props.get("name")
+            item.description = props.get("description")
+            item.instruction = props.get("instruction")
+            item.onset = props.get("onset")
+            item.expires = props.get("expires")
+    for item in result.values():
+        item.upcoming.sort(key=lambda w: w.get("onset") or "")
+    return result

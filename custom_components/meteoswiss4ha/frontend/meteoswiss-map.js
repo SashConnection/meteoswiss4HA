@@ -16,11 +16,12 @@ const WMTS = (layer, ext = "png") =>
 
 const CH_BOUNDS = [[45.75, 5.9], [47.85, 10.55]];
 
-const LAYERS = ["weather", "radar", "fire", "flood", "drought", "avalanche", "pollen"];
+const LAYERS = ["weather", "radar", "warnings", "fire", "flood", "drought", "avalanche", "pollen"];
 const HAZARDS = ["fire", "flood", "drought", "avalanche"];
 const ICONS = {
   weather: "mdi:weather-partly-cloudy",
   radar: "mdi:weather-pouring",
+  warnings: "mdi:alert",
   fire: "mdi:pine-tree-fire",
   flood: "mdi:home-flood",
   drought: "mdi:weather-sunny-alert",
@@ -36,24 +37,33 @@ const RAIN_SCALE = [
   ["#9a7e95", "0.1 – 1"], ["#0001fc", "1 – 2"], ["#058c2d", "2 – 4"], ["#05ff05", "4 – 6"],
   ["#feff01", "6 – 10"], ["#ffc703", "10 – 20"], ["#ff7d01", "20 – 40"], ["#ff1900", "> 40"],
 ];
+// MeteoSwiss weather warning kinds (MeteoAlarm feed), in the site's order.
+const WARNING_KINDS = ["rain", "thunderstorm", "wind", "snow", "slippery_roads", "heat", "frost"];
+const WARNING_ICONS = {
+  rain: "mdi:weather-pouring", thunderstorm: "mdi:weather-lightning", wind: "mdi:weather-windy",
+  snow: "mdi:weather-snowy-heavy", slippery_roads: "mdi:snowflake-melt", heat: "mdi:thermometer-high",
+  frost: "mdi:snowflake-thermometer",
+};
 const FRAME_MS = 350;   // time per radar frame (3 hours ≈ 13 s)
 const FADE_MS = 250;    // cross-fade between frames
 
 const LINKS = {
-  fr: { hazards: "https://www.dangers-naturels.ch", avalanche: "https://www.slf.ch/fr/" },
-  de: { hazards: "https://www.naturgefahren.ch", avalanche: "https://www.slf.ch/de/" },
-  it: { hazards: "https://www.pericoli-naturali.ch", avalanche: "https://www.slf.ch/it/" },
-  en: { hazards: "https://www.natural-hazards.ch", avalanche: "https://www.slf.ch/en/" },
+  fr: { warnings: "https://www.meteosuisse.admin.ch/services-et-publications/applications/dangers.html", hazards: "https://www.dangers-naturels.ch", avalanche: "https://www.slf.ch/fr/" },
+  de: { warnings: "https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/gefahren.html", hazards: "https://www.naturgefahren.ch", avalanche: "https://www.slf.ch/de/" },
+  it: { warnings: "https://www.meteosvizzera.admin.ch/servizi-e-pubblicazioni/applicazioni/pericoli.html", hazards: "https://www.pericoli-naturali.ch", avalanche: "https://www.slf.ch/it/" },
+  en: { warnings: "https://www.meteoswiss.admin.ch/services-and-publications/applications/hazards.html", hazards: "https://www.natural-hazards.ch", avalanche: "https://www.slf.ch/en/" },
 };
 
 const I18N = {
   fr: {
     title: "MétéoSuisse", today: "Aujourd’hui", home: "Domicile", error: "Données indisponibles",
-    layer: { weather: "Météo", radar: "Radar", fire: "Incendies de forêt", flood: "Crues", drought: "Sécheresse", avalanche: "Avalanches", pollen: "Pollen" },
+    layer: { weather: "Météo", radar: "Radar", warnings: "Intempéries", fire: "Incendies de forêt", flood: "Crues", drought: "Sécheresse", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
-      weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
+      weather: "Prévisions météo", radar: "Radar des précipitations", warnings: "Alertes intempéries", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
+    warnNone: "Pas d’alerte", warnFrom: "du", warnTo: "au", warnSoon: "à venir", warnNote: "Alertes officielles de MétéoSuisse (via MeteoAlarm). Les alertes à venir sont en pointillés.", warnLink: "Dangers actuels (MétéoSuisse)",
+    warnKinds: { rain: "Pluie", thunderstorm: "Orages", wind: "Vent", snow: "Neige", slippery_roads: "Routes glissantes", heat: "Canicule", frost: "Gel" },
     legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, 3 dernières heures, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", forecastLabel: "Prévision", forecastNote: "Ensuite, en orange sur le curseur : prévision de pluie heure par heure (prévisions locales MétéoSuisse, interpolées).", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
@@ -64,11 +74,13 @@ const I18N = {
   },
   de: {
     title: "MeteoSchweiz", today: "Heute", home: "Zuhause", error: "Daten nicht verfügbar",
-    layer: { weather: "Wetter", radar: "Radar", fire: "Waldbrand", flood: "Hochwasser", drought: "Trockenheit", avalanche: "Lawinen", pollen: "Pollen" },
+    layer: { weather: "Wetter", radar: "Radar", warnings: "Unwetter", fire: "Waldbrand", flood: "Hochwasser", drought: "Trockenheit", avalanche: "Lawinen", pollen: "Pollen" },
     heading: {
-      weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
+      weather: "Wetterprognose", radar: "Niederschlagsradar", warnings: "Unwetterwarnungen", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
+    warnNone: "Keine Warnung", warnFrom: "von", warnTo: "bis", warnSoon: "bevorstehend", warnNote: "Offizielle Warnungen von MeteoSchweiz (über MeteoAlarm). Bevorstehende Warnungen sind gestrichelt.", warnLink: "Aktuelle Gefahren (MeteoSchweiz)",
+    warnKinds: { rain: "Regen", thunderstorm: "Gewitter", wind: "Wind", snow: "Schnee", slippery_roads: "Glätte", heat: "Hitze", frost: "Frost" },
     legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte 3 Stunden, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", forecastLabel: "Prognose", forecastNote: "Danach, orange auf dem Regler: stündliche Niederschlagsprognose (MeteoSchweiz-Lokalprognosen, interpoliert).", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
@@ -79,11 +91,13 @@ const I18N = {
   },
   it: {
     title: "MeteoSvizzera", today: "Oggi", home: "Casa", error: "Dati non disponibili",
-    layer: { weather: "Meteo", radar: "Radar", fire: "Incendi boschivi", flood: "Piene", drought: "Siccità", avalanche: "Valanghe", pollen: "Polline" },
+    layer: { weather: "Meteo", radar: "Radar", warnings: "Maltempo", fire: "Incendi boschivi", flood: "Piene", drought: "Siccità", avalanche: "Valanghe", pollen: "Polline" },
     heading: {
-      weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
+      weather: "Previsioni meteo", radar: "Radar delle precipitazioni", warnings: "Allerte maltempo", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
+    warnNone: "Nessuna allerta", warnFrom: "dal", warnTo: "al", warnSoon: "imminente", warnNote: "Allerte ufficiali di MeteoSvizzera (tramite MeteoAlarm). Le allerte imminenti sono tratteggiate.", warnLink: "Pericoli attuali (MeteoSvizzera)",
+    warnKinds: { rain: "Pioggia", thunderstorm: "Temporali", wind: "Vento", snow: "Neve", slippery_roads: "Strade sdrucciolevoli", heat: "Canicola", frost: "Gelo" },
     legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultime 3 ore, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", forecastLabel: "Previsione", forecastNote: "Poi, in arancione sul cursore: previsione oraria delle precipitazioni (previsioni locali MeteoSvizzera, interpolate).", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
@@ -94,11 +108,13 @@ const I18N = {
   },
   en: {
     title: "MeteoSwiss", today: "Today", home: "Home", error: "Data unavailable",
-    layer: { weather: "Weather", radar: "Radar", fire: "Forest fire", flood: "Floods", drought: "Drought", avalanche: "Avalanches", pollen: "Pollen" },
+    layer: { weather: "Weather", radar: "Radar", warnings: "Severe weather", fire: "Forest fire", flood: "Floods", drought: "Drought", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
-      weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
+      weather: "Weather forecast", radar: "Precipitation radar", warnings: "Weather warnings", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
+    warnNone: "No warning", warnFrom: "from", warnTo: "to", warnSoon: "upcoming", warnNote: "Official MeteoSwiss warnings (via MeteoAlarm). Upcoming warnings are dashed.", warnLink: "Current hazards (MeteoSwiss)",
+    warnKinds: { rain: "Rain", thunderstorm: "Thunderstorms", wind: "Wind", snow: "Snow", slippery_roads: "Slippery roads", heat: "Heat", frost: "Frost" },
     legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last 3 hours, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", forecastLabel: "Forecast", forecastNote: "Then, in orange on the slider: hourly precipitation forecast (MeteoSwiss local forecasts, interpolated).", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
@@ -172,6 +188,8 @@ const STYLE = `
 .radar-img { transition: opacity ${FADE_MS}ms linear; }
 .tabs button { flex: 1; border: 0; border-top: 4px solid #4b5862; background: transparent; color: #fff;
   padding: 10px 4px; cursor: pointer; font: inherit; font-size: 15px; }
+.tabs button ha-icon { --mdc-icon-size: 20px; }
+.ms-warn-tip { max-width: 320px; white-space: normal; }
 .tabs button.on { border-top-color: #fff; font-weight: 600; }
 .leaflet-pane.ms-tint, .leaflet-pane.ms-regions { mix-blend-mode: multiply; }
 .leaflet-container { background: #26323b; font: inherit; }
@@ -252,7 +270,7 @@ class MeteoSwissMap {
     pane("ms-radar", 275);
     pane("ms-mask", 280);
     L.tileLayer(WMTS("ch.swisstopo.leichte-basiskarte_reliefschattierung"), {
-      attribution: "© swisstopo · MeteoSwiss, SLF, FOEN", maxZoom: 18,
+      attribution: "© swisstopo · MeteoSwiss, MeteoAlarm, SLF, FOEN", maxZoom: 18,
     }).addTo(this.map);
     L.tileLayer(WMTS("ch.bafu.vec25-seen"), { pane: "ms-lakes", maxZoom: 18 }).addTo(this.map);
     this.map.fitBounds(CH_BOUNDS);
@@ -272,6 +290,7 @@ class MeteoSwissMap {
   async _loadCountry() {
     try {
       const ch = await (await fetch(`${BASE}switzerland.json`)).json();
+      this._ch = ch;
       this.tint = L.geoJSON(ch, {
         pane: "ms-tint", interactive: false,
         style: { stroke: false, fillColor: "#8fd1b0", fillOpacity: 0.85 },
@@ -374,7 +393,7 @@ class MeteoSwissMap {
     this._toolbar();
     this.heading.textContent = this.t.heading[layer];
     this.note.hidden = true;
-    this.tabs.hidden = layer !== "weather";
+    this.tabs.hidden = layer !== "weather" && layer !== "warnings";
     if (layer !== "radar") this.player.hidden = true;
     if (layer !== "radar") this._clearRadar();
     if (this.tint) this.tint.setStyle({ fillOpacity: layer === "weather" ? 0.85 : 0.35 });
@@ -386,6 +405,9 @@ class MeteoSwissMap {
       this.updated.hidden = true;
     } else if (layer === "pollen") {
       this._pollen(draw);
+    } else if (layer === "warnings") {
+      await this._warnings(draw, token);
+      if (token !== this._token) return;
     } else if (layer === "radar") {
       await this._radar(draw, token);
       if (token !== this._token) return;
@@ -520,6 +542,91 @@ class MeteoSwissMap {
     this.side.hidden = false;
     this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.levels}</h3>${rows}<div class="extra">${extra}</div>`;
     this._updated(validFrom);
+  }
+
+  // ---------------------------------------------------- weather warnings
+
+  _kindTabs() {
+    const narrow = this.wrap.classList.contains("narrow");
+    const hasIcon = !!customElements.get("ha-icon");
+    const key = `warnings${narrow}${hasIcon}`;
+    if (this._tabsKey !== key) {
+      this._tabsKey = key;
+      this.tabs.innerHTML = WARNING_KINDS.map((k) => `<button data-kind="${k}" title="${this.t.warnKinds[k]}">${
+        narrow && hasIcon ? `<ha-icon icon="${WARNING_ICONS[k]}"></ha-icon>` : this.t.warnKinds[k]
+      }</button>`).join("");
+      this.tabs.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => {
+          this.warnKind = b.dataset.kind;
+          this._render();
+        }));
+    }
+    const levels = this.data.warning_kinds || {};
+    this.tabs.querySelectorAll("button").forEach((b) => {
+      b.classList.toggle("on", b.dataset.kind === this.warnKind);
+      const level = levels[b.dataset.kind];
+      b.style.borderTopColor = level ? DANGER_COLORS[level] : "";
+    });
+  }
+
+  async _warnings(draw, token) {
+    if (!this.warnKind) {
+      // Start on the kind with the highest warning in force.
+      const levels = this.data.warning_kinds || {};
+      this.warnKind = WARNING_KINDS.reduce((a, b) => ((levels[b] || 0) > (levels[a] || 0) ? b : a));
+    }
+    this._kindTabs();
+    if (!this.geo.warnings) {
+      this.geo.warnings = this._hass.callApi("GET", "meteoswiss4ha/weather_warnings").catch(() => null);
+    }
+    const geo = await this.geo.warnings;
+    if (token !== this._token) return;
+    const kind = this.warnKind;
+    const loc = lang(this._hass);
+    const fmt = (s) => (s ? new Date(s).toLocaleString(loc, {
+      weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit",
+    }) : "");
+    const now = Date.now();
+    const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+    if (!geo) {
+      this.note.hidden = false;
+      this.note.textContent = this.t.error;
+    } else {
+      // Whole country at level 1 (no warning), then this kind's regions, highest on top.
+      if (this._ch) {
+        draw.push(L.geoJSON(this._ch, {
+          pane: "ms-regions", interactive: false,
+          style: { stroke: false, fillColor: DANGER_COLORS[1], fillOpacity: 0.9 },
+        }));
+      }
+      const features = geo.features
+        .filter((f) => f.properties.kind === kind)
+        .sort((a, b) => a.properties.level - b.properties.level);
+      const soon = (p) => !!p.onset && Date.parse(p.onset) > now;
+      draw.push(L.geoJSON({ type: "FeatureCollection", features }, {
+        pane: "ms-regions",
+        style: (f) => {
+          const p = f.properties;
+          const color = DANGER_COLORS[p.level];
+          return soon(p)
+            ? { color, weight: 2, opacity: 1, dashArray: "4 4", fillColor: color, fillOpacity: 0.4 }
+            : { color: "#ffffff", weight: 0.4, opacity: 0.6, fillColor: color, fillOpacity: 0.9 };
+        },
+        onEachFeature: (f, l) => {
+          const p = f.properties;
+          const text = esc(p.description).split("\n").slice(0, 4).join("<br>");
+          l.bindTooltip(`<b>${esc(p.name)}</b><br>${p.level} – ${esc(p.event)}${soon(p) ? ` (${this.t.warnSoon})` : ""}<br>${
+            this.t.warnFrom} ${fmt(p.onset)} ${this.t.warnTo} ${fmt(p.expires)}<br><small>${text}</small>`,
+          { sticky: true, className: "ms-warn-tip" });
+        },
+      }));
+    }
+    this._placeNames(draw);
+    const rows = [1, 2, 3, 4, 5].map((i) =>
+      `<div class="row"><i style="background:${DANGER_COLORS[i]}"></i><b>${i}</b><span>${i === 1 ? this.t.warnNone : this.t.danger[i]}</span></div>`).join("");
+    this.side.hidden = false;
+    this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.levels}</h3>${rows}<div class="extra"><p>${this.t.warnNote}</p><a href="${LINKS[loc].warnings}" target="_blank" rel="noreferrer">${this.t.warnLink}</a></div>`;
+    this._updated([]);
   }
 
   // ------------------------------------------------------------- radar
@@ -763,6 +870,6 @@ if (!customElements.get("meteoswiss-map-card")) {
   window.customCards.push({
     type: "meteoswiss-map-card",
     name: "MeteoSwiss map",
-    description: "Switzerland map: weather, forest fire, floods, drought, avalanches and pollen.",
+    description: "Switzerland map: weather, radar, weather warnings, forest fire, floods, drought, avalanches and pollen.",
   });
 }

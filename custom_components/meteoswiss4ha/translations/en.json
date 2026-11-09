@@ -137,6 +137,76 @@
           "high": "High",
           "very_high": "Very high"
         }
+      },
+      "rain_warning": {
+        "name": "Rain warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "thunderstorm_warning": {
+        "name": "Thunderstorm warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "wind_warning": {
+        "name": "Wind warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "snow_warning": {
+        "name": "Snow warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "slippery_roads_warning": {
+        "name": "Slippery roads warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "heat_warning": {
+        "name": "Heat warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
+      },
+      "frost_warning": {
+        "name": "Frost warning",
+        "state": {
+          "low": "No warning",
+          "moderate": "Moderate danger",
+          "considerable": "Considerable danger",
+          "high": "High danger",
+          "very_high": "Very high danger"
+        }
       }
     }
   },

@@ -137,6 +137,76 @@
           "high": "Gross",
           "very_high": "Sehr gross"
         }
+      },
+      "rain_warning": {
+        "name": "Regenwarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "thunderstorm_warning": {
+        "name": "Gewitterwarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "wind_warning": {
+        "name": "Windwarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "snow_warning": {
+        "name": "Schneewarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "slippery_roads_warning": {
+        "name": "Glättewarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "heat_warning": {
+        "name": "Hitzewarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
+      },
+      "frost_warning": {
+        "name": "Frostwarnung",
+        "state": {
+          "low": "Keine Warnung",
+          "moderate": "Mässige Gefahr",
+          "considerable": "Erhebliche Gefahr",
+          "high": "Grosse Gefahr",
+          "very_high": "Sehr grosse Gefahr"
+        }
       }
     }
   },

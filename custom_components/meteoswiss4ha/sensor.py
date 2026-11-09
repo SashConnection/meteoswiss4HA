@@ -40,7 +40,7 @@ from .coordinator import (
     MeteoSwissConfigEntry,
     PollenCoordinator,
 )
-from .hazards import LEVELS as HAZARD_LEVELS
+from .hazards import LEVELS as HAZARD_LEVELS, WARNING_KINDS
 from .pollen import LEVELS, SPECIES, PollenSpecies
 from .entity import MeteoSwissEntity
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
@@ -173,6 +173,9 @@ async def async_setup_entry(
         entities.extend(
             HazardSensor(hazards, entry, kind)
             for kind in ("avalanche", "flood", "forest_fire", "drought")
+        )
+        entities.extend(
+            WeatherWarningSensor(hazards, entry, kind) for kind in WARNING_KINDS
         )
     async_add_entities(entities)
 
@@ -453,4 +456,69 @@ class HazardSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
             "description": item.title,
             "valid_from": item.valid_from,
             "source": "FOEN",
+        }
+
+
+WARNING_ICONS = {
+    "rain": "mdi:weather-pouring",
+    "thunderstorm": "mdi:weather-lightning",
+    "wind": "mdi:weather-windy",
+    "snow": "mdi:weather-snowy-heavy",
+    "slippery_roads": "mdi:snowflake-melt",
+    "heat": "mdi:thermometer-high",
+    "frost": "mdi:snowflake-thermometer",
+}
+
+
+class WeatherWarningSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
+    """MeteoSwiss weather warning level of one kind at the home location.
+
+    "low" (level 1) means no warning in force; upcoming warnings are listed in
+    the "upcoming" attribute. Source: MeteoSwiss via MeteoAlarm.
+    """
+
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = list(HAZARD_LEVELS)
+
+    def __init__(
+        self, coordinator: HazardCoordinator, entry: MeteoSwissConfigEntry, kind: str
+    ) -> None:
+        """Initialize the sensor for one warning kind (rain, wind, ...)."""
+        super().__init__(coordinator, entry)
+        self._kind = kind
+        self._attr_translation_key = f"{kind}_warning"
+        self._attr_unique_id = f"{entry.entry_id}_{kind}_warning"
+        self._attr_icon = WARNING_ICONS[kind]
+
+    def _item(self) -> Any:
+        data = self.coordinator.data
+        return (data.weather or {}).get(self._kind) if data is not None else None
+
+    @property
+    def available(self) -> bool:
+        """Available once the warnings were fetched."""
+        return super().available and self._item() is not None
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the level name of the warning in force."""
+        item = self._item()
+        return item.state if item is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the warning text, validity and upcoming warnings."""
+        item = self._item()
+        if item is None:
+            return {}
+        return {
+            "level": item.level,
+            "event": item.event,
+            "region": item.region,
+            "description": item.description,
+            "instruction": item.instruction,
+            "onset": item.onset,
+            "expires": item.expires,
+            "upcoming": item.upcoming,
+            "source": "MeteoSwiss (MeteoAlarm)",
         }

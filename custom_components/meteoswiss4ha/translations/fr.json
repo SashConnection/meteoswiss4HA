@@ -137,6 +137,76 @@
           "high": "Fort",
           "very_high": "Très fort"
         }
+      },
+      "rain_warning": {
+        "name": "Alerte pluie",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "thunderstorm_warning": {
+        "name": "Alerte orages",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "wind_warning": {
+        "name": "Alerte vent",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "snow_warning": {
+        "name": "Alerte neige",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "slippery_roads_warning": {
+        "name": "Alerte routes glissantes",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "heat_warning": {
+        "name": "Alerte canicule",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
+      },
+      "frost_warning": {
+        "name": "Alerte gel",
+        "state": {
+          "low": "Pas d’alerte",
+          "moderate": "Danger limité",
+          "considerable": "Danger marqué",
+          "high": "Fort danger",
+          "very_high": "Très fort danger"
+        }
       }
     }
   },

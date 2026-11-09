@@ -44,6 +44,7 @@ from .const import (
 from .hazards import (
     DROUGHT_LAYER,
     FOREST_FIRE_LAYER,
+    WARNING_KINDS,
     HazardClient,
     flood_to_wgs84,
 )
@@ -55,6 +56,7 @@ AVALANCHE_TTL = 30 * 60
 POLLEN_TTL = 60 * 60
 REGIONS_TTL = 24 * 60 * 60
 HAZARD_TTL = 30 * 60
+WARNINGS_TTL = 10 * 60
 RADAR_TIMEOUT = ClientTimeout(total=20)
 
 
@@ -229,6 +231,31 @@ class HazardRegionsView(_BaseView):
         return self.json(regions)
 
 
+async def weather_warnings(hass: HomeAssistant, cache: _Cache) -> dict[str, Any] | None:
+    """MeteoSwiss weather warnings (WGS84 GeoJSON with "kind" and "level"), cached."""
+    language = (hass.config.language or "en").split("-")[0].lower()
+    client = HazardClient(async_get_clientsession(hass), language)
+    return await cache.get(
+        f"warnings_{language}",
+        WARNINGS_TTL,
+        lambda: client.async_get_weather_warnings(dt_util.utcnow()),
+    )
+
+
+class WeatherWarningsView(_BaseView):
+    """MeteoSwiss weather warning regions (rain, thunderstorm, wind, ...)."""
+
+    url = f"/api/{DOMAIN}/weather_warnings"
+    name = f"api:{DOMAIN}:weather_warnings"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the warning regions as WGS84 GeoJSON."""
+        warnings = await weather_warnings(self.hass, self.cache)
+        if warnings is None:
+            return self.json_message("Warnings unavailable", 503)
+        return self.json(warnings)
+
+
 class OverviewView(_BaseView):
     """Everything the map needs, in one call."""
 
@@ -266,9 +293,10 @@ class OverviewView(_BaseView):
                         }
                     )
 
-        pollen, avalanche, *regions = await asyncio.gather(
+        pollen, avalanche, warnings, *regions = await asyncio.gather(
             self.cache.get("pollen", POLLEN_TTL, self._pollen),
             self.cache.get(f"avalanche_{language}", AVALANCHE_TTL, lambda: self._avalanche(language)),
+            weather_warnings(self.hass, self.cache),
             *(hazard_regions(self.hass, self.cache, kind) for kind in HAZARD_KINDS),
         )
         # Highest level of each hazard anywhere in Switzerland (icon bar).
@@ -283,6 +311,14 @@ class OverviewView(_BaseView):
         maxima["avalanche"] = max(
             (r.get("level") or 0 for r in (avalanche or {}).values()), default=0
         ) or None
+        # Weather warnings: highest level per kind and overall (None: unknown).
+        kinds: dict[str, int] | None = None
+        if warnings is not None:
+            kinds = {kind: 1 for kind in WARNING_KINDS}
+            for feature in warnings.get("features", []):
+                props = feature["properties"]
+                kinds[props["kind"]] = max(kinds.get(props["kind"], 1), props["level"])
+            maxima["warnings"] = max(kinds.values())
         maxima["pollen"] = max((p.get("level") or 0 for p in pollen or []), default=0) or None
 
         hazards = data.hazards.data if data.hazards else None
@@ -304,6 +340,7 @@ class OverviewView(_BaseView):
                 "pollen": pollen or [],
                 "avalanche": avalanche or {},
                 "maxima": maxima,
+                "warning_kinds": kinds,
                 "radar": bool(_radar_url(entry)),
             }
         )
@@ -361,5 +398,6 @@ def async_register_views(hass: HomeAssistant) -> None:
     hass.http.register_view(OverviewView(hass, cache))
     hass.http.register_view(AvalancheRegionsView(hass, cache))
     hass.http.register_view(HazardRegionsView(hass, cache))
+    hass.http.register_view(WeatherWarningsView(hass, cache))
     hass.http.register_view(RadarFramesView(hass, cache))
     hass.http.register_view(RadarFrameView(hass, cache))

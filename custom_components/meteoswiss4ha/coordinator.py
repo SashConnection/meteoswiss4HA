@@ -28,6 +28,7 @@ from .hazards import (
     HazardData,
     HazardLevel,
     find_region,
+    warnings_at,
 )
 from .pollen import PollenData, summarize
 from .symbols import NIGHT_OFFSET, is_night_code
@@ -247,7 +248,7 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
 
 
 class HazardCoordinator(DataUpdateCoordinator[HazardData]):
-    """Fetch avalanche, forest fire and drought warnings for the home location.
+    """Fetch natural hazard and weather warnings for the home location.
 
     Each source is fetched independently: if one fails, its previous value is
     kept and the others are still updated.
@@ -306,7 +307,15 @@ class HazardCoordinator(DataUpdateCoordinator[HazardData]):
         except MeteoSwissError as err:
             errors.append(f"flood: {err}")
 
-        if len(errors) == 4:
+        weather = previous.weather
+        try:
+            now = dt_util.utcnow()
+            geo = await self._client.async_get_weather_warnings(now)
+            weather = warnings_at(geo, self.latitude, self.longitude, now)
+        except MeteoSwissError as err:
+            errors.append(f"weather warnings: {err}")
+
+        if len(errors) == 5:
             raise UpdateFailed("; ".join(errors))
         for error in errors:
             _LOGGER.debug("Hazard source unavailable: %s", error)
@@ -315,4 +324,5 @@ class HazardCoordinator(DataUpdateCoordinator[HazardData]):
             forest_fire=levels["fire"],
             drought=levels["drought"],
             flood=flood,
+            weather=weather,
         )

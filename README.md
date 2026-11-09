@@ -12,8 +12,9 @@ A Home Assistant custom integration that brings official [MeteoSwiss Open Data](
   - the standard Home Assistant condition (`sunny`, `rainy`, …) on the `weather` entity, so every weather card works out of the box;
   - the native **MeteoSwiss symbol code** (1–42 day, 101–142 night) with its official description in German, French, Italian and English, and three pictogram packs (animated, vivid, classic).
 - **Pollen** from the nearest of the 15 SwissPollen stations (hourly): 7 species with MeteoSwiss intensity levels.
+- **Weather warnings** at your home: rain, thunderstorms, wind, snow, slippery roads, heat and frost (official MeteoSwiss warnings, via MeteoAlarm), with the warning text and upcoming warnings.
 - **Natural hazards** at your home: avalanche danger (SLF bulletin), flood, forest fire and drought danger (FOEN), on the 5-level Swiss scale.
-- **Switzerland map** in the sidebar (and as a dashboard card): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, flood, forest fire and drought warning maps.
+- **Switzerland map** in the sidebar (and as a dashboard card): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, weather warning regions, flood, forest fire and drought warning maps.
 
 ## Switzerland map
 
@@ -21,11 +22,11 @@ After installation a **MeteoSwiss** entry appears in the sidebar. The same map c
 
 ```yaml
 type: custom:meteoswiss-map-card
-layer: weather        # weather, avalanche, pollen, fire, drought, flood
+layer: weather        # weather, radar, warnings, avalanche, pollen, fire, drought, flood
 height: 420
 ```
 
-Base map © swisstopo. Warning maps: SLF, FOEN.
+Base map © swisstopo. Warning maps: MeteoSwiss (via MeteoAlarm), SLF, FOEN.
 
 ### Precipitation radar
 
@@ -44,6 +45,7 @@ The flow itself is in `nodered/meteoswiss-radar-flow.json` (downloads the RZC co
 | `sensor.<location>_birch_pollen`, `_grass_pollen`, … | Latest hourly pollen concentration (grains/m³); attributes: 24-hour mean, level, station. |
 | `sensor.<location>_pollen_level` | Highest pollen level (none, weak, moderate, strong, very strong) and dominant species. |
 | `sensor.<location>_avalanche_danger` | SLF avalanche danger of your region (low … very high, or no bulletin off-season); attributes: subdivision, elevation, avalanche problems, validity. |
+| `sensor.<location>_rain_warning`, `_thunderstorm_warning`, `_wind_warning`, `_snow_warning`, `_slippery_roads_warning`, `_heat_warning`, `_frost_warning` | MeteoSwiss weather warning in force at your home (`low` = no warning, then moderate … very high); attributes: event, region, description, instruction, onset, expires, upcoming warnings. |
 | `sensor.<location>_flood_danger`, `_forest_fire_danger`, `_drought_danger` | FOEN warning level of your region (low … very high). |
 
 ## Pictograms
@@ -87,6 +89,7 @@ Requires Home Assistant 2026.1 or newer.
 ## Data source and license
 
 Data: **Source: MeteoSwiss** — Open Government Data under [CC BY 4.0](https://opendatadocs.meteoswiss.ch/general/terms-of-use). Symbol descriptions are the official MeteoSwiss texts.
+Weather warnings: MeteoSwiss, published through [MeteoAlarm](https://meteoalarm.org) (EUMETNET, CC BY 4.0); they are not part of the MeteoSwiss Open Data catalogue. MeteoAlarm uses 4 colors, so MeteoSwiss levels 4 and 5 both show as level 4.
 This project is not affiliated with or endorsed by MeteoSwiss. The pictograms are original artwork, not the official MeteoSwiss pictograms.
 
 Code and pictograms: MIT License.
