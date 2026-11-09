@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.11.1"
+VERSION: Final = "2026.11.2"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -66,7 +66,17 @@ DAILY_SYMBOL: Final = "jp2000d0"
 DAILY_TEMP_MAX: Final = "tre200px"
 DAILY_TEMP_MIN: Final = "tre200pn"
 DAILY_PRECIPITATION: Final = "rka150p0"
-DAILY_PARAMS: Final = (DAILY_SYMBOL, DAILY_TEMP_MAX, DAILY_TEMP_MIN, DAILY_PRECIPITATION)
+# 10 % / 90 % quantiles of the daily precipitation (uncertainty range).
+DAILY_PRECIPITATION_P10: Final = "rreq10p0"
+DAILY_PRECIPITATION_P90: Final = "rreq90p0"
+DAILY_PARAMS: Final = (
+    DAILY_SYMBOL,
+    DAILY_TEMP_MAX,
+    DAILY_TEMP_MIN,
+    DAILY_PRECIPITATION,
+    DAILY_PRECIPITATION_P10,
+    DAILY_PRECIPITATION_P90,
+)
 
 HOURLY_SYMBOL: Final = "jww003i0"
 HOURLY_TEMPERATURE: Final = "tre200h0"
@@ -75,6 +85,10 @@ HOURLY_PRECIPITATION_PROBABILITY: Final = "rp0003i0"
 HOURLY_WIND_SPEED: Final = "fu3010h0"
 HOURLY_WIND_GUST: Final = "fu3010h1"
 HOURLY_WIND_BEARING: Final = "dkl010h0"
+# 10 % / 90 % temperature quantiles and freezing level (0 °C isotherm, m).
+HOURLY_TEMP_P10: Final = "treq10h0"
+HOURLY_TEMP_P90: Final = "treq90h0"
+HOURLY_FREEZING_LEVEL: Final = "zprfr0hs"
 HOURLY_PARAMS: Final = (
     HOURLY_SYMBOL,
     HOURLY_TEMPERATURE,
@@ -83,4 +97,7 @@ HOURLY_PARAMS: Final = (
     HOURLY_WIND_SPEED,
     HOURLY_WIND_GUST,
     HOURLY_WIND_BEARING,
+    HOURLY_TEMP_P10,
+    HOURLY_TEMP_P90,
+    HOURLY_FREEZING_LEVEL,
 )

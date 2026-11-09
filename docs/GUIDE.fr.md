@@ -22,7 +22,7 @@ Ce guide explique comment installer l'intégration, la régler et afficher la m�
 <td width="33%" valign="top"><a href="#incendies-de-forêt-crues-sécheresse"><img src="images/map-flood.jpg" width="260" alt="Crues et sécheresse"></a><br><b>Crues et sécheresse</b><br><sub>Danger OFEV par région et cours d'eau</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><a href="#3-carte-prévisions"><img src="images/card-forecast.png" width="220" alt="Carte prévisions"></a><br><b>Carte prévisions</b><br><sub>Pictogrammes animés, heures et jours</sub></td>
+<td width="33%" valign="top"><a href="#3-carte-prévisions"><img src="images/card-weather.jpg" width="150" alt="Carte météo détaillée"></a><br><b>Carte météo détaillée</b><br><sub>Mesures au choix, graphique horaire, 9 jours</sub></td>
 <td width="33%" valign="top"><a href="#5-une-carte-par-danger-ou-zoomée-sur-votre-région"><img src="images/card-map-home-radar.png" width="220" alt="Carte de votre région"></a><br><b>Carte de votre région</b><br><sub>N'importe quelle couche, zoomée sur le domicile</sub></td>
 <td width="33%" valign="top"><a href="#6-sur-téléphone"><img src="images/mobile.jpg" width="130" alt="Sur téléphone"></a><br><b>Sur téléphone</b><br><sub>Légende compacte, onglets en icônes</sub></td>
 </tr>
@@ -94,6 +94,32 @@ show_details: true    # humidité, vent, pression
 ```
 
 Les prévisions par heure demandent l'option **Prévisions horaires** activée (page Prévisions des réglages).
+
+### Carte météo détaillée
+
+<img src="images/card-weather.jpg" alt="Carte météo détaillée" width="360" align="right">
+
+La carte **MeteoSwiss detailed weather** montre tout d’un coup :
+
+- lieu et altitude, pictogramme, état du ciel, station de mesure et heure, température ;
+- une grille de **mesures choisies une par une, dans l’ordre voulu** (cochez-les et glissez-les dans l’éditeur de la carte) ;
+- un **graphique heure par heure** : pictogrammes, température avec sa bande d’incertitude 10–90 %, barres de pluie, séparation des jours ;
+- **9 jours** : pictogramme, minimum et maximum, pluie, risque de pluie et fourchette de pluie (10–90 %) ;
+- l’heure de la prévision utilisée.
+
+Mesures disponibles : humidité, vent (avec sa direction), rafales, pression, point de rosée, risque de pluie, isotherme 0 °C, pollen, pluie et soleil des 10 dernières minutes, rayonnement, pression QNH, pression à la station, alertes.
+
+```yaml
+type: custom:meteoswiss-weather-card
+details: [humidity, wind, gust, pressure, dew_point, precipitation_probability, freezing_level, pollen]
+show_header: true
+show_chart: true
+hours: 24             # 6 à 48
+show_daily: true
+days: 9
+```
+
+<br clear="right">
 
 ## 4. Carte de la Suisse
 

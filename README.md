@@ -20,11 +20,13 @@ Official MeteoSwiss weather in Home Assistant: current conditions, local forecas
 <td width="33%" valign="top"><a href="#forest-fire-floods-drought"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-flood.jpg" width="260" alt="Floods and drought"></a><br><b>Floods and drought</b><br><sub>FOEN danger by region and river</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><a href="#3-forecast-card"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="220" alt="Forecast card"></a><br><b>Forecast card</b><br><sub>Animated pictograms, hours and days</sub></td>
+<td width="33%" valign="top"><a href="#3-forecast-card"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="150" alt="Detailed weather card"></a><br><b>Detailed weather card</b><br><sub>Measurements of your choice, hourly chart, 9 days</sub></td>
 <td width="33%" valign="top"><a href="#5-one-map-per-hazard-or-zoomed-on-your-region"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="220" alt="Map of your region"></a><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home</sub></td>
 <td width="33%" valign="top"><a href="#6-on-a-phone"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/mobile.jpg" width="130" alt="On a phone"></a><br><b>On a phone</b><br><sub>Compact legend, icon tabs</sub></td>
 </tr>
 </table>
+
+The other cards: [Forecast card](#3-forecast-card) with animated pictograms, [Switzerland map](#4-switzerland-map).
 
 > Screenshots were taken with the integration; some values (forecasts, pollen) are examples.
 
@@ -97,6 +99,32 @@ show_details: true    # humidity, wind, pressure
 ```
 
 The hourly part needs the **hourly forecast** turned on (Forecast settings page).
+
+### Detailed weather card
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" alt="Detailed weather card" width="360" align="right">
+
+The **MeteoSwiss detailed weather** card shows everything at once:
+
+- place and altitude, pictogram, condition, measuring station and time, temperature;
+- a grid of **measurements you choose one by one, in the order you want** (tick and drag them in the card editor);
+- an **hourly chart**: pictograms, temperature with its 10–90 % uncertainty band, precipitation bars, day separators;
+- **9 days**: pictogram, minimum and maximum, precipitation, rain probability and precipitation range (10–90 %);
+- the forecast run time.
+
+Measurements available: humidity, wind, gust, pressure, dew_point, precipitation_probability, freezing_level, pollen, precipitation, sunshine, global_radiation, pressure_qnh, pressure_qfe, warnings.
+
+```yaml
+type: custom:meteoswiss-weather-card
+details: [humidity, wind, gust, pressure, dew_point, precipitation_probability, freezing_level, pollen]
+show_header: true
+show_chart: true
+hours: 24             # 6 to 48
+show_daily: true
+days: 9
+```
+
+<br clear="right">
 
 ## 4. Switzerland map
 

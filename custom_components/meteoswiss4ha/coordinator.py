@@ -184,6 +184,9 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
             minutes=int(entry.options.get(CONF_HOURLY_INTERVAL, DEFAULT_HOURLY_INTERVAL))
         )
         self._hourly_fetched_at: datetime | None = None
+        # Altitude of the forecast point (m), read once from the point list.
+        self.altitude: float | None = None
+        self._altitude_checked = False
 
     def _hourly_due(self, now: datetime) -> bool:
         if not self.hourly_enabled:
@@ -197,6 +200,21 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
 
     async def _async_update_data(self) -> LocalForecast:
         now = dt_util.utcnow()
+        if not self._altitude_checked:
+            self._altitude_checked = True
+            try:
+                points = await self._client.async_get_points()
+            except MeteoSwissError as err:
+                _LOGGER.debug("Forecast point list unavailable: %s", err)
+            else:
+                self.altitude = next(
+                    (
+                        p.altitude
+                        for p in points
+                        if (p.point_id, p.point_type_id) == self.point
+                    ),
+                    None,
+                )
         fetch_hourly = self._hourly_due(now)
         try:
             forecast = await self._client.async_get_forecast(

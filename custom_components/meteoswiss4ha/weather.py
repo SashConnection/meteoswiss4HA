@@ -24,15 +24,23 @@ from .api import ForecastStep
 from .const import (
     ATTR_METEOSWISS_SYMBOL,
     CONF_ICON_PACK,
+    CONF_POINT_NAME,
+    CONF_STATION,
+    CONF_STATION_NAME,
     DEFAULT_ICON_PACK,
     ICON_PACKS,
     ICONS_URL,
     DAILY_PRECIPITATION,
+    DAILY_PRECIPITATION_P10,
+    DAILY_PRECIPITATION_P90,
     DAILY_SYMBOL,
     DAILY_TEMP_MAX,
     DAILY_TEMP_MIN,
     HOURLY_PRECIPITATION,
+    HOURLY_FREEZING_LEVEL,
     HOURLY_PRECIPITATION_PROBABILITY,
+    HOURLY_TEMP_P10,
+    HOURLY_TEMP_P90,
     HOURLY_SYMBOL,
     HOURLY_TEMPERATURE,
     HOURLY_WIND_BEARING,
@@ -53,6 +61,23 @@ async def async_setup_entry(
     """Set up the MeteoSwiss weather entity."""
     data = entry.runtime_data
     async_add_entities([MeteoSwissWeather(data.forecast, data.current, entry)])
+
+
+# Station measurements exposed in the "measurements" attribute.
+MEASUREMENTS = {
+    "temperature": "tre200s0",
+    "humidity": "ure200s0",
+    "dew_point": "tde200s0",
+    "precipitation": "rre150z0",
+    "sunshine": "sre000z0",
+    "global_radiation": "gre000z0",
+    "wind_speed": "fu3010z0",
+    "wind_gust": "fu3010z1",
+    "wind_bearing": "dkl010z0",
+    "pressure_qff": "pp0qffs0",
+    "pressure_qnh": "pp0qnhs0",
+    "pressure_qfe": "prestas0",
+}
 
 
 def _int(value: float | None) -> int | None:
@@ -79,6 +104,7 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
         self._current = current
         self._attr_unique_id = f"{entry.entry_id}_weather"
         self._entry_options = entry.options
+        self._entry_data = entry.data
         features = WeatherEntityFeature.FORECAST_DAILY
         if forecast.hourly_enabled:
             features |= WeatherEntityFeature.FORECAST_HOURLY
@@ -164,12 +190,40 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
             ATTR_METEOSWISS_SYMBOL: code,
             # Base URL of the chosen pictogram pack: <icons_url>/<symbol>.svg
             "icons_url": f"{ICONS_URL}/{pack if pack in ICON_PACKS else DEFAULT_ICON_PACK}",
+            "location": self._entry_data.get(CONF_POINT_NAME),
+            "altitude": self.coordinator.altitude,
+            "station": self._entry_data.get(CONF_STATION),
+            "station_name": self._entry_data.get(CONF_STATION_NAME),
         }
+        current = self._current.data
+        if current is not None:
+            # Every station measurement, for cards that show them all.
+            attrs["measured_at"] = current.measured_at.isoformat()
+            attrs["measurements"] = {
+                name: current.values.get(key)
+                for name, key in MEASUREMENTS.items()
+                if current.values.get(key) is not None
+            }
+        step = self._current_hour()
+        if step is not None:
+            attrs["precipitation_probability"] = step.values.get(
+                HOURLY_PRECIPITATION_PROBABILITY
+            )
+            attrs["freezing_level"] = step.values.get(HOURLY_FREEZING_LEVEL)
         if self.coordinator.data:
             attrs["forecast_reference_time"] = (
                 self.coordinator.data.reference_time.isoformat()
             )
         return attrs
+
+    def _current_hour(self) -> ForecastStep | None:
+        """Hourly forecast step of the hour in progress."""
+        data = self.coordinator.data
+        if data is None:
+            return None
+        now = dt_util.utcnow()
+        # Hourly steps are stamped at the end of their hour.
+        return next((s for s in data.hourly if s.time > now), None)
 
     # --------------------------------------------------------------- forecast
 
@@ -187,6 +241,9 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
             native_precipitation=values.get(DAILY_PRECIPITATION),
         )
         forecast[ATTR_METEOSWISS_SYMBOL] = code  # type: ignore[literal-required]
+        # Uncertainty range of the precipitation (10 % / 90 % quantiles, mm).
+        forecast["precipitation_p10"] = values.get(DAILY_PRECIPITATION_P10)  # type: ignore[typeddict-unknown-key]
+        forecast["precipitation_p90"] = values.get(DAILY_PRECIPITATION_P90)  # type: ignore[typeddict-unknown-key]
         return forecast
 
     @staticmethod
@@ -206,6 +263,11 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
             wind_bearing=values.get(HOURLY_WIND_BEARING),
         )
         forecast[ATTR_METEOSWISS_SYMBOL] = code  # type: ignore[literal-required]
+        # Uncertainty band of the temperature (10 % / 90 % quantiles, °C) and
+        # freezing level (m).
+        forecast["temperature_p10"] = values.get(HOURLY_TEMP_P10)  # type: ignore[typeddict-unknown-key]
+        forecast["temperature_p90"] = values.get(HOURLY_TEMP_P90)  # type: ignore[typeddict-unknown-key]
+        forecast["freezing_level"] = values.get(HOURLY_FREEZING_LEVEL)  # type: ignore[typeddict-unknown-key]
         return forecast
 
     async def async_forecast_daily(self) -> list[Forecast] | None:
@@ -214,11 +276,23 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
         if data is None:
             return None
         today = dt_util.utcnow().astimezone(SWISS_TZ).date()
-        return [
-            self._daily_forecast(step)
-            for step in data.daily
-            if step.time.date() >= today
-        ]
+        # Daily precipitation probability: highest hourly probability of the day.
+        probability: dict[Any, float] = {}
+        for step in data.hourly:
+            value = step.values.get(HOURLY_PRECIPITATION_PROBABILITY)
+            if value is None:
+                continue
+            day = (step.time - timedelta(hours=1)).astimezone(SWISS_TZ).date()
+            probability[day] = max(probability.get(day, 0), value)
+        forecasts = []
+        for step in data.daily:
+            if step.time.date() < today:
+                continue
+            forecast = self._daily_forecast(step)
+            if step.time.date() in probability:
+                forecast["precipitation_probability"] = _int(probability[step.time.date()])
+            forecasts.append(forecast)
+        return forecasts
 
     async def async_forecast_hourly(self) -> list[Forecast] | None:
         """Return the hourly forecast."""
