@@ -114,7 +114,7 @@
     "z": "f1a7c0de5ad40001",
     "type": "function",
     "name": "list frames",
-    "func": "// List available frames (oldest first).\nconst frames = flow.get(\"radarFrames\") || {};\nmsg.payload = {\n    source: \"MeteoSwiss (RZC radar composite)\",\n    bounds: flow.get(\"radarBounds\") || [[45.6, 5.7], [48.0, 10.8]],\n    frames: Object.keys(frames).sort(),\n};\nreturn msg;",
+    "func": "// List available frames (oldest first): radar (past) and forecast (future).\nconst frames = flow.get(\"radarFrames\") || {};\nconst cutoff = new Date(Date.now() - 3600000).toISOString();\nmsg.payload = {\n    source: \"MeteoSwiss (RZC radar composite, local forecast)\",\n    bounds: flow.get(\"radarBounds\") || [[45.6, 5.7], [48.0, 10.8]],\n    frames: Object.keys(frames).sort(),\n    forecast: Object.keys(flow.get(\"fcFrames\") || {}).filter((t) => t > cutoff).sort(),\n    forecastRun: flow.get(\"fcRun\") || null,\n};\nreturn msg;",
     "outputs": 1,
     "libs": [],
     "x": 430,
@@ -158,7 +158,7 @@
     "z": "f1a7c0de5ad40001",
     "type": "function",
     "name": "frame PNG",
-    "func": "// One frame as PNG: ?time=2026-11-09T11:30:00Z\nconst frames = flow.get(\"radarFrames\") || {};\nconst data = frames[msg.req.query.time];\nif (!data) {\n    msg.statusCode = 404;\n    msg.payload = \"unknown frame\";\n    return msg;\n}\nmsg.payload = Buffer.from(data, \"base64\");\nmsg.headers = { \"Content-Type\": \"image/png\", \"Cache-Control\": \"max-age=3600\" };\nreturn msg;",
+    "func": "// One frame as PNG: ?time=2026-11-09T11:30:00Z (radar or forecast)\nconst frames = flow.get(\"radarFrames\") || {};\nconst data = frames[msg.req.query.time] || (flow.get(\"fcFrames\") || {})[msg.req.query.time];\nif (!data) {\n    msg.statusCode = 404;\n    msg.payload = \"unknown frame\";\n    return msg;\n}\nmsg.payload = Buffer.from(data, \"base64\");\nmsg.headers = { \"Content-Type\": \"image/png\", \"Cache-Control\": \"max-age=3600\" };\nreturn msg;",
     "outputs": 1,
     "libs": [],
     "x": 430,
@@ -231,7 +231,7 @@
     "z": "f1a7c0de5ad40001",
     "type": "function",
     "name": "status",
-    "func": "// Diagnostics: last run, last download, frames and errors.\nmsg.payload = {\n    lastRun: flow.get(\"radarLastRun\") || null,\n    lastDownload: flow.get(\"radarLastDownload\") || null,\n    frames: Object.keys(flow.get(\"radarFrames\") || {}).length,\n    errors: flow.get(\"radarErrors\") || [],\n};\nreturn msg;",
+    "func": "// Diagnostics: last run, last download, frames and errors.\nmsg.payload = {\n    lastRun: flow.get(\"radarLastRun\") || null,\n    lastDownload: flow.get(\"radarLastDownload\") || null,\n    frames: Object.keys(flow.get(\"radarFrames\") || {}).length,\n    forecastRun: flow.get(\"fcRun\") || null,\n    forecastUpdated: flow.get(\"fcUpdated\") || null,\n    forecastFrames: Object.keys(flow.get(\"fcFrames\") || {}).length,\n    errors: flow.get(\"radarErrors\") || [],\n};\nreturn msg;",
     "outputs": 1,
     "libs": [],
     "x": 430,
@@ -252,5 +252,160 @@
     "x": 610,
     "y": 380,
     "wires": []
+  },
+  {
+    "id": "f1a7c0de5ad40011",
+    "z": "f1a7c0de5ad40001",
+    "type": "comment",
+    "name": "Precipitation forecast (local forecast, next 12 hours)",
+    "info": "",
+    "x": 230,
+    "y": 460,
+    "wires": []
+  },
+  {
+    "id": "f1a7c0de5ad40012",
+    "z": "f1a7c0de5ad40001",
+    "type": "inject",
+    "name": "every 3 h",
+    "repeat": "10800",
+    "once": true,
+    "onceDelay": "30",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "x": 130,
+    "y": 520,
+    "wires": [
+      [
+        "f1a7c0de5ad40013"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40013",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "forecast run",
+    "func": "// Find the latest local forecast run (STAC item of today, else yesterday).\nconst back = msg.stage === \"stac-yesterday\" ? 86400000 : 0;\nconst day = new Date(Date.now() - back).toISOString().slice(0, 10).split(\"-\").join(\"\");\nmsg.url = \"https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items/\" + day + \"-ch\";\nmsg.stage = msg.stage || \"stac\";\nreturn msg;",
+    "outputs": 1,
+    "libs": [],
+    "x": 300,
+    "y": 520,
+    "wires": [
+      [
+        "f1a7c0de5ad40014"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40014",
+    "z": "f1a7c0de5ad40001",
+    "type": "http request",
+    "name": "STAC item",
+    "method": "GET",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 470,
+    "y": 520,
+    "wires": [
+      [
+        "f1a7c0de5ad40015"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40015",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "pick run",
+    "func": "// Output 1: retry with yesterday's item. Output 2: download points / CSV.\nconst assets = (msg.payload && msg.payload.assets) || {};\nconst names = Object.keys(assets).filter((k) => k.endsWith(\".rre150h0.csv\")).sort();\nif (!names.length) {\n    if (msg.stage === \"stac\") { msg.stage = \"stac-yesterday\"; return [msg, null]; }\n    node.status({ fill: \"red\", shape: \"ring\", text: \"no forecast run found\" });\n    return null;\n}\nconst name = names[names.length - 1];\nmsg.run = name.split(\".\")[2];\nmsg.csv = assets[name].href;\nconst today = new Date().toISOString().slice(0, 10);\nif (!flow.get(\"fcPoints\") || flow.get(\"fcPointsDay\") !== today) {\n    msg.stage = \"points\";\n    msg.url = \"https://data.geo.admin.ch/ch.meteoschweiz.ogd-local-forecasting/ogd-local-forecasting_meta_point.csv\";\n} else {\n    msg.stage = \"csv\";\n    msg.url = msg.csv;\n}\nnode.status({ fill: \"blue\", shape: \"dot\", text: \"run \" + msg.run });\nreturn [null, msg];",
+    "outputs": 2,
+    "libs": [],
+    "x": 630,
+    "y": 520,
+    "wires": [
+      [
+        "f1a7c0de5ad40013"
+      ],
+      [
+        "f1a7c0de5ad40016"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40016",
+    "z": "f1a7c0de5ad40001",
+    "type": "http request",
+    "name": "download points / CSV",
+    "method": "GET",
+    "ret": "bin",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 330,
+    "y": 600,
+    "wires": [
+      [
+        "f1a7c0de5ad40017"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40017",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "route forecast",
+    "func": "// Output 1: back to the download (points done, now the CSV). Output 2: render.\nif (msg.statusCode !== 200 || !Buffer.isBuffer(msg.payload)) {\n    node.status({ fill: \"red\", shape: \"ring\", text: msg.stage + \" HTTP \" + msg.statusCode });\n    return null;\n}\nif (msg.stage !== \"points\") return [null, msg];\n// ogd-local-forecasting_meta_point.csv -> { \"id;type\": [lat, lon] }\nconst lines = msg.payload.toString(\"latin1\").split(String.fromCharCode(10));\nconst head = lines[0].trim().split(\";\");\nconst iId = head.indexOf(\"point_id\"), iT = head.indexOf(\"point_type_id\");\nconst iLat = head.indexOf(\"point_coordinates_wgs84_lat\"), iLon = head.indexOf(\"point_coordinates_wgs84_lon\");\nconst pts = {};\nfor (let k = 1; k < lines.length; k++) {\n    const c = lines[k].trim().split(\";\");\n    const lat = parseFloat(c[iLat]), lon = parseFloat(c[iLon]);\n    if (c[iId] && !isNaN(lat) && !isNaN(lon)) pts[c[iId] + \";\" + c[iT]] = [lat, lon];\n}\nflow.set(\"fcPoints\", pts);\nflow.set(\"fcPointsDay\", new Date().toISOString().slice(0, 10));\nmsg.stage = \"csv\";\nmsg.url = msg.csv;\nreturn [msg, null];",
+    "outputs": 2,
+    "libs": [],
+    "x": 540,
+    "y": 600,
+    "wires": [
+      [
+        "f1a7c0de5ad40016"
+      ],
+      [
+        "f1a7c0de5ad40018"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40018",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "render forecast",
+    "func": "// Interpolate the hourly precipitation of all points into one PNG per hour.\nconst HOURS = 12;\nconst BOUNDS = [[45.6, 5.7], [48.0, 10.8]];\nconst WIDTH = 400;            // the map scales it up smoothly\nconst RADIUS_KM = 9;          // influence radius of a forecast point\nconst COLORS = [\n  [40, 255, 25, 0], [20, 255, 125, 1], [10, 255, 199, 3], [6, 254, 255, 1],\n  [4, 5, 255, 5], [2, 5, 140, 45], [1, 0, 1, 252], [0.1, 154, 126, 149],\n];\nconst points = flow.get(\"fcPoints\") || {};\nconst pad = (n) => String(n).padStart(2, \"0\");\nconst stamp = (d) => d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + pad(d.getUTCHours()) + \"00\";\n// Values are sums over the hour ending at the timestamp: next full hours.\nconst first = new Date(Math.ceil(Date.now() / 3600000) * 3600000);\nconst wanted = [];\nfor (let k = 0; k < HOURS; k++) wanted.push(stamp(new Date(first.getTime() + k * 3600000)));\nconst from = wanted[0], to = wanted[wanted.length - 1];\n\n// Scan the CSV buffer line by line, keeping only the wanted hours.\nconst buf = msg.payload;\nconst hours = {};\nfor (const h of wanted) hours[h] = {};\nlet start = buf.indexOf(10) + 1;\nwhile (start > 0 && start < buf.length) {\n  let end = buf.indexOf(10, start);\n  if (end < 0) end = buf.length;\n  const s1 = buf.indexOf(59, start), s2 = buf.indexOf(59, s1 + 1), s3 = buf.indexOf(59, s2 + 1);\n  if (s1 > 0 && s3 > 0 && s3 < end) {\n    const t = buf.toString(\"latin1\", s2 + 1, s3);\n    if (t >= from && t <= to && hours[t]) {\n      const v = parseFloat(buf.toString(\"latin1\", s3 + 1, end));\n      if (v > 0) hours[t][buf.toString(\"latin1\", start, s2)] = v;\n    }\n  }\n  start = end + 1;\n}\n\nconst mercY = (lat) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));\nconst [[s, w], [n, e]] = BOUNDS;\nconst y0 = mercY(n), y1 = mercY(s);\nconst height = Math.round((WIDTH * (y0 - y1)) / (((e - w) * Math.PI) / 180));\nconst r2max = RADIUS_KM * RADIUS_KM;\nconst BIN = 0.1;\nconst frames = {};\nfor (const h of wanted) {\n  // Spatial bins with every point (dry points count as 0 and stop the rain).\n  const bins = new Map();\n  for (const key in points) {\n    const [lat, lon] = points[key];\n    const k = Math.floor(lat / BIN) + \":\" + Math.floor(lon / BIN);\n    if (!bins.has(k)) bins.set(k, []);\n    bins.get(k).push([lat, lon, hours[h][key] || 0]);\n  }\n  const png = new pngjs.PNG({ width: WIDTH, height });\n  for (let py = 0; py < height; py++) {\n    const lat = (Math.atan(Math.sinh(y0 + ((y1 - y0) * (py + 0.5)) / height)) * 180) / Math.PI;\n    const kx = 111.32 * Math.cos((lat * Math.PI) / 180);\n    const by = Math.floor(lat / BIN);\n    for (let px = 0; px < WIDTH; px++) {\n      const lon = w + ((e - w) * (px + 0.5)) / WIDTH;\n      const bx = Math.floor(lon / BIN);\n      let sw = 0, sv = 0, near = Infinity;\n      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {\n        const list = bins.get((by + dy) + \":\" + (bx + dx));\n        if (!list) continue;\n        for (const [plat, plon, v] of list) {\n          const ddy = (plat - lat) * 111.32, ddx = (plon - lon) * kx;\n          const d2 = ddx * ddx + ddy * ddy;\n          if (d2 > r2max) continue;\n          if (d2 < near) near = d2;\n          const wgt = 1 / (d2 + 1);\n          sw += wgt; sv += wgt * v;\n        }\n      }\n      const i = (py * WIDTH + px) * 4;\n      png.data[i + 3] = 0;\n      if (!sw) continue;\n      const v = sv / sw;\n      if (v < 0.1) continue;\n      const k = COLORS.find((x) => v >= x[0]);\n      png.data[i] = k[1]; png.data[i + 1] = k[2]; png.data[i + 2] = k[3];\n      png.data[i + 3] = Math.round(200 * Math.min(1, Math.max(0, (r2max - near) / (r2max * 0.5))));\n    }\n  }\n  const iso = h.slice(0, 4) + \"-\" + h.slice(4, 6) + \"-\" + h.slice(6, 8) + \"T\" + h.slice(8, 10) + \":00:00Z\";\n  frames[iso] = pngjs.PNG.sync.write(png).toString(\"base64\");\n  await new Promise((r) => setTimeout(r, 20)); // let other flows breathe\n}\nflow.set(\"fcFrames\", frames);\nflow.set(\"fcRun\", msg.run);\nflow.set(\"fcUpdated\", new Date().toISOString());\nnode.status({ fill: \"green\", shape: \"dot\", text: Object.keys(frames).length + \" forecast frames, run \" + msg.run.slice(8, 10) + \":00 UTC\" });\nreturn null;",
+    "outputs": 1,
+    "libs": [
+      {
+        "var": "pngjs",
+        "module": "pngjs"
+      }
+    ],
+    "x": 740,
+    "y": 600,
+    "wires": [
+      []
+    ]
   }
 ]

@@ -54,7 +54,7 @@ const I18N = {
       weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
-    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, 3 dernières heures, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
+    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, 3 dernières heures, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", forecastLabel: "Prévision", forecastNote: "Ensuite, en orange sur le curseur : prévision de pluie heure par heure (prévisions locales MétéoSuisse, interpolées).", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
     pollenLevels: ["Aucun", "Faible", "Moyen", "Fort", "Très fort"],
@@ -69,7 +69,7 @@ const I18N = {
       weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
-    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte 3 Stunden, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
+    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte 3 Stunden, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", forecastLabel: "Prognose", forecastNote: "Danach, orange auf dem Regler: stündliche Niederschlagsprognose (MeteoSchweiz-Lokalprognosen, interpoliert).", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
     pollenLevels: ["Keine", "Schwach", "Mässig", "Stark", "Sehr stark"],
@@ -84,7 +84,7 @@ const I18N = {
       weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
-    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultime 3 ore, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
+    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultime 3 ore, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", forecastLabel: "Previsione", forecastNote: "Poi, in arancione sul cursore: previsione oraria delle precipitazioni (previsioni locali MeteoSvizzera, interpolate).", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
     pollenLevels: ["Nessuno", "Debole", "Moderato", "Forte", "Molto forte"],
@@ -99,7 +99,7 @@ const I18N = {
       weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
-    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last 3 hours, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
+    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last 3 hours, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", forecastLabel: "Forecast", forecastNote: "Then, in orange on the slider: hourly precipitation forecast (MeteoSwiss local forecasts, interpolated).", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
     pollenLevels: ["None", "Weak", "Moderate", "Strong", "Very strong"],
@@ -164,7 +164,11 @@ const STYLE = `
 .player button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #8a949c; background: transparent;
   color: #fff; cursor: pointer; font-size: 16px; }
 .player input { flex: 1; }
-.player .time { min-width: 56px; font-weight: 600; }
+.player .time { min-width: 56px; font-weight: 600; white-space: nowrap; }
+.player .time.fc { color: #ff9f43; }
+.player input.split { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; }
+.player input.split::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.player input.split::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 0; }
 .radar-img { transition: opacity ${FADE_MS}ms linear; }
 .tabs button { flex: 1; border: 0; border-top: 4px solid #4b5862; background: transparent; color: #fff;
   padding: 10px 4px; cursor: pointer; font: inherit; font-size: 15px; }
@@ -524,7 +528,7 @@ class MeteoSwissMap {
     this._placeNames(draw);
     const rows = RAIN_SCALE.map(([c, l]) => `<div class="row"><i style="background:${c}"></i><span>${l}</span></div>`).join("");
     this.side.hidden = false;
-    this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.rain}</h3>${rows}<p class="extra">${this.t.radarNote}</p>`;
+    this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.rain}</h3>${rows}<p class="extra">${this.t.radarNote}${this._hasForecast ? " " + this.t.forecastNote : ""}</p>`;
     if (!this.data.radar) {
       // No radar server configured in the integration options.
       this._clearRadar();
@@ -543,13 +547,22 @@ class MeteoSwissMap {
     }
     if (token !== this._token) return;
     this._clearRadar();
-    if (!list.frames?.length) {
+    // Timeline: radar (past, every 5 min) then forecast (next hours, hourly).
+    const radar = (list.frames || []).map((time) => ({ time, forecast: false }));
+    const last = radar.length ? radar[radar.length - 1].time : "";
+    const forecast = (list.forecast || []).filter((t) => t > last).map((time) => ({ time, forecast: true }));
+    const timeline = [...radar, ...forecast];
+    if (!timeline.length) {
       this._radarUnavailable();
       return;
     }
+    this._hasForecast = forecast.length > 0;
+    if (this._hasForecast) {
+      this.side.querySelector(".extra").textContent = `${this.t.radarNote} ${this.t.forecastNote}`;
+    }
     this.player.hidden = false;
     // Image URLs must be signed: <img> requests cannot carry the HA token.
-    const urls = await Promise.all(list.frames.map(async (time) => {
+    const urls = await Promise.all(timeline.map(async ({ time }) => {
       const path = `/api/meteoswiss4ha/radar/frame/${encodeURIComponent(time)}${
         this.options.entry_id ? `?entry_id=${this.options.entry_id}` : ""}`;
       try {
@@ -560,8 +573,8 @@ class MeteoSwissMap {
       }
     }));
     if (token !== this._token) return;
-    this._radarFrames = list.frames.map((time, i) => {
-      const frame = { time, broken: false };
+    this._radarFrames = timeline.map(({ time, forecast: isForecast }, i) => {
+      const frame = { time, forecast: isForecast, broken: false };
       frame.layer = L.imageOverlay(urls[i], list.bounds, {
         pane: "ms-radar", opacity: 0, interactive: false, className: "radar-img",
       });
@@ -574,10 +587,18 @@ class MeteoSwissMap {
       return frame;
     });
     this._radarLoaded = Date.now();
+    // "Now" = the latest radar image (or the first forecast one).
+    this._nowFrame = Math.max(0, radar.length - 1);
     const slider = this.player.querySelector("input");
     slider.max = this._radarFrames.length - 1;
+    // Slider track: grey for the radar past, orange for the forecast.
+    const split = this._radarFrames.length > 1 ? (100 * this._nowFrame) / (this._radarFrames.length - 1) : 100;
+    slider.style.background = forecast.length
+      ? `linear-gradient(to right, #8a949c 0 ${split}%, #ff9f43 ${split}% 100%)`
+      : "";
+    slider.classList.toggle("split", forecast.length > 0);
     this._updated([]);
-    this._showFrame(this._radarFrames.length - 1);
+    this._showFrame(this._nowFrame);
     this._playRadar();
   }
 
@@ -595,10 +616,13 @@ class MeteoSwissMap {
     const n = this._radarFrames.length;
     for (let k = 0; k < n && this._radarFrames[index].broken; k++) index = (index + 1) % n;
     this._frame = index;
-    this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? 0.85 : 0));
+    const frame = this._radarFrames[index];
+    this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? (f.forecast ? 0.75 : 0.85) : 0));
     this.player.querySelector("input").value = index;
-    const t = new Date(this._radarFrames[index].time);
-    this.player.querySelector(".time").textContent = t.toLocaleTimeString(lang(this._hass), { hour: "2-digit", minute: "2-digit" });
+    const t = new Date(frame.time).toLocaleTimeString(lang(this._hass), { hour: "2-digit", minute: "2-digit" });
+    const label = this.player.querySelector(".time");
+    label.textContent = frame.forecast ? `${this.t.forecastLabel} ${t}` : t;
+    label.classList.toggle("fc", frame.forecast);
   }
 
   _playRadar() {
@@ -607,8 +631,11 @@ class MeteoSwissMap {
     this._radarTimer = setInterval(() => {
       const n = this._radarFrames?.length || 0;
       if (!n) return;
-      // Pause a little on the latest frame before looping.
-      if (this._frame === n - 1 && (this._hold = (this._hold || 0) + 1) < 6) return;
+      // Pause on "now" and on the last frame; forecast frames (hourly)
+      // stay longer than radar frames (5 minutes).
+      const frame = this._radarFrames[this._frame];
+      const hold = this._frame === n - 1 || this._frame === this._nowFrame ? 6 : frame?.forecast ? 3 : 1;
+      if ((this._hold = (this._hold || 0) + 1) < hold) return;
       this._hold = 0;
       this._showFrame((this._frame + 1) % n);
     }, FRAME_MS);

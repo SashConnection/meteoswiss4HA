@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.01.8"
+VERSION: Final = "2026.01.9"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"

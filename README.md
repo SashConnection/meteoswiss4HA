@@ -29,7 +29,7 @@ Base map © swisstopo. Warning maps: SLF, FOEN.
 
 ### Precipitation radar
 
-The MeteoSwiss radar is published as HDF5 grids every 5 minutes. They are converted into map images by a Node-RED flow run by the project at `https://ha.jesaispas.ch/endpoint/meteoswiss/radar`, which the integration uses automatically (nothing to configure). The map shows the last 3 hours, animated; if the server cannot be reached, it says that the radar is not available for the moment.
+The MeteoSwiss radar is published as HDF5 grids every 5 minutes. They are converted into map images by a Node-RED flow run by the project at `https://ha.jesaispas.ch/endpoint/meteoswiss/radar`, which the integration uses automatically (nothing to configure). The map shows the last 3 hours of radar, then an hourly precipitation forecast for the next 12 hours (orange part of the time slider), interpolated by the same flow from the MeteoSwiss local forecast (`rre150h0`, ~5800 points, refreshed every 3 hours). If the server cannot be reached, the map says that the radar is not available for the moment.
 
 The flow itself is in `nodered/meteoswiss-radar-flow.json` (downloads the RZC composite, renders transparent PNG frames with `jsfive` and `pngjs`). Endpoints: `/frames`, `/frame?time=…`, and `/status` for diagnostics.
 

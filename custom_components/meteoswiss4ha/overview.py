@@ -145,7 +145,11 @@ class RadarFramesView(_BaseView):
             _LOGGER.debug("Radar server unavailable: %s", err)
             return self.json_message("Radar server unavailable", 502)
         return self.json(
-            {"bounds": data.get("bounds"), "frames": data.get("frames") or []}
+            {
+                "bounds": data.get("bounds"),
+                "frames": data.get("frames") or [],
+                "forecast": data.get("forecast") or [],
+            }
         )
 
 
