@@ -153,7 +153,11 @@
       "display": {
         "title": "Display",
         "data": {
-          "icon_pack": "Pictogram pack"
+          "icon_pack": "Pictogram pack",
+          "radar_url": "Radar server URL (optional)"
+        },
+        "data_description": {
+          "radar_url": "Base URL of the MeteoSwiss radar flow in Node-RED, e.g. http://a0d7b954-nodered:1880/endpoint/meteoswiss/radar. Leave empty to disable the radar layer."
         }
       },
       "forecast": {

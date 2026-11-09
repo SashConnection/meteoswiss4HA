@@ -13,7 +13,7 @@ import logging
 import time
 from typing import Any
 
-from aiohttp import web
+from aiohttp import ClientError, ClientTimeout, web
 
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.config_entries import ConfigEntryState
@@ -32,6 +32,7 @@ from .const import (
     CONF_ICON_PACK,
     CONF_POINT_ID,
     CONF_POINT_TYPE_ID,
+    CONF_RADAR_URL,
     DAILY_PRECIPITATION,
     DAILY_SYMBOL,
     DAILY_TEMP_MAX,
@@ -54,6 +55,7 @@ AVALANCHE_TTL = 30 * 60
 POLLEN_TTL = 60 * 60
 REGIONS_TTL = 24 * 60 * 60
 HAZARD_TTL = 30 * 60
+RADAR_TIMEOUT = ClientTimeout(total=20)
 
 
 class _Cache:
@@ -115,6 +117,63 @@ class _BaseView(HomeAssistantView):
             if wanted is None or entry.entry_id == wanted:
                 return entry
         return None
+
+
+def _radar_url(entry) -> str | None:
+    return entry.options.get(CONF_RADAR_URL) if entry else None
+
+
+class RadarFramesView(_BaseView):
+    """List of radar frames, relayed from the radar server (Node-RED)."""
+
+    url = f"/api/{DOMAIN}/radar/frames"
+    name = f"api:{DOMAIN}:radar_frames"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return {bounds, frames: [ISO times]}."""
+        base = _radar_url(self._entry(request))
+        if not base:
+            return self.json_message("No radar server configured", 404)
+        try:
+            async with async_get_clientsession(self.hass).get(
+                f"{base}/frames", timeout=RADAR_TIMEOUT
+            ) as resp:
+                resp.raise_for_status()
+                data = await resp.json(content_type=None)
+        except (ClientError, TimeoutError, ValueError) as err:
+            _LOGGER.debug("Radar server unavailable: %s", err)
+            return self.json_message("Radar server unavailable", 502)
+        return self.json(
+            {"bounds": data.get("bounds"), "frames": data.get("frames") or []}
+        )
+
+
+class RadarFrameView(_BaseView):
+    """One radar frame (PNG), relayed from the radar server."""
+
+    url = f"/api/{DOMAIN}/radar/frame/{{time}}"
+    name = f"api:{DOMAIN}:radar_frame"
+
+    async def get(self, request: web.Request, time: str) -> web.Response:
+        """Return the PNG of one frame (time as in the frame list)."""
+        base = _radar_url(self._entry(request))
+        if not base:
+            return web.Response(status=404)
+        try:
+            async with async_get_clientsession(self.hass).get(
+                f"{base}/frame", params={"time": time}, timeout=RADAR_TIMEOUT
+            ) as resp:
+                if resp.status != 200:
+                    return web.Response(status=resp.status)
+                body = await resp.read()
+        except (ClientError, TimeoutError) as err:
+            _LOGGER.debug("Radar frame unavailable: %s", err)
+            return web.Response(status=502)
+        return web.Response(
+            body=body,
+            content_type="image/png",
+            headers={"Cache-Control": "private, max-age=3600"},
+        )
 
 
 class AvalancheRegionsView(_BaseView):
@@ -240,6 +299,7 @@ class OverviewView(_BaseView):
                 "pollen": pollen or [],
                 "avalanche": avalanche or {},
                 "maxima": maxima,
+                "radar": bool(_radar_url(entry)),
             }
         )
 
@@ -296,3 +356,5 @@ def async_register_views(hass: HomeAssistant) -> None:
     hass.http.register_view(OverviewView(hass, cache))
     hass.http.register_view(AvalancheRegionsView(hass, cache))
     hass.http.register_view(HazardRegionsView(hass, cache))
+    hass.http.register_view(RadarFramesView(hass, cache))
+    hass.http.register_view(RadarFrameView(hass, cache))

@@ -16,10 +16,11 @@ const WMTS = (layer, ext = "png") =>
 
 const CH_BOUNDS = [[45.75, 5.9], [47.85, 10.55]];
 
-const LAYERS = ["weather", "fire", "flood", "drought", "avalanche", "pollen"];
+const LAYERS = ["weather", "radar", "fire", "flood", "drought", "avalanche", "pollen"];
 const HAZARDS = ["fire", "flood", "drought", "avalanche"];
 const ICONS = {
   weather: "mdi:weather-partly-cloudy",
+  radar: "mdi:weather-pouring",
   fire: "mdi:pine-tree-fire",
   flood: "mdi:home-flood",
   drought: "mdi:weather-sunny-alert",
@@ -30,6 +31,13 @@ const ICONS = {
 // Swiss / European 5-level natural hazard scale.
 const DANGER_COLORS = ["#c8c8c8", "#ccff66", "#ffff00", "#ff9900", "#ff0000", "#8b0000"];
 const POLLEN_COLORS = ["#c8c8c8", "#ccff66", "#ffff00", "#ff9900", "#ff0000"];
+// MeteoSwiss precipitation scale (mm/h), same colors as the radar frames.
+const RAIN_SCALE = [
+  ["#9a7e95", "0.1 – 1"], ["#0001fc", "1 – 2"], ["#058c2d", "2 – 4"], ["#05ff05", "4 – 6"],
+  ["#feff01", "6 – 10"], ["#ffc703", "10 – 20"], ["#ff7d01", "20 – 40"], ["#ff1900", "> 40"],
+];
+const FRAME_MS = 700;   // time per radar frame
+const FADE_MS = 450;    // cross-fade between frames
 
 const LINKS = {
   fr: { hazards: "https://www.dangers-naturels.ch", avalanche: "https://www.slf.ch/fr/" },
@@ -41,12 +49,12 @@ const LINKS = {
 const I18N = {
   fr: {
     title: "MétéoSuisse", today: "Aujourd’hui", home: "Domicile", error: "Données indisponibles",
-    layer: { weather: "Météo", fire: "Incendies de forêt", flood: "Crues", drought: "Sécheresse", avalanche: "Avalanches", pollen: "Pollen" },
+    layer: { weather: "Météo", radar: "Radar", fire: "Incendies de forêt", flood: "Crues", drought: "Sécheresse", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
-      weather: "Prévisions météo", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
+      weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
-    legend: "Légende", levels: "Degrés de danger", updated: "Mise à jour le",
+    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Aucune image radar disponible pour le moment.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
     pollenLevels: ["Aucun", "Faible", "Moyen", "Fort", "Très fort"],
@@ -56,12 +64,12 @@ const I18N = {
   },
   de: {
     title: "MeteoSchweiz", today: "Heute", home: "Zuhause", error: "Daten nicht verfügbar",
-    layer: { weather: "Wetter", fire: "Waldbrand", flood: "Hochwasser", drought: "Trockenheit", avalanche: "Lawinen", pollen: "Pollen" },
+    layer: { weather: "Wetter", radar: "Radar", fire: "Waldbrand", flood: "Hochwasser", drought: "Trockenheit", avalanche: "Lawinen", pollen: "Pollen" },
     heading: {
-      weather: "Wetterprognose", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
+      weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
-    legend: "Legende", levels: "Gefahrenstufen", updated: "Aktualisiert am",
+    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Zurzeit keine Radarbilder verfügbar.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
     pollenLevels: ["Keine", "Schwach", "Mässig", "Stark", "Sehr stark"],
@@ -71,12 +79,12 @@ const I18N = {
   },
   it: {
     title: "MeteoSvizzera", today: "Oggi", home: "Casa", error: "Dati non disponibili",
-    layer: { weather: "Meteo", fire: "Incendi boschivi", flood: "Piene", drought: "Siccità", avalanche: "Valanghe", pollen: "Polline" },
+    layer: { weather: "Meteo", radar: "Radar", fire: "Incendi boschivi", flood: "Piene", drought: "Siccità", avalanche: "Valanghe", pollen: "Polline" },
     heading: {
-      weather: "Previsioni meteo", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
+      weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
-    legend: "Legenda", levels: "Gradi di pericolo", updated: "Aggiornato il",
+    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Nessuna immagine radar disponibile al momento.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
     pollenLevels: ["Nessuno", "Debole", "Moderato", "Forte", "Molto forte"],
@@ -86,12 +94,12 @@ const I18N = {
   },
   en: {
     title: "MeteoSwiss", today: "Today", home: "Home", error: "Data unavailable",
-    layer: { weather: "Weather", fire: "Forest fire", flood: "Floods", drought: "Drought", avalanche: "Avalanches", pollen: "Pollen" },
+    layer: { weather: "Weather", radar: "Radar", fire: "Forest fire", flood: "Floods", drought: "Drought", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
-      weather: "Weather forecast", fire: "Forest fire danger", flood: "Flood danger",
+      weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
-    legend: "Legend", levels: "Danger levels", updated: "Updated",
+    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "No radar image available at the moment.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
     pollenLevels: ["None", "Weak", "Moderate", "Strong", "Very strong"],
@@ -146,6 +154,12 @@ const STYLE = `
 .place::before { content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%;
   background: #263238; border: 1px solid #fff; margin-right: 4px; vertical-align: 2px; }
 .tabs { display: flex; background: #1f2a33; }
+.player { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #1f2a33; font-size: 15px; }
+.player button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #8a949c; background: transparent;
+  color: #fff; cursor: pointer; font-size: 16px; }
+.player input { flex: 1; }
+.player .time { min-width: 56px; font-weight: 600; }
+.radar-img { transition: opacity ${FADE_MS}ms linear; }
 .tabs button { flex: 1; border: 0; border-top: 4px solid #4b5862; background: transparent; color: #fff;
   padding: 10px 4px; cursor: pointer; font: inherit; font-size: 15px; }
 .tabs button.on { border-top-color: #fff; font-weight: 600; }
@@ -187,6 +201,7 @@ class MeteoSwissMap {
           <div class="side" hidden></div>
         </div>
         <div class="tabs" hidden></div>
+        <div class="player" hidden><button class="play">❚❚</button><input type="range" min="0" value="0"><span class="time"></span></div>
         <div class="updated" hidden></div>
       </div>`;
     const $ = (s) => this.root.querySelector(s);
@@ -197,6 +212,12 @@ class MeteoSwissMap {
     this.side = $(".side");
     this.tabs = $(".tabs");
     this.updated = $(".updated");
+    this.player = $(".player");
+    this.player.querySelector(".play").addEventListener("click", () => this._togglePlay());
+    this.player.querySelector("input").addEventListener("input", (e) => {
+      this._stopRadar();
+      this._showFrame(Number(e.target.value));
+    });
     const mapEl = $(".map");
 
     this.map = L.map(mapEl, {
@@ -218,6 +239,7 @@ class MeteoSwissMap {
     pane("ms-tint", 250, "ms-tint");
     pane("ms-regions", 260, "ms-regions", true);
     pane("ms-lakes", 270);
+    pane("ms-radar", 275);
     pane("ms-mask", 280);
     L.tileLayer(WMTS("ch.swisstopo.leichte-basiskarte_reliefschattierung"), {
       attribution: "© swisstopo · MeteoSwiss, SLF, FOEN", maxZoom: 18,
@@ -268,12 +290,14 @@ class MeteoSwissMap {
 
   destroy() {
     clearInterval(this._timer);
+    this._clearRadar();
     this.map.remove();
   }
 
   _toolbar() {
-    const shown = this.options.layers || LAYERS;
-    if (!this.toolbar.childElementCount) {
+    const shown = (this.options.layers || LAYERS).filter((l) => l !== "radar" || this.data?.radar);
+    if (this.toolbar.dataset.layers !== shown.join()) {
+      this.toolbar.dataset.layers = shown.join();
       const hasIcon = !!customElements.get("ha-icon");
       this.toolbar.innerHTML = shown.map((l) => `<button data-layer="${l}" title="${this.t.layer[l]}">${
         hasIcon ? `<ha-icon icon="${ICONS[l]}"></ha-icon>` : `<span class="fallback">${this.t.layer[l].slice(0, 3)}</span>`
@@ -302,6 +326,7 @@ class MeteoSwissMap {
       const query = this.options.entry_id ? `?entry_id=${this.options.entry_id}` : "";
       this.data = await this._hass.callApi("GET", `meteoswiss4ha/overview${query}`);
       this.geo = {};
+      this._radarLoaded = 0;
       this._render();
     } catch (err) {
       this.note.hidden = false;
@@ -326,6 +351,8 @@ class MeteoSwissMap {
     this.heading.textContent = this.t.heading[layer];
     this.note.hidden = true;
     this.tabs.hidden = layer !== "weather";
+    this.player.hidden = layer !== "radar";
+    if (layer !== "radar") this._clearRadar();
     if (this.tint) this.tint.setStyle({ fillOpacity: layer === "weather" ? 0.85 : 0.35 });
     const token = (this._token = (this._token || 0) + 1);
     const draw = [];
@@ -335,6 +362,9 @@ class MeteoSwissMap {
       this.updated.hidden = true;
     } else if (layer === "pollen") {
       this._pollen(draw);
+    } else if (layer === "radar") {
+      await this._radar(draw, token);
+      if (token !== this._token) return;
     } else {
       const geo = await this._regions(layer);
       if (token !== this._token) return; // another layer was chosen meanwhile
@@ -465,6 +495,93 @@ class MeteoSwissMap {
     this.side.hidden = false;
     this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.levels}</h3>${rows}<div class="extra">${extra}</div>`;
     this._updated(validFrom);
+  }
+
+  // ------------------------------------------------------------- radar
+
+  async _radar(draw, token) {
+    this._placeNames(draw);
+    const rows = RAIN_SCALE.map(([c, l]) => `<div class="row"><i style="background:${c}"></i><span>${l}</span></div>`).join("");
+    this.side.hidden = false;
+    this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.rain}</h3>${rows}<p class="extra">${this.t.radarNote}</p>`;
+    if (this._radarFrames && Date.now() - this._radarLoaded < 4 * 60000) return; // still fresh
+    let list;
+    try {
+      const query = this.options.entry_id ? `?entry_id=${this.options.entry_id}` : "";
+      list = await this._hass.callApi("GET", `meteoswiss4ha/radar/frames${query}`);
+    } catch (err) {
+      list = { frames: [] };
+    }
+    if (token !== this._token) return;
+    this._clearRadar();
+    if (!list.frames?.length) {
+      this.note.hidden = false;
+      this.note.textContent = this.t.noRadar;
+      return;
+    }
+    // Image URLs must be signed: <img> requests cannot carry the HA token.
+    const urls = await Promise.all(list.frames.map(async (time) => {
+      const path = `/api/meteoswiss4ha/radar/frame/${encodeURIComponent(time)}${
+        this.options.entry_id ? `?entry_id=${this.options.entry_id}` : ""}`;
+      try {
+        const res = await this._hass.callWS({ type: "auth/sign_path", path, expires: 3600 });
+        return res.path;
+      } catch (err) {
+        return path; // outside HA (tests)
+      }
+    }));
+    if (token !== this._token) return;
+    this._radarFrames = list.frames.map((time, i) => ({
+      time,
+      layer: L.imageOverlay(urls[i], list.bounds, {
+        pane: "ms-radar", opacity: 0, interactive: false, className: "radar-img",
+      }).addTo(this.map),
+    }));
+    this._radarLoaded = Date.now();
+    const slider = this.player.querySelector("input");
+    slider.max = this._radarFrames.length - 1;
+    this._updated([]);
+    this._showFrame(this._radarFrames.length - 1);
+    this._playRadar();
+  }
+
+  _showFrame(index) {
+    if (!this._radarFrames) return;
+    this._frame = index;
+    this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? 0.85 : 0));
+    this.player.querySelector("input").value = index;
+    const t = new Date(this._radarFrames[index].time);
+    this.player.querySelector(".time").textContent = t.toLocaleTimeString(lang(this._hass), { hour: "2-digit", minute: "2-digit" });
+  }
+
+  _playRadar() {
+    this._stopRadar();
+    this.player.querySelector(".play").textContent = "❚❚";
+    this._radarTimer = setInterval(() => {
+      const n = this._radarFrames?.length || 0;
+      if (!n) return;
+      // Pause a little on the latest frame before looping.
+      if (this._frame === n - 1 && (this._hold = (this._hold || 0) + 1) < 3) return;
+      this._hold = 0;
+      this._showFrame((this._frame + 1) % n);
+    }, FRAME_MS);
+  }
+
+  _stopRadar() {
+    clearInterval(this._radarTimer);
+    this._radarTimer = null;
+    this.player.querySelector(".play").textContent = "▶";
+  }
+
+  _togglePlay() {
+    if (this._radarTimer) this._stopRadar();
+    else this._playRadar();
+  }
+
+  _clearRadar() {
+    this._stopRadar();
+    (this._radarFrames || []).forEach((f) => f.layer.remove());
+    this._radarFrames = null;
   }
 
   _pollen(draw) {

@@ -25,6 +25,8 @@ from homeassistant.helpers.selector import (
     SelectSelectorConfig,
     SelectSelectorMode,
     TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
 )
 
 from .hazards import HazardClient
@@ -39,6 +41,7 @@ from .api import (
 from .const import (
     CONF_AVALANCHE_REGION,
     CONF_POLLEN_STATION,
+    CONF_RADAR_URL,
     CONF_ICON_PACK,
     DEFAULT_ICON_PACK,
     ICON_PACKS,
@@ -198,6 +201,9 @@ DISPLAY_SCHEMA = vol.Schema(
                 mode=SelectSelectorMode.LIST,
             )
         ),
+        vol.Optional(CONF_RADAR_URL): TextSelector(
+            TextSelectorConfig(type=TextSelectorType.URL)
+        ),
     }
 )
 
@@ -246,7 +252,14 @@ class MeteoSwissOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Pictogram pack."""
         if user_input is not None:
-            return self._save({CONF_ICON_PACK: user_input[CONF_ICON_PACK]})
+            return self._save(
+                {
+                    CONF_ICON_PACK: user_input[CONF_ICON_PACK],
+                    # Empty means: no radar server.
+                    CONF_RADAR_URL: (user_input.get(CONF_RADAR_URL) or "").strip().rstrip("/")
+                    or AUTO,
+                }
+            )
         return self.async_show_form(
             step_id="display",
             data_schema=self.add_suggested_values_to_schema(

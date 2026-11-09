@@ -27,6 +27,14 @@ height: 420
 
 Base map © swisstopo. Warning maps: SLF, FOEN.
 
+### Precipitation radar (optional, via Node-RED)
+
+The MeteoSwiss radar is published as HDF5 grids every 5 minutes. Converting them is done outside Home Assistant by a small Node-RED flow:
+
+1. In Node-RED, **Import** `nodered/meteoswiss-radar-flow.json` and deploy. It installs the `jsfive` and `pngjs` modules for its function nodes, downloads the last hour of radar images and serves them at `/meteoswiss/radar/frames` and `/meteoswiss/radar/frame?time=…`.
+2. In the integration, **Configure → Display → Radar server URL**: the base URL of these endpoints, e.g. `http://a0d7b954-nodered:1880/endpoint/meteoswiss/radar` for the Node-RED add-on (add `user:password@` if the add-on protects its HTTP nodes).
+3. A **Radar** layer appears on the map, animated over the last hour.
+
 ## Entities
 
 | Entity | Description |

@@ -1,0 +1,183 @@
+[
+  {
+    "id": "f1a7c0de5ad40001",
+    "type": "tab",
+    "label": "MeteoSwiss radar",
+    "info": "Converts the MeteoSwiss precipitation radar (Open Data, RZC) into transparent PNG frames for the MeteoSwiss Complete For HA map.\n\nEndpoints:\n- GET /meteoswiss/radar/frames\n- GET /meteoswiss/radar/frame?time=..."
+  },
+  {
+    "id": "f1a7c0de5ad40002",
+    "z": "f1a7c0de5ad40001",
+    "type": "inject",
+    "name": "every 5 min",
+    "repeat": "300",
+    "once": true,
+    "onceDelay": "10",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "x": 140,
+    "y": 80,
+    "wires": [
+      [
+        "f1a7c0de5ad40003"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40003",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "missing frames",
+    "func": "// Radar frames of the last hour (one every 5 minutes) not yet converted.\n// File names are predictable: rzc<YY><day of year><HHMM>vl.001.h5 (UTC).\nconst KEEP = 12;            // frames kept (1 hour)\nconst DELAY_MIN = 7;        // publication delay\nconst frames = flow.get(\"radarFrames\") || {};\nconst now = Date.now() - DELAY_MIN * 60000;\nconst last = Math.floor(now / 300000) * 300000;\nconst pad = (n, l = 2) => String(n).padStart(l, \"0\");\nconst wanted = [];\nfor (let i = 0; i < KEEP; i++) {\n    const t = new Date(last - i * 300000);\n    const iso = t.toISOString().slice(0, 16) + \":00Z\";\n    wanted.push(iso);\n    if (frames[iso]) continue;\n    const start = Date.UTC(t.getUTCFullYear(), 0, 0);\n    const doy = Math.floor((t - start) / 86400000);\n    const day = t.getUTCFullYear() + pad(t.getUTCMonth() + 1) + pad(t.getUTCDate());\n    const name = \"rzc\" + pad(t.getUTCFullYear() % 100) + pad(doy, 3) + pad(t.getUTCHours()) + pad(t.getUTCMinutes()) + \"vl.001.h5\";\n    node.send({ url: \"https://data.geo.admin.ch/ch.meteoschweiz.ogd-radar-precip/\" + day + \"-ch/\" + name, time: iso });\n}\n// Forget frames older than the window.\nfor (const k of Object.keys(frames)) if (!wanted.includes(k)) delete frames[k];\nflow.set(\"radarFrames\", frames);\nnode.status({ fill: \"green\", shape: \"dot\", text: Object.keys(frames).length + \" frames\" });\nreturn null;",
+    "outputs": 1,
+    "libs": [],
+    "x": 330,
+    "y": 80,
+    "wires": [
+      [
+        "f1a7c0de5ad40004"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40004",
+    "z": "f1a7c0de5ad40001",
+    "type": "http request",
+    "name": "download HDF5",
+    "method": "GET",
+    "ret": "bin",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 530,
+    "y": 80,
+    "wires": [
+      [
+        "f1a7c0de5ad40005"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40005",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "render PNG",
+    "func": "// MeteoSwiss radar (RZC, ODIM HDF5) -> transparent PNG in Web Mercator.\nif (msg.statusCode !== 200 || !Buffer.isBuffer(msg.payload)) return null; // not published yet\nconst BOUNDS = [[45.6, 5.7], [48.0, 10.8]];\nconst WIDTH = 800;\nconst COLORS = [\n  [40, 255, 25, 0], [20, 255, 125, 1], [10, 255, 199, 3], [6, 254, 255, 1],\n  [4, 5, 255, 5], [2, 5, 140, 45], [1, 0, 1, 252], [0.1, 154, 126, 149],\n];\nfunction toLv95(lat, lon) {\n  const p = (lat * 3600 - 169028.66) / 10000, l = (lon * 3600 - 26782.5) / 10000;\n  return [2600072.37 + 211455.93 * l - 10938.51 * l * p - 0.36 * l * p * p - 44.54 * l ** 3,\n          1200147.07 + 308807.95 * p + 3745.25 * l * l + 76.63 * p * p - 194.56 * l * l * p + 119.79 * p ** 3];\n}\nconst mercY = (lat) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));\nconst buf = msg.payload;\nconst file = new hdf5.File(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength), \"rzc.h5\");\nconst ds = file.get(\"dataset1/data1/data\");\nconst [rows, cols] = ds.shape;\nconst grid = ds.value;\nconst scale = Number(file.get(\"where\").attrs.xscale) || 1000;\nconst e0 = 2255000, n1 = 840000 + rows * scale;\nconst [[s, w], [nLat, eLon]] = BOUNDS;\nconst y0 = mercY(nLat), y1 = mercY(s);\nconst height = Math.round((WIDTH * (y0 - y1)) / (((eLon - w) * Math.PI) / 180));\nconst png = new pngjs.PNG({ width: WIDTH, height });\nfor (let py = 0; py < height; py++) {\n  const lat = (Math.atan(Math.sinh(y0 + ((y1 - y0) * (py + 0.5)) / height)) * 180) / Math.PI;\n  for (let px = 0; px < WIDTH; px++) {\n    const [e, n] = toLv95(lat, w + ((eLon - w) * (px + 0.5)) / WIDTH);\n    const c = Math.floor((e - e0) / scale), r = Math.floor((n1 - n) / scale);\n    const i = (py * WIDTH + px) * 4;\n    png.data[i + 3] = 0;\n    if (c < 0 || c >= cols || r < 0 || r >= rows) continue;\n    const v = grid[r * cols + c];\n    if (!(v >= 0.1)) continue;\n    const k = COLORS.find((x) => v >= x[0]);\n    png.data[i] = k[1]; png.data[i + 1] = k[2]; png.data[i + 2] = k[3]; png.data[i + 3] = 215;\n  }\n}\nconst frames = flow.get(\"radarFrames\") || {};\nframes[msg.time] = pngjs.PNG.sync.write(png).toString(\"base64\");\nflow.set(\"radarFrames\", frames);\nflow.set(\"radarBounds\", BOUNDS);\nnode.status({ fill: \"green\", shape: \"dot\", text: Object.keys(frames).length + \" frames, last \" + msg.time.slice(11, 16) + \" UTC\" });\nreturn null;",
+    "outputs": 1,
+    "libs": [
+      {
+        "var": "hdf5",
+        "module": "jsfive"
+      },
+      {
+        "var": "pngjs",
+        "module": "pngjs"
+      }
+    ],
+    "x": 720,
+    "y": 80,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40006",
+    "z": "f1a7c0de5ad40001",
+    "type": "http in",
+    "name": "",
+    "url": "/meteoswiss/radar/frames",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 190,
+    "y": 180,
+    "wires": [
+      [
+        "f1a7c0de5ad40007"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40007",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "list frames",
+    "func": "// List available frames (oldest first).\nconst frames = flow.get(\"radarFrames\") || {};\nmsg.payload = {\n    source: \"MeteoSwiss (RZC radar composite)\",\n    bounds: flow.get(\"radarBounds\") || [[45.6, 5.7], [48.0, 10.8]],\n    frames: Object.keys(frames).sort(),\n};\nreturn msg;",
+    "outputs": 1,
+    "libs": [],
+    "x": 430,
+    "y": 180,
+    "wires": [
+      [
+        "f1a7c0de5ad40008"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad40008",
+    "z": "f1a7c0de5ad40001",
+    "type": "http response",
+    "name": "",
+    "statusCode": "",
+    "headers": {},
+    "x": 610,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "f1a7c0de5ad40009",
+    "z": "f1a7c0de5ad40001",
+    "type": "http in",
+    "name": "",
+    "url": "/meteoswiss/radar/frame",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 190,
+    "y": 240,
+    "wires": [
+      [
+        "f1a7c0de5ad4000a"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad4000a",
+    "z": "f1a7c0de5ad40001",
+    "type": "function",
+    "name": "frame PNG",
+    "func": "// One frame as PNG: ?time=2026-11-09T11:30:00Z\nconst frames = flow.get(\"radarFrames\") || {};\nconst data = frames[msg.req.query.time];\nif (!data) {\n    msg.statusCode = 404;\n    msg.payload = \"unknown frame\";\n    return msg;\n}\nmsg.payload = Buffer.from(data, \"base64\");\nmsg.headers = { \"Content-Type\": \"image/png\", \"Cache-Control\": \"max-age=3600\" };\nreturn msg;",
+    "outputs": 1,
+    "libs": [],
+    "x": 430,
+    "y": 240,
+    "wires": [
+      [
+        "f1a7c0de5ad4000b"
+      ]
+    ]
+  },
+  {
+    "id": "f1a7c0de5ad4000b",
+    "z": "f1a7c0de5ad40001",
+    "type": "http response",
+    "name": "",
+    "statusCode": "",
+    "headers": {},
+    "x": 610,
+    "y": 240,
+    "wires": []
+  }
+]
