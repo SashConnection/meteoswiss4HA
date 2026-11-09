@@ -15,7 +15,7 @@ A Home Assistant custom integration that brings official [MeteoSwiss Open Data](
 3. Install **MeteoSwiss Open Data** and restart Home Assistant.
 4. Go to **Settings → Devices & services → Add integration** and search for **MeteoSwiss Open Data**.
 
-Requires Home Assistant 2026.11 or newer.
+Requires Home Assistant 2026.1 or newer.
 
 ## Data source and license
 
