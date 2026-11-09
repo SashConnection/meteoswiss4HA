@@ -168,7 +168,7 @@ class MeteoSwissForecastCard extends HTMLElement {
     };
     if (this._hourly?.length) {
       const items = this._hourly.slice(0, Math.max(1, Number(c.hours) || 12)).map((f) => `<div class="item">
-        <span class="t">${new Date(f.datetime).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" })}</span>
+        <span class="t">${new Date(f.datetime).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}</span>
         ${img(f.meteoswiss_symbol, f.condition)}<span class="hi">${num(f.temperature)}°</span><span class="p">${precip(f)}</span></div>`);
       parts.push(`<div class="sec"><div class="strip">${items.join("")}</div></div>`);
     }

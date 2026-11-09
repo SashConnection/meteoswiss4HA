@@ -97,7 +97,7 @@ const loadPollen = (hass) => {
 };
 
 const STYLE = `
-ha-card { padding: 12px; }
+ha-card { padding: 12px; container-type: inline-size; }
 .title { display: flex; align-items: center; gap: 6px; font-size: 18px; margin: 0 2px 10px; }
 .title ha-icon { --mdc-icon-size: 22px; color: #66bb6a; }
 .grid { display: grid; gap: 8px; }
@@ -110,10 +110,18 @@ ha-card { padding: 12px; }
 .st .ic { background: rgba(127,127,127,.2); }
 .ic { flex: 0 0 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .ic ha-icon { --mdc-icon-size: 22px; }
-.txt { min-width: 0; }
+.txt { min-width: 0; overflow: hidden; }
 .lv { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.val { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; }
-.stn { font-weight: 600; font-size: 14px; }
+.val { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stn { font-weight: 600; font-size: 14px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Narrow cards: no round icons, tighter tiles. */
+@container (max-width: 440px) {
+  .tile:not(.sp) .ic { display: none; }
+  .tile { padding: 7px 8px; }
+  .lv { font-size: 13px; }
+  .val { font-size: 11px; }
+  .grid { gap: 6px; }
+}
 .empty { color: var(--secondary-text-color); padding: 8px; }
 `;
 

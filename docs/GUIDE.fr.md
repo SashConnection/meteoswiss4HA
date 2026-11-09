@@ -4,31 +4,35 @@
 
 🇬🇧 **[English version](../README.md)**
 
-Ce guide explique comment installer l'intégration, la régler et afficher la météo, le radar et les dangers dans vos tableaux de bord Home Assistant.
+**Toute la météo suisse dans Home Assistant, en une seule intégration.**
+Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à programmer — en **allemand, français, italien, romanche et anglais**.
 
-> Les captures ont été faites avec l'intégration ; certaines valeurs (prévisions, pollen) sont des exemples.
+![MeteoSwiss Complete For HA](images/overview.png)
 
-![MeteoSwiss Complete For HA](images/overview.jpg)
+## Tout en un
 
-## En images
+| | |
+|---|---|
+| 🌤️ **Météo** | Conditions actuelles de la station la plus proche, prévisions sur 9 jours et heure par heure |
+| 🌧️ **Radar** | Les 3 dernières heures du radar MétéoSuisse, puis la prévision de pluie des 12 heures suivantes |
+| ⚠️ **Alertes intempéries** | Pluie, orages, vent, neige, routes glissantes, canicule, gel — alertes officielles de MétéoSuisse |
+| 🔥 **Dangers naturels** | Incendies de forêt, crues, sécheresse (OFEV) et avalanches (SLF) |
+| 🌼 **Pollen** | 7 espèces, 15 stations de mesure en Suisse |
+| 🗺️ **Carte de la Suisse** | Tout cela sur une carte, ou zoomé sur votre région |
 
-<table>
-<tr>
-<td width="33%" valign="top"><a href="#météo"><img src="images/map-weather.jpg" width="260" alt="Carte météo"></a><br><b>Carte météo</b><br><sub>Pictogrammes et températures de 31 villes, 9 jours</sub></td>
-<td width="33%" valign="top"><a href="#radar-des-précipitations"><img src="images/map-radar.jpg" width="260" alt="Radar des précipitations"></a><br><b>Radar des précipitations</b><br><sub>3 dernières heures, toutes les 5 minutes</sub></td>
-<td width="33%" valign="top"><a href="#radar-des-précipitations"><img src="images/map-radar-forecast.jpg" width="260" alt="Prévision radar"></a><br><b>Prévision radar</b><br><sub>Pluie heure par heure après le radar</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><a href="#alertes-intempéries"><img src="images/map-warnings.jpg" width="260" alt="Alertes intempéries"></a><br><b>Alertes intempéries</b><br><sub>Pluie, orages, vent, neige, verglas, canicule, gel</sub></td>
-<td width="33%" valign="top"><a href="#incendies-de-forêt-crues-sécheresse"><img src="images/map-fire.jpg" width="260" alt="Incendies de forêt"></a><br><b>Incendies de forêt</b><br><sub>Danger OFEV par région</sub></td>
-<td width="33%" valign="top"><a href="#incendies-de-forêt-crues-sécheresse"><img src="images/map-flood.jpg" width="260" alt="Crues et sécheresse"></a><br><b>Crues et sécheresse</b><br><sub>Danger OFEV par région et cours d'eau</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><a href="#3-carte-prévisions"><img src="images/card-weather.jpg" width="150" alt="Carte météo détaillée"></a><br><b>Carte météo détaillée</b><br><sub>Mesures au choix, graphique horaire, 9 jours</sub></td>
-<td width="33%" valign="top"><a href="#5-une-carte-par-danger-ou-zoomée-sur-votre-région"><img src="images/card-map-home-radar.png" width="220" alt="Carte de votre région"></a><br><b>Carte de votre région</b><br><sub>N'importe quelle couche, zoomée sur le domicile</sub></td>
-<td width="33%" valign="top"><a href="#6-sur-téléphone"><img src="images/mobile.jpg" width="130" alt="Sur téléphone"></a><br><b>Sur téléphone</b><br><sub>Légende compacte, onglets en icônes</sub></td>
-</tr>
-</table>
+## Cinq langues
+
+Tout — réglages, entités, cartes et carte de la Suisse — existe en **Deutsch, Français, Italiano, Rumantsch et English**. Les cartes suivent la langue de Home Assistant ; chaque carte peut aussi être réglée sur une autre langue.
+
+![La carte pollen en cinq langues](images/languages.jpg)
+
+## Animé ou fixe, au choix
+
+Trois packs de pictogrammes, un par symbole météo MétéoSuisse ; le pack animé est celui par défaut (réglages → Affichage).
+
+![Packs de pictogrammes](images/packs.jpg)
+
+> Exemples : Neuchâtel et Berne ; certaines valeurs (prévisions, pollen) sont des exemples.
 
 ## Sommaire
 
@@ -119,6 +123,23 @@ show_chart: true
 hours: 24             # 6 à 48
 show_daily: true
 days: 9
+```
+
+<br clear="right">
+
+### Carte pollen
+
+<img src="images/card-pollen.jpg" alt="Carte pollen" width="360" align="right">
+
+La carte **MeteoSwiss pollen** montre, pour chaque espèce choisie, une **esquisse de la plante** qui prend la couleur du niveau de pollen dès qu’il y en a, et pour chaque station choisie le **niveau et la concentration** (moyenne sur 24 heures ou dernière heure). Disposition : **tableau** (stations en colonnes) ou **liste**. Langues : de, fr, it, rm, en.
+
+```yaml
+type: custom:meteoswiss-pollen-card
+stations: [PNE, PBE]  # Neuchâtel, Berne (par défaut : la station de l’intégration)
+species: [grasses, birch, hazel]
+layout: table         # ou list
+value: mean           # ou latest
+language: auto        # ou de, fr, it, rm, en
 ```
 
 <br clear="right">

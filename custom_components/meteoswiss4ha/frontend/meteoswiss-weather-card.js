@@ -282,7 +282,7 @@ class MeteoSwissWeatherCard extends HTMLElement {
       if (h.temperature != null) {
         parts.push(`<text class="t" x="${x(i).toFixed(1)}" y="${(y(h.temperature) - 8).toFixed(1)}" text-anchor="middle">${Math.round(h.temperature)}°</text>`);
       }
-      parts.push(`<text class="ax" x="${x(i).toFixed(1)}" y="${PB + 16}" text-anchor="middle">${esc(d.toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" }))}</text>`);
+      parts.push(`<text class="ax" x="${x(i).toFixed(1)}" y="${PB + 16}" text-anchor="middle">${esc(d.toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }))}</text>`);
     });
     return `<svg viewBox="0 0 ${W} ${H + 4}" style="color:var(--primary-text-color)">${parts.join("")}</svg>`;
   }
@@ -303,7 +303,7 @@ class MeteoSwissWeatherCard extends HTMLElement {
     const icons = a.icons_url;
     const num = (v, d = 0) => (v == null || isNaN(v) ? "–" : Number(v).toLocaleString(loc, { maximumFractionDigits: d, minimumFractionDigits: d }));
     const img = (code) => (icons && code != null ? `<img src="${icons}/${code}.svg" alt="">` : `<img alt="">`);
-    const time = (s) => (s ? new Date(s).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" }) : "");
+    const time = (s) => (s ? new Date(s).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "");
     const parts = [];
 
     if (c.show_header !== false) {

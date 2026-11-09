@@ -3,6 +3,11 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.7
+
+- New HACS page: everything in one, five languages, animated or static pictograms, ready in 2 minutes (examples: Neuchâtel and Bern).
+- Pollen card fits narrow dashboards; 24-hour times everywhere.
+
 ## 2026.11.6
 
 - Everything in 5 languages: German, French, Italian, Romansh and English (settings, entities, all cards and the map). Each card has a language option (default: the Home Assistant language).

@@ -678,7 +678,7 @@ class MeteoSwissMap {
     const kind = this.warnKind;
     const loc = lang(this._hass, this.options?.language);
     const fmt = (s) => (s ? new Date(s).toLocaleString(loc, {
-      weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit",
+      weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }) : "");
     const now = Date.now();
     const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -820,7 +820,7 @@ class MeteoSwissMap {
     const frame = this._radarFrames[index];
     this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? (f.forecast ? 0.75 : 0.85) : 0));
     this.player.querySelector("input").value = index;
-    const t = new Date(frame.time).toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit" });
+    const t = new Date(frame.time).toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
     const label = this.player.querySelector(".time");
     label.textContent = frame.forecast ? `${this.t.forecastLabel} ${t}` : t;
     label.classList.toggle("fc", frame.forecast);
@@ -888,7 +888,7 @@ class MeteoSwissMap {
     const when = dates.length ? new Date(Math.max(...dates)) : new Date(this.data.updated);
     this.updated.hidden = false;
     this.updated.textContent = `${this.t.updated} ${when.toLocaleDateString(lang(this._hass, this.options?.language))}${
-      dates.length ? "" : ", " + when.toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit" })
+      dates.length ? "" : ", " + when.toLocaleTimeString(lang(this._hass, this.options?.language), { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
     }`;
   }
 }

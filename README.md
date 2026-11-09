@@ -2,35 +2,72 @@
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/logo.png" alt="Logo" width="96" align="right">
 
-Official MeteoSwiss weather in Home Assistant: current conditions, local forecast with animated pictograms, precipitation radar, weather warnings, natural hazards and pollen, with a Switzerland map for your dashboards.
+**All of Swiss weather in Home Assistant, in one integration.**
+Official MeteoSwiss data, ready-made cards, nothing to program — in **German, French, Italian, Romansh and English**.
 
 🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**
 
-![MeteoSwiss Complete For HA](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.jpg)
+![MeteoSwiss Complete For HA](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.png)
 
-## At a glance
+## Everything in one
+
+| | |
+|---|---|
+| 🌤️ **Weather** | Current conditions from the nearest station, forecast for 9 days and hour by hour |
+| 🌧️ **Radar** | The last 3 hours of the MeteoSwiss radar, then the rain forecast for the next 12 hours |
+| ⚠️ **Weather warnings** | Rain, thunderstorms, wind, snow, slippery roads, heat, frost — official MeteoSwiss warnings |
+| 🔥 **Natural hazards** | Forest fire, floods, drought (FOEN) and avalanches (SLF) |
+| 🌼 **Pollen** | 7 species, 15 measuring stations across Switzerland |
+| 🗺️ **Switzerland map** | All of the above on one map, or zoomed on your region |
+
+## Five ready-made cards
 
 <table>
 <tr>
-<td width="33%" valign="top"><a href="#weather"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="260" alt="Weather map"></a><br><b>Weather map</b><br><sub>Pictograms and temperatures for 31 towns, 9 days</sub></td>
-<td width="33%" valign="top"><a href="#precipitation-radar"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar.jpg" width="260" alt="Precipitation radar"></a><br><b>Precipitation radar</b><br><sub>Last 3 hours, every 5 minutes</sub></td>
-<td width="33%" valign="top"><a href="#precipitation-radar"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar-forecast.jpg" width="260" alt="Radar forecast"></a><br><b>Radar forecast</b><br><sub>Hourly rain forecast after the radar</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="100%" alt="Detailed weather"><br><b>Detailed weather</b><br><sub>Your place and altitude, the measurements you choose, hourly chart, 9 days</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>A sketch of each plant, colored by the pollen level, for the stations you choose</sub>
+<br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="100%" alt="Forecast"><br><b>Forecast</b><br><sub>Compact current weather, hours and days</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><a href="#weather-warnings"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-warnings.jpg" width="260" alt="Weather warnings"></a><br><b>Weather warnings</b><br><sub>Rain, storms, wind, snow, ice, heat, frost</sub></td>
-<td width="33%" valign="top"><a href="#forest-fire-floods-drought"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-fire.jpg" width="260" alt="Forest fire"></a><br><b>Forest fire</b><br><sub>FOEN danger by region</sub></td>
-<td width="33%" valign="top"><a href="#forest-fire-floods-drought"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-flood.jpg" width="260" alt="Floods and drought"></a><br><b>Floods and drought</b><br><sub>FOEN danger by region and river</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><a href="#3-forecast-card"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="150" alt="Detailed weather card"></a><br><b>Detailed weather card</b><br><sub>Measurements of your choice, hourly chart, 9 days</sub></td>
-<td width="33%" valign="top"><a href="#5-one-map-per-hazard-or-zoomed-on-your-region"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="220" alt="Map of your region"></a><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home</sub></td>
-<td width="33%" valign="top"><a href="#6-on-a-phone"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/mobile.jpg" width="130" alt="On a phone"></a><br><b>On a phone</b><br><sub>Compact legend, icon tabs</sub></td>
+<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards and pollen — one tap to switch</sub></td>
+<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="100%" alt="Map of your region"><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home (here: radar over Neuchâtel)</sub></td>
 </tr>
 </table>
 
-The other cards: [Forecast card](#3-forecast-card) with animated pictograms, [Switzerland map](#4-switzerland-map).
+Add them with **Edit dashboard → Add card → search "MeteoSwiss"**. Every setting is in the card editor: no YAML needed.
 
-> Screenshots were taken with the integration; some values (forecasts, pollen) are examples.
+## Five languages
+
+Everything — settings, entities, cards and map — speaks **Deutsch, Français, Italiano, Rumantsch and English**. By default the cards follow the Home Assistant language; each card can also be set to another one.
+
+![The pollen card in five languages](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/languages.jpg)
+
+## Animated or static — your choice
+
+Three pictogram packs, one per MeteoSwiss weather symbol. Pick one in the integration options; the animated pack is the default.
+
+<p>
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/1.svg" width="64" alt="Sunny">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/5.svg" width="64" alt="Cloudy">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/17.svg" width="64" alt="Rain">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/23.svg" width="64" alt="Thunderstorm">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/26.svg" width="64" alt="Snow">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/101.svg" width="64" alt="Clear night">
+</p>
+
+![Pictogram packs](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/packs.jpg)
+
+## Ready in 2 minutes
+
+1. **HACS** → ⋮ → Custom repositories → `https://github.com/SashConnection/meteoswiss4HA` (Integration) → Download → restart Home Assistant.
+2. **Settings → Devices & services → Add integration → MeteoSwiss Complete For HA**: pick your station and postal code (the nearest are suggested).
+3. **Add a card** to your dashboard: search "MeteoSwiss".
+
+> Screenshots: Neuchâtel and Bern; some values (forecasts, pollen) are examples.
+
+---
+
+# User guide
 
 ## Contents
 
@@ -124,6 +161,23 @@ show_chart: true
 hours: 24             # 6 to 48
 show_daily: true
 days: 9
+```
+
+<br clear="right">
+
+### Pollen card
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" alt="Pollen card" width="360" align="right">
+
+The **MeteoSwiss pollen** card shows, for each species you choose, a **sketch of the plant** that takes the color of the pollen level as soon as there is pollen, and for each station you choose the **level and the concentration** (24-hour mean or last hour). Layout: **table** (stations as columns) or **list**. Languages: de, fr, it, rm, en.
+
+```yaml
+type: custom:meteoswiss-pollen-card
+stations: [PNE, PBE]  # Neuchâtel, Bern (default: the station of the integration)
+species: [grasses, birch, hazel]
+layout: table         # or list
+value: mean           # or latest
+language: auto        # or de, fr, it, rm, en
 ```
 
 <br clear="right">
