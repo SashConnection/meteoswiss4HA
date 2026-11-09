@@ -20,6 +20,14 @@ from .api import (
     PollenMeasurement,
     Station,
 )
+from .hazards import (
+    DROUGHT_LAYER,
+    FOREST_FIRE_LAYER,
+    HazardClient,
+    HazardData,
+    HazardLevel,
+    find_region,
+)
 from .pollen import PollenData, summarize
 from .symbols import NIGHT_OFFSET, is_night_code
 from .const import (
@@ -40,6 +48,8 @@ from .const import (
     DOMAIN,
     FORECAST_UPDATE_INTERVAL,
     POLLEN_UPDATE_INTERVAL,
+    HAZARD_UPDATE_INTERVAL,
+    CONF_AVALANCHE_REGION,
     HOURLY_PARAMS,
 )
 
@@ -54,6 +64,7 @@ class MeteoSwissData:
     current: CurrentCoordinator
     forecast: ForecastCoordinator
     pollen: PollenCoordinator | None = None
+    hazards: HazardCoordinator | None = None
 
 
 class PollenCoordinator(DataUpdateCoordinator[PollenData]):
@@ -231,3 +242,66 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
                 code = int(step.values[DAILY_SYMBOL])
                 return (code + NIGHT_OFFSET if night else code), night
         return None, False
+
+
+class HazardCoordinator(DataUpdateCoordinator[HazardData]):
+    """Fetch avalanche, forest fire and drought warnings for the home location.
+
+    Each source is fetched independently: if one fails, its previous value is
+    kept and the others are still updated.
+    """
+
+    config_entry: MeteoSwissConfigEntry
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: MeteoSwissConfigEntry,
+        client: HazardClient,
+    ) -> None:
+        """Initialize the coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=entry,
+            name=f"{DOMAIN} hazards",
+            update_interval=HAZARD_UPDATE_INTERVAL,
+        )
+        self._client = client
+        self.latitude = hass.config.latitude
+        self.longitude = hass.config.longitude
+        self.region_id: str | None = entry.options.get(CONF_AVALANCHE_REGION)
+
+    async def _async_update_data(self) -> HazardData:
+        previous = self.data or HazardData(None, None, None)
+        errors: list[str] = []
+
+        avalanche = previous.avalanche
+        try:
+            if self.region_id is None:
+                regions = await self._client.async_get_regions()
+                self.region_id = find_region(regions, self.latitude, self.longitude)
+            if self.region_id is not None:
+                avalanche = await self._client.async_get_avalanche(self.region_id)
+        except MeteoSwissError as err:
+            errors.append(f"avalanche: {err}")
+
+        levels: dict[str, HazardLevel | None] = {
+            "fire": previous.forest_fire,
+            "drought": previous.drought,
+        }
+        for key, layer in (("fire", FOREST_FIRE_LAYER), ("drought", DROUGHT_LAYER)):
+            try:
+                levels[key] = await self._client.async_get_level(
+                    layer, self.latitude, self.longitude
+                )
+            except MeteoSwissError as err:
+                errors.append(f"{key}: {err}")
+
+        if len(errors) == 3:
+            raise UpdateFailed("; ".join(errors))
+        for error in errors:
+            _LOGGER.debug("Hazard source unavailable: %s", error)
+        return HazardData(
+            avalanche=avalanche, forest_fire=levels["fire"], drought=levels["drought"]
+        )

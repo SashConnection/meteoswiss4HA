@@ -96,6 +96,37 @@
           "strong": "Stark",
           "very_strong": "Sehr stark"
         }
+      },
+      "avalanche_danger": {
+        "name": "Lawinengefahr",
+        "state": {
+          "low": "Gering",
+          "moderate": "Mässig",
+          "considerable": "Erheblich",
+          "high": "Gross",
+          "very_high": "Sehr gross",
+          "no_rating": "Kein Bulletin"
+        }
+      },
+      "forest_fire_danger": {
+        "name": "Waldbrandgefahr",
+        "state": {
+          "low": "Gering",
+          "moderate": "Mässig",
+          "considerable": "Erheblich",
+          "high": "Gross",
+          "very_high": "Sehr gross"
+        }
+      },
+      "drought_danger": {
+        "name": "Trockenheitsgefahr",
+        "state": {
+          "low": "Gering",
+          "moderate": "Mässig",
+          "considerable": "Erheblich",
+          "high": "Gross",
+          "very_high": "Sehr gross"
+        }
       }
     }
   },

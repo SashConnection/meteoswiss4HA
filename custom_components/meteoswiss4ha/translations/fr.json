@@ -96,6 +96,37 @@
           "strong": "Fort",
           "very_strong": "Très fort"
         }
+      },
+      "avalanche_danger": {
+        "name": "Danger d’avalanche",
+        "state": {
+          "low": "Faible",
+          "moderate": "Limité",
+          "considerable": "Marqué",
+          "high": "Fort",
+          "very_high": "Très fort",
+          "no_rating": "Pas de bulletin"
+        }
+      },
+      "forest_fire_danger": {
+        "name": "Danger d’incendie de forêt",
+        "state": {
+          "low": "Faible",
+          "moderate": "Limité",
+          "considerable": "Marqué",
+          "high": "Fort",
+          "very_high": "Très fort"
+        }
+      },
+      "drought_danger": {
+        "name": "Danger de sécheresse",
+        "state": {
+          "low": "Faible",
+          "moderate": "Limité",
+          "considerable": "Marqué",
+          "high": "Fort",
+          "very_high": "Très fort"
+        }
       }
     }
   },

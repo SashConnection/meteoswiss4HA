@@ -19,8 +19,10 @@ from .coordinator import (
     ForecastCoordinator,
     MeteoSwissConfigEntry,
     MeteoSwissData,
+    HazardCoordinator,
     PollenCoordinator,
 )
+from .hazards import HazardClient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,10 +57,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
         current=current,
         forecast=forecast,
         pollen=await _async_setup_pollen(hass, entry, client),
+        hazards=await _async_setup_hazards(hass, entry),
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
+
+
+async def _async_setup_hazards(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> HazardCoordinator:
+    """Set up avalanche, forest fire and drought warnings (never blocking)."""
+    language = (hass.config.language or "en").split("-")[0].lower()
+    hazards = HazardCoordinator(
+        hass, entry, HazardClient(async_get_clientsession(hass), language)
+    )
+    await hazards.async_refresh()
+    return hazards
 
 
 async def _async_setup_pollen(

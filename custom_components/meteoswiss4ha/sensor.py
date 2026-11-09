@@ -36,13 +36,21 @@ from .const import (
 from .coordinator import (
     CurrentCoordinator,
     ForecastCoordinator,
+    HazardCoordinator,
     MeteoSwissConfigEntry,
     PollenCoordinator,
 )
+from .hazards import LEVELS as HAZARD_LEVELS
 from .pollen import LEVELS, SPECIES, PollenSpecies
 from .entity import MeteoSwissEntity
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
 from .symbols import symbol_to_condition
+
+HAZARD_ICONS = {
+    "avalanche": "mdi:snowflake-alert",
+    "forest_fire": "mdi:pine-tree-fire",
+    "drought": "mdi:weather-sunny-alert",
+}
 
 # Index of each language in SYMBOL_DESCRIPTIONS tuples.
 LANGUAGE_INDEX: dict[str, int] = {"de": 0, "fr": 1, "it": 2, "en": 3}
@@ -160,6 +168,11 @@ async def async_setup_entry(
     if (pollen := entry.runtime_data.pollen) is not None:
         entities.extend(PollenSensor(pollen, entry, species) for species in SPECIES)
         entities.append(PollenLevelSensor(pollen, entry))
+    if (hazards := entry.runtime_data.hazards) is not None:
+        entities.extend(
+            HazardSensor(hazards, entry, kind)
+            for kind in ("avalanche", "forest_fire", "drought")
+        )
     async_add_entities(entities)
 
 
@@ -378,3 +391,65 @@ class PollenLevelSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
             index = data.level(species)
             attrs[species.key] = LEVELS[index] if index is not None else None
         return attrs
+
+
+class HazardSensor(MeteoSwissEntity[HazardCoordinator], SensorEntity):
+    """A natural hazard level (5-level scale) for the home location."""
+
+    _attr_device_class = SensorDeviceClass.ENUM
+
+    def __init__(
+        self, coordinator: HazardCoordinator, entry: MeteoSwissConfigEntry, kind: str
+    ) -> None:
+        """Initialize the sensor; kind is avalanche, forest_fire or drought."""
+        super().__init__(coordinator, entry)
+        self._kind = kind
+        self._attr_translation_key = f"{kind}_danger"
+        self._attr_unique_id = f"{entry.entry_id}_{kind}_danger"
+        self._attr_icon = HAZARD_ICONS[kind]
+        self._attr_options = list(HAZARD_LEVELS) + (
+            ["no_rating"] if kind == "avalanche" else []
+        )
+
+    def _item(self) -> Any:
+        data = self.coordinator.data
+        return getattr(data, self._kind, None) if data is not None else None
+
+    @property
+    def available(self) -> bool:
+        """Available when this source returned data."""
+        return super().available and self._item() is not None
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the level name."""
+        item = self._item()
+        return item.state if item is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return level number, region and validity."""
+        item = self._item()
+        if item is None:
+            return {}
+        if self._kind == "avalanche":
+            return {
+                "level": item.level,
+                "subdivision": item.subdivision,
+                "elevation": item.elevation,
+                "problems": item.problems,
+                "region_id": item.region_id,
+                "region": item.region_name,
+                "valid_from": item.valid_from,
+                "valid_until": item.valid_until,
+                "next_update": item.next_update,
+                "published": item.published,
+                "source": "SLF",
+            }
+        return {
+            "level": item.level,
+            "region": item.region,
+            "description": item.title,
+            "valid_from": item.valid_from,
+            "source": "FOEN",
+        }

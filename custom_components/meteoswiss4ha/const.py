@@ -32,6 +32,7 @@ CURRENT_UPDATE_INTERVAL: Final = timedelta(minutes=10)
 # Daily forecast files are small (~1.3 MB); a new run is published every hour.
 FORECAST_UPDATE_INTERVAL: Final = timedelta(minutes=60)
 POLLEN_UPDATE_INTERVAL: Final = timedelta(minutes=60)
+HAZARD_UPDATE_INTERVAL: Final = timedelta(minutes=30)
 
 # Options
 CONF_HOURLY_FORECAST: Final = "hourly_forecast"
@@ -39,6 +40,7 @@ CONF_HOURLY_HOURS: Final = "hourly_hours"
 CONF_HOURLY_INTERVAL: Final = "hourly_interval"
 CONF_ICON_PACK: Final = "icon_pack"
 CONF_POLLEN_STATION: Final = "pollen_station"
+CONF_AVALANCHE_REGION: Final = "avalanche_region"
 DEFAULT_ICON_PACK: Final = "animated"
 
 DEFAULT_HOURLY_FORECAST: Final = True

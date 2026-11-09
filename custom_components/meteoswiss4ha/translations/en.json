@@ -96,6 +96,37 @@
           "strong": "Strong",
           "very_strong": "Very strong"
         }
+      },
+      "avalanche_danger": {
+        "name": "Avalanche danger",
+        "state": {
+          "low": "Low",
+          "moderate": "Moderate",
+          "considerable": "Considerable",
+          "high": "High",
+          "very_high": "Very high",
+          "no_rating": "No bulletin"
+        }
+      },
+      "forest_fire_danger": {
+        "name": "Forest fire danger",
+        "state": {
+          "low": "Low",
+          "moderate": "Moderate",
+          "considerable": "Considerable",
+          "high": "High",
+          "very_high": "Very high"
+        }
+      },
+      "drought_danger": {
+        "name": "Drought danger",
+        "state": {
+          "low": "Low",
+          "moderate": "Moderate",
+          "considerable": "Considerable",
+          "high": "High",
+          "very_high": "Very high"
+        }
       }
     }
   },
