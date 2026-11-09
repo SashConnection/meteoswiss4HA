@@ -3,6 +3,11 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.5
+
+- New pollen card (`custom:meteoswiss-pollen-card`): a sketch of each plant that takes the color of the pollen level, levels and concentrations for the stations of your choice, table or list layout, in German, French, Italian, Romansh and English.
+- API: pollen of every SwissPollen station (`/api/meteoswiss4ha/pollen`).
+
 ## 2026.11.4
 
 - Logo: Swiss flag added.

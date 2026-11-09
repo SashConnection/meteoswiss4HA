@@ -11,6 +11,7 @@
 import * as L from "./leaflet/leaflet-src.esm.js";
 import "./meteoswiss-forecast.js";
 import "./meteoswiss-weather-card.js";
+import "./meteoswiss-pollen-card.js";
 
 const BASE = new URL(".", import.meta.url).href;
 const WMTS = (layer, ext = "png") =>

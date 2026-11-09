@@ -256,6 +256,64 @@ class WeatherWarningsView(_BaseView):
         return self.json(warnings)
 
 
+async def pollen_stations(hass: HomeAssistant, cache: _Cache) -> list[dict[str, Any]] | None:
+    """Pollen of every SwissPollen station (levels, 24 h means, latest), cached."""
+
+    async def load() -> list[dict[str, Any]]:
+        client = MeteoSwissClient(async_get_clientsession(hass))
+        stations = await client.async_get_pollen_stations()
+        now = dt_util.utcnow()
+
+        async def one(station):
+            try:
+                rows = await client.async_get_pollen(station.abbr)
+            except MeteoSwissError:
+                return None
+            summary = summarize(station.abbr, rows, now)
+            level, dominant = summary.overall()
+            return {
+                "abbr": station.abbr,
+                "name": station.name,
+                "lat": station.latitude,
+                "lon": station.longitude,
+                "level": level,
+                "dominant": dominant,
+                "measured_at": summary.measured_at.isoformat() if summary.measured_at else None,
+                "species": {
+                    s.key: level_index(s, summary.mean_24h.get(s.key)) for s in SPECIES
+                },
+                # 24-hour mean and latest hourly value (grains/m³).
+                "mean": {s.key: summary.mean_24h.get(s.key) for s in SPECIES},
+                "latest": {s.key: summary.latest.get(s.key) for s in SPECIES},
+            }
+
+        results = await asyncio.gather(*(one(s) for s in stations))
+        return [r for r in results if r is not None]
+
+    return await cache.get("pollen", POLLEN_TTL, load)
+
+
+class PollenView(_BaseView):
+    """Pollen of every station, and the station used by the integration."""
+
+    url = f"/api/{DOMAIN}/pollen"
+    name = f"api:{DOMAIN}:pollen"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the pollen stations and the configured (home) station."""
+        stations = await pollen_stations(self.hass, self.cache)
+        if stations is None:
+            return self.json_message("Pollen unavailable", 503)
+        entry = self._entry(request)
+        pollen = entry.runtime_data.pollen if entry is not None else None
+        return self.json(
+            {
+                "home": pollen.station.abbr if pollen is not None else None,
+                "stations": stations,
+            }
+        )
+
+
 class OverviewView(_BaseView):
     """Everything the map needs, in one call."""
 
@@ -294,7 +352,7 @@ class OverviewView(_BaseView):
                     )
 
         pollen, avalanche, warnings, *regions = await asyncio.gather(
-            self.cache.get("pollen", POLLEN_TTL, self._pollen),
+            pollen_stations(self.hass, self.cache),
             self.cache.get(f"avalanche_{language}", AVALANCHE_TTL, lambda: self._avalanche(language)),
             weather_warnings(self.hass, self.cache),
             *(hazard_regions(self.hass, self.cache, kind) for kind in HAZARD_KINDS),
@@ -345,33 +403,6 @@ class OverviewView(_BaseView):
             }
         )
 
-    async def _pollen(self) -> list[dict[str, Any]]:
-        client = MeteoSwissClient(async_get_clientsession(self.hass))
-        stations = await client.async_get_pollen_stations()
-        now = dt_util.utcnow()
-
-        async def one(station):
-            try:
-                rows = await client.async_get_pollen(station.abbr)
-            except MeteoSwissError:
-                return None
-            summary = summarize(station.abbr, rows, now)
-            level, dominant = summary.overall()
-            return {
-                "abbr": station.abbr,
-                "name": station.name,
-                "lat": station.latitude,
-                "lon": station.longitude,
-                "level": level,
-                "dominant": dominant,
-                "species": {
-                    s.key: level_index(s, summary.mean_24h.get(s.key)) for s in SPECIES
-                },
-            }
-
-        results = await asyncio.gather(*(one(s) for s in stations))
-        return [r for r in results if r is not None]
-
     async def _avalanche(self, language: str) -> dict[str, Any]:
         client = HazardClient(async_get_clientsession(self.hass), language)
         raw = await client._get_json(  # noqa: SLF001 - same package
@@ -399,5 +430,6 @@ def async_register_views(hass: HomeAssistant) -> None:
     hass.http.register_view(AvalancheRegionsView(hass, cache))
     hass.http.register_view(HazardRegionsView(hass, cache))
     hass.http.register_view(WeatherWarningsView(hass, cache))
+    hass.http.register_view(PollenView(hass, cache))
     hass.http.register_view(RadarFramesView(hass, cache))
     hass.http.register_view(RadarFrameView(hass, cache))
