@@ -22,9 +22,31 @@ After installation a **MeteoSwiss** entry appears in the sidebar. The same map c
 
 ```yaml
 type: custom:meteoswiss-map-card
-layer: weather        # weather, radar, warnings, avalanche, pollen, fire, drought, flood
+layer: weather        # layer shown first: weather, radar, warnings, fire, flood, drought, avalanche, pollen
+layers: [fire]        # optional: layers offered; a single one gives a single-hazard map without toolbar
+area: home            # optional: switzerland (default) or home = zoomed on your region
+zoom: 9               # zoom level when area is home (7 to 12)
+legend: true
 height: 420
 ```
+
+All options can be set in the card editor.
+
+## Forecast card
+
+Current weather, hourly and daily forecast with the integration pictograms (the pack chosen in the options, animated by default). The standard Home Assistant weather card always uses its own icons.
+
+```yaml
+type: custom:meteoswiss-forecast-card
+entity: weather.home  # optional: the first MeteoSwiss weather entity
+forecast: both        # both, daily, hourly or none
+days: 7               # 1 to 9
+hours: 12
+show_current: true
+show_details: true    # humidity, wind, gusts, pressure
+```
+
+Hourly forecasts need the hourly forecast enabled in the integration options. The weather entity exposes the pictogram base URL in its `icons_url` attribute.
 
 Base map © swisstopo. Warning maps: MeteoSwiss (via MeteoAlarm), SLF, FOEN.
 

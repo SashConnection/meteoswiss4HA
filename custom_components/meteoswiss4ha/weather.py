@@ -23,6 +23,10 @@ from homeassistant.util import dt as dt_util
 from .api import ForecastStep
 from .const import (
     ATTR_METEOSWISS_SYMBOL,
+    CONF_ICON_PACK,
+    DEFAULT_ICON_PACK,
+    ICON_PACKS,
+    ICONS_URL,
     DAILY_PRECIPITATION,
     DAILY_SYMBOL,
     DAILY_TEMP_MAX,
@@ -74,6 +78,7 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
         super().__init__(forecast, entry)
         self._current = current
         self._attr_unique_id = f"{entry.entry_id}_weather"
+        self._entry_options = entry.options
         features = WeatherEntityFeature.FORECAST_DAILY
         if forecast.hourly_enabled:
             features |= WeatherEntityFeature.FORECAST_HOURLY
@@ -154,7 +159,12 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Expose the native MeteoSwiss symbol and data sources."""
         code, _ = self.coordinator.current_symbol()
-        attrs: dict[str, Any] = {ATTR_METEOSWISS_SYMBOL: code}
+        pack = self._entry_options.get(CONF_ICON_PACK, DEFAULT_ICON_PACK)
+        attrs: dict[str, Any] = {
+            ATTR_METEOSWISS_SYMBOL: code,
+            # Base URL of the chosen pictogram pack: <icons_url>/<symbol>.svg
+            "icons_url": f"{ICONS_URL}/{pack if pack in ICON_PACKS else DEFAULT_ICON_PACK}",
+        }
         if self.coordinator.data:
             attrs["forecast_reference_time"] = (
                 self.coordinator.data.reference_time.isoformat()

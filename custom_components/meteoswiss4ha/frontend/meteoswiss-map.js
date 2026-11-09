@@ -9,6 +9,7 @@
 // Switzerland outline (swissBOUNDARIES3D).
 
 import * as L from "./leaflet/leaflet-src.esm.js";
+import "./meteoswiss-forecast.js";
 
 const BASE = new URL(".", import.meta.url).href;
 const WMTS = (layer, ext = "png") =>
@@ -130,12 +131,14 @@ const STYLE = `
 [hidden] { display: none !important; }
 .wrap { display: flex; flex-direction: column; height: 100%; background: #1f2a33; color: #fff;
   font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif); }
-.main { flex: 1; display: flex; min-height: 0; }
+.main { position: relative; flex: 1; display: flex; min-height: 0; }
 .map { flex: 1; min-height: 300px; position: relative; }
 .side { width: 300px; padding: 16px 20px; background: #26333d; overflow: auto; font-size: 15px; line-height: 1.45; }
-.wrap.narrow .side { position: absolute; z-index: 600; right: 8px; bottom: 26px; width: auto; max-width: 260px;
+.wrap.narrow .side { position: absolute; z-index: 600; left: 8px; bottom: 26px; width: auto; max-width: 260px;
   padding: 8px 12px; font-size: 12px; border-radius: 8px; background: rgba(38,51,61,.92); }
-.wrap.narrow .side .extra { display: none; }
+.wrap.narrow .side .extra, .wrap.narrow .side h2 { display: none; }
+.wrap.narrow .side h3 { font-size: 12px; margin-bottom: 4px; }
+.wrap.narrow .side .row { margin: 2px 0; gap: 6px; }
 .side h2 { font-size: 17px; margin: 0 0 12px; }
 .side h3 { font-size: 15px; font-weight: 400; margin: 0 0 8px; }
 .side .row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
@@ -149,6 +152,10 @@ const STYLE = `
 .toolbar button { position: relative; width: 48px; height: 46px; border: 0; background: transparent; color: #fff;
   cursor: pointer; display: flex; align-items: center; justify-content: center; border-top: 4px solid #8a949c; }
 .toolbar button.on { background: #3d4d59; }
+.wrap.single .heading { top: 14px; }
+.wrap.single .note { top: 44px; }
+.place.home { font-weight: 700; }
+.place.home::before { width: 9px; height: 9px; background: #f57c00; vertical-align: 1px; }
 .wrap.narrow .toolbar { left: 8px; max-width: calc(100% - 16px); overflow-x: auto; }
 .wrap.narrow .toolbar button { width: 40px; flex: 0 0 40px; }
 .wrap.narrow .heading { left: 12px; top: 66px; font-size: 16px; }
@@ -205,7 +212,9 @@ class MeteoSwissMap {
   constructor(root, options = {}) {
     this.root = root;
     this.options = options;
-    this.layer = options.layer || "weather";
+    const shown = (Array.isArray(options.layers) ? options.layers : []).filter((l) => LAYERS.includes(l));
+    this.shown = shown.length ? shown : LAYERS;
+    this.layer = this.shown.includes(options.layer) ? options.layer : this.shown[0];
     this.day = 0;
     this.data = null;
     this.geo = {}; // cached region GeoJSON per hazard
@@ -278,13 +287,21 @@ class MeteoSwissMap {
     this._loadCountry();
     this.map.on("zoomend", () => this._render());
 
-    new ResizeObserver(() => {
+    this._resize = new ResizeObserver(() => {
       const narrow = this.wrap.clientWidth < 900;
       const changed = narrow !== this.wrap.classList.contains("narrow");
       this.wrap.classList.toggle("narrow", narrow);
       this.map.invalidateSize();
+      // New size (first layout, card resized): fit the view again, which also
+      // redraws the vector layers for the new size.
+      const size = `${this.wrap.clientWidth}x${this.wrap.clientHeight}`;
+      if (size !== this._size && this.wrap.clientWidth) {
+        this._size = size;
+        this._fitView();
+      }
       if (changed) this._render(); // day names, legend placement
-    }).observe(this.wrap);
+    });
+    this._resize.observe(this.wrap);
   }
 
   async _loadCountry() {
@@ -322,6 +339,7 @@ class MeteoSwissMap {
 
   destroy() {
     clearInterval(this._timer);
+    this._resize?.disconnect();
     this._clearRadar();
     this.map.remove();
   }
@@ -333,9 +351,12 @@ class MeteoSwissMap {
   }
 
   _toolbar() {
-    const shown = this.options.layers || LAYERS;
+    const shown = this.shown;
     const menu = this.options.menuButton && this._narrowPanel;
     const key = shown.join() + (menu ? "+menu" : "");
+    const single = shown.length === 1 && !menu;
+    this.wrap.classList.toggle("single", single);
+    this.toolbar.hidden = single;
     if (this.toolbar.dataset.layers !== key) {
       this.toolbar.dataset.layers = key;
       const hasIcon = !!customElements.get("ha-icon");
@@ -368,6 +389,10 @@ class MeteoSwissMap {
     try {
       const query = this.options.entry_id ? `?entry_id=${this.options.entry_id}` : "";
       this.data = await this._hass.callApi("GET", `meteoswiss4ha/overview${query}`);
+      if (!this._viewSet) {
+        this._viewSet = true;
+        this._fitView();
+      }
       this.geo = {};
       this._radarLoaded = 0;
       this._render();
@@ -419,11 +444,23 @@ class MeteoSwissMap {
     this.overlay.clearLayers();
     draw.forEach((d) => d.addTo(this.overlay));
     // The legend panel changes the map width: re-center Switzerland.
+    if (this.options.legend === false) this.side.hidden = true;
     const sideShown = !this.side.hidden && !this.wrap.classList.contains("narrow");
     if (sideShown !== this._sideShown) {
       this._sideShown = sideShown;
       this.map.invalidateSize();
-      this.map.fitBounds(CH_BOUNDS);
+      this._fitView();
+    }
+  }
+
+  // Whole Switzerland, or zoomed on the home location (option area: home).
+  _fitView() {
+    const home = this.data?.home;
+    if (this.options.area === "home" && home?.lat != null) {
+      this.map.setView([home.lat, home.lon], Number(this.options.zoom) || 9, { reset: true });
+    } else {
+      // reset: re-project every vector layer for the (possibly new) map size.
+      this.map.fitBounds(CH_BOUNDS, { reset: true });
     }
   }
 
@@ -490,6 +527,13 @@ class MeteoSwissMap {
 
   // Small "• Name" labels for orientation on the warning maps.
   _placeNames(draw) {
+    const home = this.data.home;
+    if (home?.lat != null) {
+      draw.push(L.marker([home.lat, home.lon], {
+        icon: L.divIcon({ html: `<span class="place home">${home.name || this.t.home}</span>`, className: "", iconSize: null, iconAnchor: [6, 9] }),
+        keyboard: false, interactive: false, zIndexOffset: 1000,
+      }));
+    }
     const cities = this.data.cities.filter((c) => c.kind === "city").sort((a, b) => a.min_zoom - b.min_zoom);
     for (const c of this._placeLabels(cities, (p, pt) => [pt.x - 4, pt.y - 10, pt.x + 14 + p.name.length * 8, pt.y + 10])) {
       draw.push(L.marker([c.lat, c.lon], {
@@ -830,7 +874,14 @@ class MeteoSwissPanel extends HTMLElement {
 
 class MeteoSwissMapCard extends HTMLElement {
   setConfig(config) {
+    const changed = this._map && JSON.stringify(config) !== JSON.stringify(this._config);
     this._config = config || {};
+    if (changed) {
+      // Edited in the card editor: rebuild with the new options.
+      this._map.destroy();
+      this._map = null;
+      if (this.isConnected) this.connectedCallback();
+    }
   }
   connectedCallback() {
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -861,15 +912,70 @@ class MeteoSwissMapCard extends HTMLElement {
   static getStubConfig() {
     return { layer: "weather", height: 420 };
   }
+  static getConfigElement() {
+    return document.createElement("meteoswiss-map-card-editor");
+  }
+}
+
+const EDITOR = {
+  fr: { layers: "Couches affichées (vide = toutes ; une seule = carte d’un seul danger)", layer: "Couche au démarrage", area: "Zone", zoom: "Zoom sur la région (7 – 12)", legend: "Légende", height: "Hauteur (px)",
+        areas: { switzerland: "Toute la Suisse", home: "Ma région (domicile)" } },
+  de: { layers: "Angezeigte Ebenen (leer = alle; eine = Karte einer Gefahr)", layer: "Ebene beim Start", area: "Bereich", zoom: "Zoom auf die Region (7 – 12)", legend: "Legende", height: "Höhe (px)",
+        areas: { switzerland: "Ganze Schweiz", home: "Meine Region (Zuhause)" } },
+  it: { layers: "Livelli mostrati (vuoto = tutti; uno = carta di un solo pericolo)", layer: "Livello iniziale", area: "Zona", zoom: "Zoom sulla regione (7 – 12)", legend: "Legenda", height: "Altezza (px)",
+        areas: { switzerland: "Tutta la Svizzera", home: "La mia regione (casa)" } },
+  en: { layers: "Layers shown (empty = all; one = single-hazard map)", layer: "Layer at start", area: "Area", zoom: "Zoom on the region (7 – 12)", legend: "Legend", height: "Height (px)",
+        areas: { switzerland: "Whole Switzerland", home: "My region (home)" } },
+};
+
+class MeteoSwissMapCardEditor extends HTMLElement {
+  setConfig(config) {
+    this._config = config;
+    this._render();
+  }
+  set hass(hass) {
+    this._hass = hass;
+    this._render();
+  }
+  _render() {
+    if (!this._hass || !this._config) return;
+    const l = lang(this._hass);
+    const e = EDITOR[l];
+    const t = I18N[l];
+    if (!this._form) {
+      this._form = document.createElement("ha-form");
+      this._form.addEventListener("value-changed", (ev) => {
+        const config = { ...ev.detail.value };
+        if (Array.isArray(config.layers) && !config.layers.length) delete config.layers;
+        if (config.area !== "home") delete config.zoom;
+        this.dispatchEvent(new CustomEvent("config-changed", { detail: { config }, bubbles: true, composed: true }));
+      });
+      this.appendChild(this._form);
+    }
+    const layerOptions = LAYERS.map((v) => ({ value: v, label: t.heading[v] }));
+    this._form.hass = this._hass;
+    this._form.data = { area: "switzerland", legend: true, height: 420, ...this._config };
+    this._form.computeLabel = (sch) => e[sch.name] || sch.name;
+    this._form.schema = [
+      { name: "layers", selector: { select: { multiple: true, mode: "list", options: layerOptions } } },
+      { name: "layer", selector: { select: { mode: "dropdown", options: layerOptions } } },
+      { name: "area", selector: { select: { mode: "dropdown", options: ["switzerland", "home"].map((v) => ({ value: v, label: e.areas[v] })) } } },
+      ...(this._config.area === "home" ? [{ name: "zoom", selector: { number: { min: 7, max: 12, step: 0.5, mode: "slider" } } }] : []),
+      { name: "legend", selector: { boolean: {} } },
+      { name: "height", selector: { number: { min: 200, max: 1200, step: 10, mode: "box" } } },
+    ];
+  }
 }
 
 if (!customElements.get("meteoswiss-panel")) customElements.define("meteoswiss-panel", MeteoSwissPanel);
 if (!customElements.get("meteoswiss-map-card")) {
   customElements.define("meteoswiss-map-card", MeteoSwissMapCard);
+  customElements.define("meteoswiss-map-card-editor", MeteoSwissMapCardEditor);
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: "meteoswiss-map-card",
     name: "MeteoSwiss map",
-    description: "Switzerland map: weather, radar, weather warnings, forest fire, floods, drought, avalanches and pollen.",
+    preview: true,
+    description: "Switzerland or your region: weather, radar, weather warnings, forest fire, floods, drought, avalanches and pollen.",
   });
 }
