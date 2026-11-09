@@ -1,5 +1,5 @@
 {
-  "name": "MeteoSwiss for HA",
-  "homeassistant": "2026.11.0",
+  "name": "MeteoSwiss Complete For HA",
+  "homeassistant": "2026.1.0",
   "render_readme": true
 }

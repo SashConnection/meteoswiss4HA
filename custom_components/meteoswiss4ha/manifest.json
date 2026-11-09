@@ -1,6 +1,6 @@
 {
   "domain": "meteoswiss4ha",
-  "name": "MeteoSwiss for HA",
+  "name": "MeteoSwiss Complete For HA",
   "codeowners": ["@SashConnection"],
   "config_flow": true,
   "dependencies": ["http"],

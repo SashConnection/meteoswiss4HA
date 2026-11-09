@@ -1,4 +1,4 @@
-"""Data update coordinators for MeteoSwiss for HA."""
+"""Data update coordinators for MeteoSwiss Complete For HA."""
 
 from __future__ import annotations
 

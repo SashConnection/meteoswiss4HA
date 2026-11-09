@@ -1,4 +1,4 @@
-"""Sensors for MeteoSwiss for HA."""
+"""Sensors for MeteoSwiss Complete For HA."""
 
 from __future__ import annotations
 
