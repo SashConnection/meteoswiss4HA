@@ -74,10 +74,20 @@
         "title": "Options des prévisions",
         "description": "Les fichiers de prévisions horaires sont volumineux (environ 33 Mo chacun, dont environ 8 Mo lus pour 48 heures). Réduisez l’horizon ou augmentez l’intervalle pour économiser de la bande passante.",
         "data": {
+          "icon_pack": "Pack de pictogrammes",
           "hourly_forecast": "Prévisions horaires",
           "hourly_hours": "Horizon des prévisions horaires",
           "hourly_interval": "Intervalle de mise à jour des prévisions horaires"
         }
+      }
+    }
+  },
+  "selector": {
+    "icon_pack": {
+      "options": {
+        "animated": "Animé",
+        "vivid": "Vif",
+        "classic": "Classique"
       }
     }
   }

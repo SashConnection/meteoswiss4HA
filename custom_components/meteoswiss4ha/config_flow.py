@@ -36,6 +36,9 @@ from .api import (
     distance_km,
 )
 from .const import (
+    CONF_ICON_PACK,
+    DEFAULT_ICON_PACK,
+    ICON_PACKS,
     CONF_HOURLY_FORECAST,
     CONF_HOURLY_HOURS,
     CONF_HOURLY_INTERVAL,
@@ -177,6 +180,13 @@ class MeteoSwissConfigFlow(ConfigFlow, domain=DOMAIN):
 
 OPTIONS_SCHEMA = vol.Schema(
     {
+        vol.Required(CONF_ICON_PACK, default=DEFAULT_ICON_PACK): SelectSelector(
+            SelectSelectorConfig(
+                options=list(ICON_PACKS),
+                translation_key=CONF_ICON_PACK,
+                mode=SelectSelectorMode.LIST,
+            )
+        ),
         vol.Required(
             CONF_HOURLY_FORECAST, default=DEFAULT_HOURLY_FORECAST
         ): BooleanSelector(),
@@ -208,6 +218,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(
                 data={
+                    CONF_ICON_PACK: user_input[CONF_ICON_PACK],
                     CONF_HOURLY_FORECAST: user_input[CONF_HOURLY_FORECAST],
                     CONF_HOURLY_HOURS: int(user_input[CONF_HOURLY_HOURS]),
                     CONF_HOURLY_INTERVAL: int(user_input[CONF_HOURLY_INTERVAL]),

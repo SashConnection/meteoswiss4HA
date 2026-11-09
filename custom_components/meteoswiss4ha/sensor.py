@@ -25,7 +25,14 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import CONF_STATION, CONF_STATION_NAME, ICONS_URL
+from .const import (
+    CONF_ICON_PACK,
+    CONF_STATION,
+    CONF_STATION_NAME,
+    DEFAULT_ICON_PACK,
+    ICON_PACKS,
+    ICONS_URL,
+)
 from .coordinator import CurrentCoordinator, ForecastCoordinator, MeteoSwissConfigEntry
 from .entity import MeteoSwissEntity
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
@@ -204,6 +211,8 @@ class _SymbolBase(MeteoSwissEntity[ForecastCoordinator], SensorEntity):
     ) -> None:
         super().__init__(coordinator, entry)
         self._attr_unique_id = f"{entry.entry_id}_{key}"
+        pack = entry.options.get(CONF_ICON_PACK, DEFAULT_ICON_PACK)
+        self._icon_pack = pack if pack in ICON_PACKS else DEFAULT_ICON_PACK
 
     @property
     def _code(self) -> int | None:
@@ -211,11 +220,11 @@ class _SymbolBase(MeteoSwissEntity[ForecastCoordinator], SensorEntity):
 
     @property
     def entity_picture(self) -> str | None:
-        """Return the pictogram of the current symbol."""
+        """Return the pictogram of the current symbol in the chosen pack."""
         code = self._code
         if code is None or code not in SYMBOL_DESCRIPTIONS:
             return None
-        return f"{ICONS_URL}/{code}.svg"
+        return f"{ICONS_URL}/{self._icon_pack}/{code}.svg"
 
 
 class SymbolSensor(_SymbolBase):

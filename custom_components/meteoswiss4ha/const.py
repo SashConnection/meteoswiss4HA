@@ -10,8 +10,9 @@ DOMAIN: Final = "meteoswiss4ha"
 
 SWISS_TZ: Final = ZoneInfo("Europe/Zurich")
 
-# URL where the integration serves its pictograms (icons/<code>.svg).
+# URL where the integration serves its pictograms: icons/<pack>/<code>.svg
 ICONS_URL: Final = f"/{DOMAIN}/icons"
+ICON_PACKS: Final = ("animated", "vivid", "classic")
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -35,6 +36,8 @@ FORECAST_UPDATE_INTERVAL: Final = timedelta(minutes=60)
 CONF_HOURLY_FORECAST: Final = "hourly_forecast"
 CONF_HOURLY_HOURS: Final = "hourly_hours"
 CONF_HOURLY_INTERVAL: Final = "hourly_interval"
+CONF_ICON_PACK: Final = "icon_pack"
+DEFAULT_ICON_PACK: Final = "animated"
 
 DEFAULT_HOURLY_FORECAST: Final = True
 DEFAULT_HOURLY_HOURS: Final = 48

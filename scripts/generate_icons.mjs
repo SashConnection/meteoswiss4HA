@@ -2,25 +2,44 @@
 //
 //   node scripts/generate_icons.mjs
 //
-// Writes custom_components/meteoswiss4ha/icons/<code>.svg for codes 1-42
-// (day) and 101-142 (night). The artwork is original and built from a few
-// shared parts, so the whole set can be restyled by editing THEME below.
+// Writes one folder per pictogram pack in custom_components/meteoswiss4ha/
+// icons/<pack>/<code>.svg, for codes 1-42 (day) and 101-142 (night):
+//   classic, vivid  static icons built from the parts below (THEMES)
+//   animated        CSS-animated icons, see animated_icons.mjs
+// The artwork is original; the whole set is restyled by editing THEMES/SPEC.
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), "..",
+import { renderAnimated } from "./animated_icons.mjs";
+
+const ICONS_DIR = join(dirname(fileURLToPath(import.meta.url)), "..",
   "custom_components", "meteoswiss4ha", "icons");
 
-const THEME = {
-  sun: "#FDB813", sunStroke: "#F29A00",
-  moon: "#F4E3A1", moonStroke: "#C9B26A",
-  cloud: "#EEF2F7", cloudStroke: "#8C99AA",
-  darkCloud: "#A3AEBD", darkCloudStroke: "#5E6B7D",
-  rain: "#2F7BEA", snow: "#5AA7F2", bolt: "#FFCC1F", boltStroke: "#D99400",
-  fog: "#9AA6B6", high: "#B9C4D3",
+const THEMES = {
+  // Sober, light colors.
+  classic: {
+    viewBox: "0 0 64 64", dropWidth: 2.8, flakeR: 3.4, flakeWidth: 1.6,
+    sun: "#FDB813", sunStroke: "#F29A00",
+    moon: "#F4E3A1", moonStroke: "#C9B26A",
+    cloud: "#EEF2F7", cloudStroke: "#8C99AA",
+    darkCloud: "#A3AEBD", darkCloudStroke: "#5E6B7D",
+    rain: "#2F7BEA", snow: "#5AA7F2", bolt: "#FFCC1F", boltStroke: "#D99400",
+    fog: "#9AA6B6", high: "#B9C4D3",
+  },
+  // Same drawings, stronger colors, thicker strokes, tighter frame.
+  vivid: {
+    viewBox: "2 2 60 60", dropWidth: 3.4, flakeR: 4, flakeWidth: 2.2,
+    sun: "#FFB703", sunStroke: "#FB8500",
+    moon: "#FFD95A", moonStroke: "#E09F00",
+    cloud: "#E3F0FF", cloudStroke: "#4A78B8",
+    darkCloud: "#7F93B5", darkCloudStroke: "#34476B",
+    rain: "#0066FF", snow: "#00B4D8", bolt: "#FFD60A", boltStroke: "#E85D04",
+    fog: "#7C8DA8", high: "#9DB8DE",
+  },
 };
+let THEME = THEMES.classic;
 
 // ------------------------------------------------------------------ parts
 
@@ -51,16 +70,16 @@ const cloud = (x, y, s, dark = false) =>
   `stroke-width="${(1.6 / s).toFixed(2)}" stroke-linejoin="round"/>`;
 
 const drop = (x, y) =>
-  `<line x1="${x}" y1="${y}" x2="${x - 2.5}" y2="${y + 6}" stroke="${THEME.rain}" stroke-width="2.8" stroke-linecap="round"/>`;
+  `<line x1="${x}" y1="${y}" x2="${x - 2.5}" y2="${y + 6}" stroke="${THEME.rain}" stroke-width="${THEME.dropWidth}" stroke-linecap="round"/>`;
 
 const flake = (x, y) => {
-  const r = 3.4;
+  const r = THEME.flakeR;
   const arms = [0, 60, 120].map((deg) => {
     const a = (deg * Math.PI) / 180;
     return `<line x1="${(x - Math.cos(a) * r).toFixed(1)}" y1="${(y - Math.sin(a) * r).toFixed(1)}" ` +
       `x2="${(x + Math.cos(a) * r).toFixed(1)}" y2="${(y + Math.sin(a) * r).toFixed(1)}"/>`;
   }).join("");
-  return `<g stroke="${THEME.snow}" stroke-width="1.6" stroke-linecap="round">${arms}</g>`;
+  return `<g stroke="${THEME.snow}" stroke-width="${THEME.flakeWidth}" stroke-linecap="round">${arms}</g>`;
 };
 
 const bolt = (x, y, s = 1) =>
@@ -99,7 +118,7 @@ const stratus = () =>
 //        "stratus", "fog"
 // precip: [type, intensity]   bolt: 0 none, 1 weak, 2 strong
 
-const SPEC = {
+export const SPEC = {
   1: { sky: "full" },
   2: { sky: "big", cloud: "small" },
   3: { sky: "part", cloud: "light" },
@@ -173,15 +192,22 @@ function render({ sky = null, cloud: kind = null, precip = null, bolt: b = 0 }, 
   }
   if (b) parts.push(bolt(precip ? 36 : 28, 38, b === 2 ? 1.1 : 0.85));
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">` +
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${THEME.viewBox}" width="64" height="64">` +
     parts.join("") + `</svg>\n`;
 }
 
-mkdirSync(OUT, { recursive: true });
-let count = 0;
-for (const [code, spec] of Object.entries(SPEC)) {
-  writeFileSync(join(OUT, `${code}.svg`), render(spec, false));
-  writeFileSync(join(OUT, `${Number(code) + 100}.svg`), render(spec, true));
-  count += 2;
+const PACKS = {
+  classic: (spec, night) => { THEME = THEMES.classic; return render(spec, night); },
+  vivid: (spec, night) => { THEME = THEMES.vivid; return render(spec, night); },
+  animated: (spec, night) => renderAnimated(spec, night),
+};
+
+for (const [pack, draw] of Object.entries(PACKS)) {
+  const out = join(ICONS_DIR, pack);
+  mkdirSync(out, { recursive: true });
+  for (const [code, spec] of Object.entries(SPEC)) {
+    writeFileSync(join(out, `${code}.svg`), draw(spec, false));
+    writeFileSync(join(out, `${Number(code) + 100}.svg`), draw(spec, true));
+  }
+  console.log(`Wrote ${Object.keys(SPEC).length * 2} icons to ${out}`);
 }
-console.log(`Wrote ${count} icons to ${OUT}`);
