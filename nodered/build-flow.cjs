@@ -7,6 +7,7 @@ const missing = `// Radar frames of the last hour (one every 5 minutes) not yet 
 // File names are predictable: rzc<YY><day of year><HHMM>vl.001.h5 (UTC).
 const KEEP = 12;            // frames kept (1 hour)
 const DELAY_MIN = 7;        // publication delay
+flow.set("radarLastRun", new Date().toISOString());
 const frames = flow.get("radarFrames") || {};
 const now = Date.now() - DELAY_MIN * 60000;
 const last = Math.floor(now / 300000) * 300000;
@@ -30,6 +31,7 @@ node.status({ fill: "green", shape: "dot", text: Object.keys(frames).length + " 
 return null;`;
 
 const render = `// MeteoSwiss radar (RZC, ODIM HDF5) -> transparent PNG in Web Mercator.
+flow.set("radarLastDownload", { time: msg.time, status: msg.statusCode, bytes: msg.payload && msg.payload.length });
 if (msg.statusCode !== 200 || !Buffer.isBuffer(msg.payload)) return null; // not published yet
 const BOUNDS = [[45.6, 5.7], [48.0, 10.8]];
 const WIDTH = 800;
@@ -96,10 +98,25 @@ msg.payload = Buffer.from(data, "base64");
 msg.headers = { "Content-Type": "image/png", "Cache-Control": "max-age=3600" };
 return msg;`;
 
+const errors = `// Keep the last errors of this tab for the status endpoint.
+const errors = flow.get("radarErrors") || [];
+errors.unshift({ at: new Date().toISOString(), node: msg.error && msg.error.source && msg.error.source.name, message: msg.error && msg.error.message });
+flow.set("radarErrors", errors.slice(0, 5));
+return null;`;
+
+const status = `// Diagnostics: last run, last download, frames and errors.
+msg.payload = {
+    lastRun: flow.get("radarLastRun") || null,
+    lastDownload: flow.get("radarLastDownload") || null,
+    frames: Object.keys(flow.get("radarFrames") || {}).length,
+    errors: flow.get("radarErrors") || [],
+};
+return msg;`;
+
 const libs = [{ var: "hdf5", module: "jsfive" }, { var: "pngjs", module: "pngjs" }];
 const tab = "f1a7c0de5ad40001";
 const nodes = [
-  { id: tab, type: "tab", label: "MeteoSwiss radar", info: "Converts the MeteoSwiss precipitation radar (Open Data, RZC) into transparent PNG frames for the MeteoSwiss Complete For HA map.\n\nEndpoints:\n- GET /meteoswiss/radar/frames\n- GET /meteoswiss/radar/frame?time=..." },
+  { id: tab, type: "tab", label: "MeteoSwiss radar", info: "Converts the MeteoSwiss precipitation radar (Open Data, RZC) into transparent PNG frames for the MeteoSwiss Complete For HA map.\n\nEndpoints:\n- GET /meteoswiss/radar/frames\n- GET /meteoswiss/radar/frame?time=...\n- GET /meteoswiss/radar/status (diagnostics)" },
   { id: "f1a7c0de5ad40002", z: tab, type: "inject", name: "every 5 min", repeat: "300", once: true, onceDelay: "10", topic: "", payload: "", payloadType: "date", props: [{ p: "payload" }], x: 140, y: 80, wires: [["f1a7c0de5ad40003"]] },
   { id: "f1a7c0de5ad40003", z: tab, type: "function", name: "missing frames", func: missing, outputs: 1, libs: [], x: 330, y: 80, wires: [["f1a7c0de5ad40004"]] },
   { id: "f1a7c0de5ad40004", z: tab, type: "http request", name: "download HDF5", method: "GET", ret: "bin", paytoqs: "ignore", url: "", tls: "", persist: false, proxy: "", insecureHTTPParser: false, authType: "", senderr: false, headers: [], x: 530, y: 80, wires: [["f1a7c0de5ad40005"]] },
@@ -110,6 +127,11 @@ const nodes = [
   { id: "f1a7c0de5ad40009", z: tab, type: "http in", name: "", url: "/meteoswiss/radar/frame", method: "get", upload: false, swaggerDoc: "", x: 190, y: 240, wires: [["f1a7c0de5ad4000a"]] },
   { id: "f1a7c0de5ad4000a", z: tab, type: "function", name: "frame PNG", func: image, outputs: 1, libs: [], x: 430, y: 240, wires: [["f1a7c0de5ad4000b"]] },
   { id: "f1a7c0de5ad4000b", z: tab, type: "http response", name: "", statusCode: "", headers: {}, x: 610, y: 240, wires: [] },
+  { id: "f1a7c0de5ad4000c", z: tab, type: "catch", name: "errors", scope: null, uncaught: false, x: 140, y: 320, wires: [["f1a7c0de5ad4000d"]] },
+  { id: "f1a7c0de5ad4000d", z: tab, type: "function", name: "remember error", func: errors, outputs: 1, libs: [], x: 330, y: 320, wires: [[]] },
+  { id: "f1a7c0de5ad4000e", z: tab, type: "http in", name: "", url: "/meteoswiss/radar/status", method: "get", upload: false, swaggerDoc: "", x: 190, y: 380, wires: [["f1a7c0de5ad4000f"]] },
+  { id: "f1a7c0de5ad4000f", z: tab, type: "function", name: "status", func: status, outputs: 1, libs: [], x: 430, y: 380, wires: [["f1a7c0de5ad40010"]] },
+  { id: "f1a7c0de5ad40010", z: tab, type: "http response", name: "", statusCode: "", headers: {}, x: 610, y: 380, wires: [] },
 ];
 fs.writeFileSync(path.join(__dirname, "meteoswiss-radar-flow.json"), JSON.stringify(nodes, null, 2) + "\n");
 console.log("written", nodes.length, "nodes");
