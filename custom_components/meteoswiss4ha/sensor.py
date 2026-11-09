@@ -25,9 +25,14 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import CONF_STATION, CONF_STATION_NAME
-from .coordinator import CurrentCoordinator, MeteoSwissConfigEntry
+from .const import CONF_STATION, CONF_STATION_NAME, ICONS_URL
+from .coordinator import CurrentCoordinator, ForecastCoordinator, MeteoSwissConfigEntry
 from .entity import MeteoSwissEntity
+from .symbol_descriptions import SYMBOL_DESCRIPTIONS
+from .symbols import symbol_to_condition
+
+# Index of each language in SYMBOL_DESCRIPTIONS tuples.
+LANGUAGE_INDEX: dict[str, int] = {"de": 0, "fr": 1, "it": 2, "en": 3}
 
 # SwissMetNet parameter identifiers published in VQHA80.csv.
 CURRENT_SENSORS: tuple[SensorEntityDescription, ...] = (
@@ -136,6 +141,9 @@ async def async_setup_entry(
         if values.get(description.key) is not None
     ]
     entities.append(MeasurementTimeSensor(current, entry))
+    forecast = entry.runtime_data.forecast
+    entities.append(SymbolSensor(forecast, entry))
+    entities.append(DescriptionSensor(forecast, entry, hass.config.language))
     async_add_entities(entities)
 
 
@@ -186,3 +194,76 @@ class MeasurementTimeSensor(MeteoSwissEntity[CurrentCoordinator], SensorEntity):
     def native_value(self) -> datetime:
         """Return the measurement time."""
         return self.coordinator.data.measured_at
+
+
+class _SymbolBase(MeteoSwissEntity[ForecastCoordinator], SensorEntity):
+    """Common logic of the sensors based on the current MeteoSwiss symbol."""
+
+    def __init__(
+        self, coordinator: ForecastCoordinator, entry: MeteoSwissConfigEntry, key: str
+    ) -> None:
+        super().__init__(coordinator, entry)
+        self._attr_unique_id = f"{entry.entry_id}_{key}"
+
+    @property
+    def _code(self) -> int | None:
+        return self.coordinator.current_symbol()[0]
+
+    @property
+    def entity_picture(self) -> str | None:
+        """Return the pictogram of the current symbol."""
+        code = self._code
+        if code is None or code not in SYMBOL_DESCRIPTIONS:
+            return None
+        return f"{ICONS_URL}/{code}.svg"
+
+
+class SymbolSensor(_SymbolBase):
+    """Native MeteoSwiss weather symbol code (1-42 day, 101-142 night)."""
+
+    _attr_translation_key = "symbol"
+
+    def __init__(self, coordinator: ForecastCoordinator, entry: MeteoSwissConfigEntry) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, entry, "symbol")
+
+    @property
+    def native_value(self) -> int | None:
+        """Return the symbol code."""
+        return self._code
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return descriptions in all languages and the HA condition."""
+        code, night = self.coordinator.current_symbol()
+        texts = SYMBOL_DESCRIPTIONS.get(code) if code is not None else None
+        attrs: dict[str, Any] = {
+            "condition": symbol_to_condition(code, night),
+            "is_night": night if code is not None else None,
+        }
+        for lang, index in LANGUAGE_INDEX.items():
+            attrs[f"description_{lang}"] = texts[index] if texts else None
+        return attrs
+
+
+class DescriptionSensor(_SymbolBase):
+    """Official MeteoSwiss description of the current weather."""
+
+    _attr_translation_key = "description"
+
+    def __init__(
+        self,
+        coordinator: ForecastCoordinator,
+        entry: MeteoSwissConfigEntry,
+        language: str,
+    ) -> None:
+        """Initialize the sensor in the Home Assistant language."""
+        super().__init__(coordinator, entry, "description")
+        self._index = LANGUAGE_INDEX.get(language.split("-")[0].lower(), LANGUAGE_INDEX["en"])
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the description."""
+        code = self._code
+        texts = SYMBOL_DESCRIPTIONS.get(code) if code is not None else None
+        return texts[self._index] if texts else None

@@ -59,6 +59,12 @@
       },
       "measured_at": {
         "name": "Heure de la mesure"
+      },
+      "symbol": {
+        "name": "Symbole MétéoSuisse"
+      },
+      "description": {
+        "name": "Description météo"
       }
     }
   },

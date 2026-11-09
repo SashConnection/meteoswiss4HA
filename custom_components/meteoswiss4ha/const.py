@@ -4,8 +4,17 @@ from __future__ import annotations
 
 from datetime import timedelta
 from typing import Final
+from zoneinfo import ZoneInfo
 
 DOMAIN: Final = "meteoswiss4ha"
+
+SWISS_TZ: Final = ZoneInfo("Europe/Zurich")
+
+# URL where the integration serves its pictograms (icons/<code>.svg).
+ICONS_URL: Final = f"/{DOMAIN}/icons"
+
+# Attribute / forecast key carrying the native MeteoSwiss symbol code.
+ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
 
 ATTRIBUTION: Final = "Source: MeteoSwiss"
 MANUFACTURER: Final = "MeteoSwiss"

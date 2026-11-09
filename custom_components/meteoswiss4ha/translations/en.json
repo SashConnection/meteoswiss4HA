@@ -59,6 +59,12 @@
       },
       "measured_at": {
         "name": "Measurement time"
+      },
+      "symbol": {
+        "name": "MeteoSwiss symbol"
+      },
+      "description": {
+        "name": "Weather description"
       }
     }
   },

@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.typing import ConfigType
 
 from .api import MeteoSwissClient
+from .const import DOMAIN, ICONS_URL
 from .coordinator import (
     CurrentCoordinator,
     ForecastCoordinator,
@@ -15,6 +21,20 @@ from .coordinator import (
 )
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.WEATHER]
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Serve the pictograms shipped with the integration."""
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                ICONS_URL, str(Path(__file__).parent / "icons"), cache_headers=True
+            )
+        ]
+    )
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> bool:

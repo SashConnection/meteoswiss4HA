@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from homeassistant.components.weather import (
     Forecast,
@@ -19,11 +18,11 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.helpers.sun import is_up
 from homeassistant.util import dt as dt_util
 
 from .api import ForecastStep
 from .const import (
+    ATTR_METEOSWISS_SYMBOL,
     DAILY_PRECIPITATION,
     DAILY_SYMBOL,
     DAILY_TEMP_MAX,
@@ -35,15 +34,11 @@ from .const import (
     HOURLY_WIND_BEARING,
     HOURLY_WIND_GUST,
     HOURLY_WIND_SPEED,
+    SWISS_TZ,
 )
 from .coordinator import CurrentCoordinator, ForecastCoordinator, MeteoSwissConfigEntry
 from .entity import MeteoSwissEntity
 from .symbols import is_night_code, symbol_to_condition
-
-SWISS_TZ = ZoneInfo("Europe/Zurich")
-
-# Extra forecast key carrying the native MeteoSwiss symbol code.
-ATTR_METEOSWISS_SYMBOL = "meteoswiss_symbol"
 
 
 async def async_setup_entry(
@@ -149,33 +144,16 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
         """Return the wind direction."""
         return self._measurement("dkl010z0")
 
-    def current_symbol(self) -> tuple[int | None, bool]:
-        """Return the symbol code describing now, and whether it is night."""
-        data = self.coordinator.data
-        if data is None:
-            return None, False
-        now = dt_util.utcnow()
-        # Hourly steps are stamped at the end of their interval.
-        for step in data.hourly:
-            if step.time > now and step.values.get(HOURLY_SYMBOL) is not None:
-                code = int(step.values[HOURLY_SYMBOL])
-                return code, is_night_code(code)
-        today = now.astimezone(SWISS_TZ).date()
-        for step in data.daily:
-            if step.time.date() == today and step.values.get(DAILY_SYMBOL) is not None:
-                return int(step.values[DAILY_SYMBOL]), not is_up(self.hass)
-        return None, False
-
     @property
     def condition(self) -> str | None:
         """Return the current Home Assistant condition."""
-        code, night = self.current_symbol()
+        code, night = self.coordinator.current_symbol()
         return symbol_to_condition(code, night)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Expose the native MeteoSwiss symbol and data sources."""
-        code, _ = self.current_symbol()
+        code, _ = self.coordinator.current_symbol()
         attrs: dict[str, Any] = {ATTR_METEOSWISS_SYMBOL: code}
         if self.coordinator.data:
             attrs["forecast_reference_time"] = (

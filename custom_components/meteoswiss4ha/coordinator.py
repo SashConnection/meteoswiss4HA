@@ -8,11 +8,16 @@ from datetime import datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.sun import is_up
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
 from .api import CurrentConditions, LocalForecast, MeteoSwissClient, MeteoSwissError
+from .symbols import NIGHT_OFFSET, is_night_code
 from .const import (
+    DAILY_SYMBOL,
+    HOURLY_SYMBOL,
+    SWISS_TZ,
     CONF_HOURLY_FORECAST,
     CONF_HOURLY_HOURS,
     CONF_HOURLY_INTERVAL,
@@ -150,3 +155,25 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
                 hourly=[step for step in self.data.hourly if step.time > cutoff],
             )
         return forecast
+
+    def current_symbol(self) -> tuple[int | None, bool]:
+        """Return the MeteoSwiss symbol code for now, and whether it is night.
+
+        Uses the hourly forecast when available (its codes carry day/night),
+        otherwise today's daily symbol with night taken from the sun.
+        """
+        if self.data is None:
+            return None, False
+        now = dt_util.utcnow()
+        # Hourly steps are stamped at the end of their interval.
+        for step in self.data.hourly:
+            if step.time > now and step.values.get(HOURLY_SYMBOL) is not None:
+                code = int(step.values[HOURLY_SYMBOL])
+                return code, is_night_code(code)
+        today = now.astimezone(SWISS_TZ).date()
+        for step in self.data.daily:
+            if step.time.date() == today and step.values.get(DAILY_SYMBOL) is not None:
+                night = not is_up(self.hass)
+                code = int(step.values[DAILY_SYMBOL])
+                return (code + NIGHT_OFFSET if night else code), night
+        return None, False
