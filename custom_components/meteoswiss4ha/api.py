@@ -378,8 +378,7 @@ class MeteoSwissClient:
                     point = prefixes.get(raw_line[: cut + 1]) if cut > 0 else None
                     if point is None:
                         continue
-                    parts = raw_line.decode("latin-1").rstrip("
-").split(";")
+                    parts = raw_line.decode("latin-1").rstrip("\r\n").split(";")
                     if len(parts) < 4:
                         continue
                     timestamp = parse_timestamp(parts[2])

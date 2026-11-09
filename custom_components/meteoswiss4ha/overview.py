@@ -159,8 +159,14 @@ class OverviewView(_BaseView):
 
         cities = []
         if forecast is not None:
+            main = (entry.data[CONF_POINT_ID], entry.data[CONF_POINT_TYPE_ID])
             for point_id, name, lat, lon, zoom in CITIES:
-                steps = forecast.others.get((point_id, 2))
+                # The configured point is not repeated in "others".
+                steps = (
+                    forecast.daily
+                    if (point_id, 2) == main
+                    else forecast.others.get((point_id, 2))
+                )
                 if steps:
                     cities.append(
                         {"name": name, "lat": lat, "lon": lon, "min_zoom": zoom, "days": _days(steps)}

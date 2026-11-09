@@ -134,8 +134,11 @@ def _point_in_ring(lon: float, lat: float, ring: list[list[float]]) -> bool:
 
 
 def _point_in_geometry(lon: float, lat: float, geometry: dict[str, Any]) -> bool:
+    kind = geometry.get("type")
+    if kind not in ("Polygon", "MultiPolygon"):
+        return False  # lines (rivers, lakes) have no inside
     polygons = geometry.get("coordinates") or []
-    if geometry.get("type") == "Polygon":
+    if kind == "Polygon":
         polygons = [polygons]
     for polygon in polygons:
         if polygon and _point_in_ring(lon, lat, polygon[0]) and not any(
@@ -264,16 +267,24 @@ def flood_to_wgs84(data: dict[str, Any]) -> dict[str, Any]:
     features = []
     for feature in data.get("features") or []:
         geometry = feature.get("geometry") or {}
+        kind = geometry.get("type")
         coords = geometry.get("coordinates") or []
-        if geometry.get("type") == "Polygon":
-            coords = [[ring(r) for r in coords]]
-        else:
+        # Regions are polygons; rivers and lakes are lines.
+        if kind == "Polygon":
+            kind, coords = "MultiPolygon", [[ring(r) for r in coords]]
+        elif kind == "MultiPolygon":
             coords = [[ring(r) for r in polygon] for polygon in coords]
+        elif kind == "LineString":
+            kind, coords = "MultiLineString", [ring(coords)]
+        elif kind == "MultiLineString":
+            coords = [ring(line) for line in coords]
+        else:
+            continue
         props = feature.get("properties") or {}
         features.append(
             {
                 "type": "Feature",
-                "geometry": {"type": "MultiPolygon", "coordinates": coords},
+                "geometry": {"type": kind, "coordinates": coords},
                 "properties": {
                     "level": _flood_level(props),
                     "name": re.sub(r"<[^>]+>", "", props.get("description") or "")

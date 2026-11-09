@@ -293,6 +293,10 @@ class MeteoSwissMap {
       L.geoJSON(this.floods, {
         style: (f) => {
           const lvl = f.properties.level || 0;
+          // Rivers and lakes are lines: draw them thick in the level color.
+          if (f.geometry.type.includes("Line")) {
+            return { color: lvl > 1 ? DANGER_COLORS[lvl] : "#4a90c2", weight: lvl > 1 ? 5 : 2.5, opacity: 0.9 };
+          }
           return { color: "#555", weight: 0.6, fillColor: DANGER_COLORS[lvl], fillOpacity: lvl > 1 ? 0.6 : 0.25 };
         },
         onEachFeature: (f, layer) =>
