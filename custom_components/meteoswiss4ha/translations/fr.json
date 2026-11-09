@@ -61,5 +61,18 @@
         "name": "Heure de la mesure"
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options des prévisions",
+        "description": "Les fichiers de prévisions horaires sont volumineux (environ 33 Mo chacun, dont environ 8 Mo lus pour 48 heures). Réduisez l’horizon ou augmentez l’intervalle pour économiser de la bande passante.",
+        "data": {
+          "hourly_forecast": "Prévisions horaires",
+          "hourly_hours": "Horizon des prévisions horaires",
+          "hourly_interval": "Intervalle de mise à jour des prévisions horaires"
+        }
+      }
+    }
   }
 }

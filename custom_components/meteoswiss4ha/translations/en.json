@@ -61,5 +61,18 @@
         "name": "Measurement time"
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Forecast options",
+        "description": "Hourly forecast files are large (about 33 MB each, of which about 8 MB are read for 48 hours). Reduce the horizon or increase the interval to save bandwidth.",
+        "data": {
+          "hourly_forecast": "Hourly forecast",
+          "hourly_hours": "Hourly forecast horizon",
+          "hourly_interval": "Hourly forecast refresh interval"
+        }
+      }
+    }
   }
 }

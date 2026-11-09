@@ -8,11 +8,14 @@ This module has no dependency on Home Assistant so it can be tested alone.
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
 import math
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import aiohttp
 
@@ -30,7 +33,16 @@ POINT_TYPE_STATION = 1
 POINT_TYPE_POSTAL_CODE = 2
 POINT_TYPE_MOUNTAIN = 3
 
+STAC_ITEMS_URL = (
+    f"{BASE_URL}/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items"
+)
+# e.g. "vnut12.lssw.202611090700.tre200h0.csv"
+ASSET_RE = re.compile(r"^vnut12\.lssw\.(?P<run>\d{12})\.(?P<param>\w+)\.csv$")
+
 DEFAULT_TIMEOUT = aiohttp.ClientTimeout(total=60)
+# Large forecast files: no total limit, but fail if the stream stalls.
+STREAM_TIMEOUT = aiohttp.ClientTimeout(total=None, connect=30, sock_read=60)
+MAX_PARALLEL_DOWNLOADS = 4
 
 
 class MeteoSwissError(Exception):
@@ -78,6 +90,35 @@ class CurrentConditions:
     station_abbr: str
     measured_at: datetime
     values: dict[str, float | None] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
+class ForecastRun:
+    """One local forecast run and the download URL of each parameter."""
+
+    reference_time: datetime
+    urls: dict[str, str]
+
+
+@dataclass(slots=True)
+class ForecastStep:
+    """Values of all parameters for one forecast time step.
+
+    Hourly steps are stamped at the END of the aggregation interval (UTC).
+    Daily steps are stamped 00:00 of the calendar day they describe.
+    """
+
+    time: datetime
+    values: dict[str, float | None]
+
+
+@dataclass(slots=True)
+class LocalForecast:
+    """Daily and hourly local forecast for one point."""
+
+    reference_time: datetime
+    daily: list[ForecastStep]
+    hourly: list[ForecastStep]
 
 
 def parse_timestamp(value: str) -> datetime:
@@ -218,3 +259,124 @@ class MeteoSwissClient:
     async def async_get_points(self) -> list[ForecastPoint]:
         """Return local forecast point metadata."""
         return parse_points_csv(await self._get_text(POINTS_META_URL, "latin-1"))
+
+    # ------------------------------------------------------------------
+    # Local forecast
+    # ------------------------------------------------------------------
+
+    async def async_get_latest_run(
+        self, params: Iterable[str], now: datetime | None = None
+    ) -> ForecastRun:
+        """Find the most recent forecast run that has all requested parameters."""
+        now = now or datetime.now(UTC)
+        wanted = set(params)
+        # Runs are grouped in one STAC item per UTC day; just after midnight
+        # the new item may still be empty, so fall back to the previous day.
+        for day in (now, now - timedelta(days=1)):
+            item_id = f"{day:%Y%m%d}-ch"
+            url = f"{STAC_ITEMS_URL}/{item_id}"
+            try:
+                async with self._session.get(url, timeout=DEFAULT_TIMEOUT) as resp:
+                    if resp.status == 404:
+                        continue
+                    resp.raise_for_status()
+                    item = await resp.json(content_type=None)
+            except (aiohttp.ClientError, TimeoutError, ValueError) as err:
+                raise MeteoSwissConnectionError(f"Error fetching {url}: {err}") from err
+
+            runs: dict[str, dict[str, str]] = {}
+            for name, asset in (item.get("assets") or {}).items():
+                match = ASSET_RE.match(name)
+                if match and "href" in asset:
+                    runs.setdefault(match["run"], {})[match["param"]] = asset["href"]
+            for run in sorted(runs, reverse=True):
+                if wanted <= runs[run].keys():
+                    return ForecastRun(
+                        reference_time=parse_timestamp(run),
+                        urls={p: runs[run][p] for p in wanted},
+                    )
+        raise MeteoSwissDataError("No complete local forecast run found")
+
+    async def async_get_point_series(
+        self,
+        url: str,
+        point: tuple[int, int],
+        until: datetime | None = None,
+    ) -> list[tuple[datetime, float | None]]:
+        """Stream one parameter file and return the values of a single point.
+
+        Files contain every forecast point (~33 MB for hourly parameters) and
+        are sorted by time first, so with ``until`` the download is stopped as
+        soon as the requested horizon has been read.
+        """
+        prefix = f"{point[0]};{point[1]};".encode()
+        series: list[tuple[datetime, float | None]] = []
+        try:
+            async with self._session.get(url, timeout=STREAM_TIMEOUT) as resp:
+                resp.raise_for_status()
+                async for raw_line in resp.content:
+                    if not raw_line.startswith(prefix):
+                        continue
+                    parts = raw_line.decode("latin-1").rstrip("\r\n").split(";")
+                    if len(parts) < 4:
+                        continue
+                    timestamp = parse_timestamp(parts[2])
+                    if until is not None and timestamp > until:
+                        # Closing early aborts the rest of the download.
+                        resp.close()
+                        break
+                    series.append((timestamp, parse_float(parts[3])))
+        except (aiohttp.ClientError, TimeoutError) as err:
+            raise MeteoSwissConnectionError(f"Error fetching {url}: {err}") from err
+        return series
+
+    async def async_get_forecast(
+        self,
+        point: tuple[int, int],
+        daily_params: Iterable[str],
+        hourly_params: Iterable[str] = (),
+        hourly_hours: int = 48,
+        now: datetime | None = None,
+    ) -> LocalForecast:
+        """Download daily (and optionally hourly) forecasts for one point."""
+        now = now or datetime.now(UTC)
+        daily_params = tuple(daily_params)
+        hourly_params = tuple(hourly_params)
+        run = await self.async_get_latest_run((*daily_params, *hourly_params), now)
+        until = now + timedelta(hours=hourly_hours)
+        semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
+
+        async def fetch(param: str, limit: datetime | None):
+            async with semaphore:
+                return param, await self.async_get_point_series(
+                    run.urls[param], point, limit
+                )
+
+        results = await asyncio.gather(
+            *(fetch(p, None) for p in daily_params),
+            *(fetch(p, until) for p in hourly_params),
+        )
+        series = dict(results)
+        return LocalForecast(
+            reference_time=run.reference_time,
+            daily=_merge_series({p: series[p] for p in daily_params}),
+            hourly=_merge_series(
+                {p: series[p] for p in hourly_params},
+                # Keep the hour in progress (its timestamp is its end).
+                not_before=now - timedelta(hours=1),
+            ),
+        )
+
+
+def _merge_series(
+    series: dict[str, list[tuple[datetime, float | None]]],
+    not_before: datetime | None = None,
+) -> list[ForecastStep]:
+    """Combine per-parameter series into one list of steps sorted by time."""
+    steps: dict[datetime, dict[str, float | None]] = {}
+    for param, values in series.items():
+        for timestamp, value in values:
+            if not_before is not None and timestamp <= not_before:
+                continue
+            steps.setdefault(timestamp, {})[param] = value
+    return [ForecastStep(time=t, values=steps[t]) for t in sorted(steps)]

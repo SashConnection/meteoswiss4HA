@@ -7,9 +7,19 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    BooleanSelector,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -26,6 +36,12 @@ from .api import (
     distance_km,
 )
 from .const import (
+    CONF_HOURLY_FORECAST,
+    CONF_HOURLY_HOURS,
+    CONF_HOURLY_INTERVAL,
+    DEFAULT_HOURLY_FORECAST,
+    DEFAULT_HOURLY_HOURS,
+    DEFAULT_HOURLY_INTERVAL,
     CONF_POINT_ID,
     CONF_POINT_NAME,
     CONF_POINT_TYPE_ID,
@@ -151,3 +167,55 @@ class MeteoSwissConfigFlow(ConfigFlow, domain=DOMAIN):
             schema = self.add_suggested_values_to_schema(schema, user_input)
 
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> MeteoSwissOptionsFlow:
+        """Return the options flow."""
+        return MeteoSwissOptionsFlow()
+
+
+OPTIONS_SCHEMA = vol.Schema(
+    {
+        vol.Required(
+            CONF_HOURLY_FORECAST, default=DEFAULT_HOURLY_FORECAST
+        ): BooleanSelector(),
+        vol.Required(CONF_HOURLY_HOURS, default=DEFAULT_HOURLY_HOURS): NumberSelector(
+            NumberSelectorConfig(
+                min=6, max=120, step=6, unit_of_measurement="h",
+                mode=NumberSelectorMode.SLIDER,
+            )
+        ),
+        vol.Required(
+            CONF_HOURLY_INTERVAL, default=DEFAULT_HOURLY_INTERVAL
+        ): NumberSelector(
+            NumberSelectorConfig(
+                min=60, max=720, step=60, unit_of_measurement="min",
+                mode=NumberSelectorMode.SLIDER,
+            )
+        ),
+    }
+)
+
+
+class MeteoSwissOptionsFlow(OptionsFlow):
+    """Options: hourly forecast download settings."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(
+                data={
+                    CONF_HOURLY_FORECAST: user_input[CONF_HOURLY_FORECAST],
+                    CONF_HOURLY_HOURS: int(user_input[CONF_HOURLY_HOURS]),
+                    CONF_HOURLY_INTERVAL: int(user_input[CONF_HOURLY_INTERVAL]),
+                }
+            )
+        return self.async_show_form(
+            step_id="init",
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA, self.config_entry.options
+            ),
+        )

@@ -61,5 +61,18 @@
         "name": "Messzeit"
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Prognose-Optionen",
+        "description": "Stündliche Prognosedateien sind gross (je etwa 33 MB, davon etwa 8 MB für 48 Stunden gelesen). Verkürzen Sie den Horizont oder verlängern Sie das Intervall, um Bandbreite zu sparen.",
+        "data": {
+          "hourly_forecast": "Stündliche Prognose",
+          "hourly_hours": "Horizont der stündlichen Prognose",
+          "hourly_interval": "Aktualisierungsintervall der stündlichen Prognose"
+        }
+      }
+    }
   }
 }
