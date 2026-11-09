@@ -93,7 +93,7 @@ Les **3 dernières heures** du radar MétéoSuisse, une image toutes les 5 minut
 
 ![Prévision radar](images/map-radar-forecast.jpg)
 
-Le bouton ▶ / ❚❚ lance ou arrête l'animation ; le curseur permet de choisir une heure. Si le serveur radar ne répond pas, la carte affiche « Le radar n'est pas disponible pour le moment ».
+Le bouton ▶ / ❚❚ lance ou arrête l'animation ; le curseur permet de choisir une heure. Les images radar et la prévision de pluie sont préparées à partir des données MétéoSuisse par un serveur du projet (`ha.jesaispas.ch`), d’où Home Assistant les télécharge. Si ce serveur ne répond pas, la carte affiche « Le radar n'est pas disponible pour le moment ».
 
 ### Alertes intempéries
 
