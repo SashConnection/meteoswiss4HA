@@ -1,13 +1,19 @@
 {
   "domain": "meteoswiss4ha",
   "name": "MeteoSwiss Complete For HA",
-  "codeowners": ["@SashConnection"],
+  "codeowners": [
+    "@SashConnection"
+  ],
   "config_flow": true,
-  "dependencies": ["http"],
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom"
+  ],
   "documentation": "https://github.com/SashConnection/meteoswiss4HA",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/SashConnection/meteoswiss4HA/issues",
   "requirements": [],
-  "version": "2026.01"
+  "version": "2026.01.1"
 }

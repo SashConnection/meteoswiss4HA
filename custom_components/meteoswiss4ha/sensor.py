@@ -50,6 +50,7 @@ HAZARD_ICONS = {
     "avalanche": "mdi:snowflake-alert",
     "forest_fire": "mdi:pine-tree-fire",
     "drought": "mdi:weather-sunny-alert",
+    "flood": "mdi:home-flood",
 }
 
 # Index of each language in SYMBOL_DESCRIPTIONS tuples.
@@ -171,7 +172,7 @@ async def async_setup_entry(
     if (hazards := entry.runtime_data.hazards) is not None:
         entities.extend(
             HazardSensor(hazards, entry, kind)
-            for kind in ("avalanche", "forest_fire", "drought")
+            for kind in ("avalanche", "flood", "forest_fire", "drought")
         )
     async_add_entities(entities)
 

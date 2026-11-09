@@ -10,6 +10,7 @@ Sources (all public):
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -20,6 +21,11 @@ from .api import DEFAULT_TIMEOUT, MeteoSwissConnectionError, MeteoSwissDataError
 SLF_BULLETIN_URL = "https://aws.slf.ch/api/bulletin/caaml/{lang}/json"
 REGIONS_URL = "https://regions.avalanches.org/micro-regions/CH_micro-regions.geojson.json"
 IDENTIFY_URL = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify"
+
+FLOOD_URL = (
+    "https://data.geo.admin.ch/ch.bafu.hydroweb-warnkarte_national/"
+    "ch.bafu.hydroweb-warnkarte_national_{lang}.json"
+)
 
 FOREST_FIRE_LAYER = "ch.bafu.gefahren-waldbrand_warnung"
 DROUGHT_LAYER = "ch.bafu.trockenheitswarnkarte"
@@ -85,9 +91,34 @@ class HazardData:
     avalanche: AvalancheBulletin | None
     forest_fire: HazardLevel | None
     drought: HazardLevel | None
+    flood: HazardLevel | None = None
 
 
 # --------------------------------------------------------------- geometry
+
+
+def wgs84_to_lv95(lat: float, lon: float) -> tuple[float, float]:
+    """Approximate swisstopo conversion WGS84 -> LV95 (E, N), ~1 m accuracy."""
+    p = (lat * 3600 - 169028.66) / 10000
+    l = (lon * 3600 - 26782.5) / 10000
+    east = 2600072.37 + 211455.93 * l - 10938.51 * l * p - 0.36 * l * p**2 - 44.54 * l**3
+    north = (
+        1200147.07 + 308807.95 * p + 3745.25 * l**2 + 76.63 * p**2
+        - 194.56 * l**2 * p + 119.79 * p**3
+    )
+    return east, north
+
+
+def lv95_to_wgs84(east: float, north: float) -> tuple[float, float]:
+    """Approximate swisstopo conversion LV95 -> WGS84 (lat, lon)."""
+    y = (east - 2600000) / 1e6
+    x = (north - 1200000) / 1e6
+    lon = 2.6779094 + 4.728982 * y + 0.791484 * y * x + 0.1306 * y * x**2 - 0.0436 * y**3
+    lat = (
+        16.9023892 + 3.238272 * x - 0.270978 * y**2 - 0.002528 * x**2
+        - 0.0447 * y**2 * x - 0.0140 * x**3
+    )
+    return lat * 100 / 36, lon * 100 / 36
 
 
 def _point_in_ring(lon: float, lat: float, ring: list[list[float]]) -> bool:
@@ -198,6 +229,63 @@ def parse_bulletin(data: dict[str, Any], region_id: str) -> AvalancheBulletin:
     return result
 
 
+def _flood_level(properties: dict[str, Any]) -> int | None:
+    """Level from the "ws-class" property, e.g. "Region.3" -> 3."""
+    try:
+        return int(str(properties.get("ws-class", "")).rsplit(".", 1)[1])
+    except (IndexError, ValueError):
+        return None
+
+
+def parse_flood(data: dict[str, Any], lat: float, lon: float) -> HazardLevel | None:
+    """Flood danger of the FOEN warning region containing the point."""
+    east, north = wgs84_to_lv95(lat, lon)
+    for feature in data.get("features") or []:
+        if _point_in_geometry(east, north, feature.get("geometry") or {}):
+            props = feature.get("properties") or {}
+            description = re.sub(r"<[^>]+>", "", props.get("description") or "")
+            return HazardLevel(
+                level=_flood_level(props),
+                region=description.split(":", 1)[0].strip() or None,
+                title=props.get("text"),
+                valid_from=data.get("creation_time"),
+            )
+    return None
+
+
+def flood_to_wgs84(data: dict[str, Any]) -> dict[str, Any]:
+    """Convert the flood warning map to WGS84 GeoJSON with a "level" property."""
+
+    def ring(points):
+        return [
+            [round(c, 5) for c in reversed(lv95_to_wgs84(p[0], p[1]))] for p in points
+        ]
+
+    features = []
+    for feature in data.get("features") or []:
+        geometry = feature.get("geometry") or {}
+        coords = geometry.get("coordinates") or []
+        if geometry.get("type") == "Polygon":
+            coords = [[ring(r) for r in coords]]
+        else:
+            coords = [[ring(r) for r in polygon] for polygon in coords]
+        props = feature.get("properties") or {}
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": {"type": "MultiPolygon", "coordinates": coords},
+                "properties": {
+                    "level": _flood_level(props),
+                    "name": re.sub(r"<[^>]+>", "", props.get("description") or "")
+                    .split(":", 1)[0]
+                    .strip(),
+                    "text": props.get("text"),
+                },
+            }
+        )
+    return {"type": "FeatureCollection", "features": features}
+
+
 def parse_identify(data: dict[str, Any], layer: str, lang: str) -> HazardLevel | None:
     """Parse a geoportal 'identify' answer for a FOEN warning layer."""
     for result in data.get("results") or []:
@@ -248,6 +336,14 @@ class HazardClient:
         """Return the current avalanche danger of a micro-region."""
         data = await self._get_json(SLF_BULLETIN_URL.format(lang=self._lang))
         return parse_bulletin(data, region_id)
+
+    async def async_get_flood_map(self) -> dict[str, Any]:
+        """Return the FOEN flood warning map (LV95 GeoJSON)."""
+        return await self._get_json(FLOOD_URL.format(lang=self._lang))
+
+    async def async_get_flood(self, lat: float, lon: float) -> HazardLevel | None:
+        """Return the flood danger at a point."""
+        return parse_flood(await self.async_get_flood_map(), lat, lon)
 
     async def async_get_level(self, layer: str, lat: float, lon: float) -> HazardLevel | None:
         """Return the FOEN warning level of a layer at a point."""

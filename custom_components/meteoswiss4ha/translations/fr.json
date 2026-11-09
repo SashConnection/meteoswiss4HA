@@ -127,6 +127,16 @@
           "high": "Fort",
           "very_high": "Très fort"
         }
+      },
+      "flood_danger": {
+        "name": "Danger de crues",
+        "state": {
+          "low": "Faible",
+          "moderate": "Limité",
+          "considerable": "Marqué",
+          "high": "Fort",
+          "very_high": "Très fort"
+        }
       }
     }
   },

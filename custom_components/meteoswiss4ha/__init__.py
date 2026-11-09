@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from homeassistant.components import panel_custom
+from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -13,7 +15,14 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
 from .api import MeteoSwissClient, MeteoSwissError, distance_km
-from .const import CONF_POLLEN_STATION, DOMAIN, ICONS_URL
+from .const import (
+    CONF_POLLEN_STATION,
+    DOMAIN,
+    FRONTEND_URL,
+    ICONS_URL,
+    PANEL_URL_PATH,
+    VERSION,
+)
 from .coordinator import (
     CurrentCoordinator,
     ForecastCoordinator,
@@ -23,6 +32,7 @@ from .coordinator import (
     PollenCoordinator,
 )
 from .hazards import HazardClient
+from .overview import async_register_views
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,13 +42,29 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Serve the pictograms shipped with the integration."""
+    """Serve pictograms and the map, register the sidebar page and the card."""
+    root = Path(__file__).parent
     await hass.http.async_register_static_paths(
         [
-            StaticPathConfig(
-                ICONS_URL, str(Path(__file__).parent / "icons"), cache_headers=True
-            )
+            StaticPathConfig(ICONS_URL, str(root / "icons"), cache_headers=True),
+            StaticPathConfig(FRONTEND_URL, str(root / "frontend"), cache_headers=False),
         ]
+    )
+    async_register_views(hass)
+
+    module_url = f"{FRONTEND_URL}/meteoswiss-map.js?v={VERSION}"
+    # Card: load the module on every dashboard.
+    add_extra_js_url(hass, module_url)
+    # Full page in the sidebar.
+    await panel_custom.async_register_panel(
+        hass,
+        frontend_url_path=PANEL_URL_PATH,
+        webcomponent_name="meteoswiss-panel",
+        sidebar_title="MeteoSwiss",
+        sidebar_icon="mdi:weather-partly-snowy-rainy",
+        module_url=module_url,
+        embed_iframe=False,
+        require_admin=False,
     )
     return True
 

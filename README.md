@@ -10,7 +10,22 @@ A Home Assistant custom integration that brings official [MeteoSwiss Open Data](
   - hourly forecast (symbol, temperature, precipitation and its probability, wind, gusts, direction).
 - **Two condition values**:
   - the standard Home Assistant condition (`sunny`, `rainy`, …) on the `weather` entity, so every weather card works out of the box;
-  - the native **MeteoSwiss symbol code** (1–42 day, 101–142 night) with its official description in German, French, Italian and English, and a dedicated pictogram set (84 icons).
+  - the native **MeteoSwiss symbol code** (1–42 day, 101–142 night) with its official description in German, French, Italian and English, and three pictogram packs (animated, vivid, classic).
+- **Pollen** from the nearest of the 15 SwissPollen stations (hourly): 7 species with MeteoSwiss intensity levels.
+- **Natural hazards** at your home: avalanche danger (SLF bulletin), flood, forest fire and drought danger (FOEN), on the 5-level Swiss scale.
+- **Switzerland map** in the sidebar (and as a dashboard card): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, flood, forest fire and drought warning maps.
+
+## Switzerland map
+
+After installation a **MeteoSwiss** entry appears in the sidebar. The same map can be added to any dashboard:
+
+```yaml
+type: custom:meteoswiss-map-card
+layer: weather        # weather, avalanche, pollen, fire, drought, flood
+height: 420
+```
+
+Base map © swisstopo. Warning maps: SLF, FOEN.
 
 ## Entities
 
@@ -20,6 +35,10 @@ A Home Assistant custom integration that brings official [MeteoSwiss Open Data](
 | `sensor.<location>_temperature`, `_humidity`, … | Station measurements (only those the station actually measures). |
 | `sensor.<location>_meteoswiss_symbol` | Current MeteoSwiss symbol code; attributes: HA condition, day/night, descriptions in 4 languages. Shows the matching pictogram. |
 | `sensor.<location>_weather_description` | Official MeteoSwiss description in the Home Assistant language. |
+| `sensor.<location>_birch_pollen`, `_grass_pollen`, … | Latest hourly pollen concentration (grains/m³); attributes: 24-hour mean, level, station. |
+| `sensor.<location>_pollen_level` | Highest pollen level (none, weak, moderate, strong, very strong) and dominant species. |
+| `sensor.<location>_avalanche_danger` | SLF avalanche danger of your region (low … very high, or no bulletin off-season); attributes: subdivision, elevation, avalanche problems, validity. |
+| `sensor.<location>_flood_danger`, `_forest_fire_danger`, `_drought_danger` | FOEN warning level of your region (low … very high). |
 
 ## Pictograms
 

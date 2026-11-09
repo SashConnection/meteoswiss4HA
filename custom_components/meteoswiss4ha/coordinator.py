@@ -20,6 +20,7 @@ from .api import (
     PollenMeasurement,
     Station,
 )
+from .cities import CITY_POINTS
 from .hazards import (
     DROUGHT_LAYER,
     FOREST_FIRE_LAYER,
@@ -203,6 +204,7 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
                 hourly_params=HOURLY_PARAMS if fetch_hourly else (),
                 hourly_hours=self._hourly_hours,
                 now=now,
+                extra_points=CITY_POINTS,
             )
         except MeteoSwissError as err:
             raise UpdateFailed(f"Error fetching forecast: {err}") from err
@@ -273,7 +275,7 @@ class HazardCoordinator(DataUpdateCoordinator[HazardData]):
         self.region_id: str | None = entry.options.get(CONF_AVALANCHE_REGION)
 
     async def _async_update_data(self) -> HazardData:
-        previous = self.data or HazardData(None, None, None)
+        previous = self.data or HazardData(None, None, None, None)
         errors: list[str] = []
 
         avalanche = previous.avalanche
@@ -298,10 +300,19 @@ class HazardCoordinator(DataUpdateCoordinator[HazardData]):
             except MeteoSwissError as err:
                 errors.append(f"{key}: {err}")
 
-        if len(errors) == 3:
+        flood = previous.flood
+        try:
+            flood = await self._client.async_get_flood(self.latitude, self.longitude)
+        except MeteoSwissError as err:
+            errors.append(f"flood: {err}")
+
+        if len(errors) == 4:
             raise UpdateFailed("; ".join(errors))
         for error in errors:
             _LOGGER.debug("Hazard source unavailable: %s", error)
         return HazardData(
-            avalanche=avalanche, forest_fire=levels["fire"], drought=levels["drought"]
+            avalanche=avalanche,
+            forest_fire=levels["fire"],
+            drought=levels["drought"],
+            flood=flood,
         )

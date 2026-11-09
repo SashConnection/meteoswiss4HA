@@ -127,6 +127,16 @@
           "high": "Gross",
           "very_high": "Sehr gross"
         }
+      },
+      "flood_danger": {
+        "name": "Hochwassergefahr",
+        "state": {
+          "low": "Gering",
+          "moderate": "Mässig",
+          "considerable": "Erheblich",
+          "high": "Gross",
+          "very_high": "Sehr gross"
+        }
       }
     }
   },

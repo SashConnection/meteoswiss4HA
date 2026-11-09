@@ -127,6 +127,16 @@
           "high": "High",
           "very_high": "Very high"
         }
+      },
+      "flood_danger": {
+        "name": "Flood danger",
+        "state": {
+          "low": "Low",
+          "moderate": "Moderate",
+          "considerable": "Considerable",
+          "high": "High",
+          "very_high": "Very high"
+        }
       }
     }
   },

@@ -130,6 +130,8 @@ class LocalForecast:
     reference_time: datetime
     daily: list[ForecastStep]
     hourly: list[ForecastStep]
+    # Daily forecast of other points (overview map), keyed by point.
+    others: dict[tuple[int, int], list[ForecastStep]] = field(default_factory=dict)
 
 
 def parse_timestamp(value: str) -> datetime:
@@ -350,27 +352,34 @@ class MeteoSwissClient:
                     )
         raise MeteoSwissDataError("No complete local forecast run found")
 
-    async def async_get_point_series(
+    async def async_get_points_series(
         self,
         url: str,
-        point: tuple[int, int],
+        points: Iterable[tuple[int, int]],
         until: datetime | None = None,
-    ) -> list[tuple[datetime, float | None]]:
-        """Stream one parameter file and return the values of a single point.
+    ) -> dict[tuple[int, int], list[tuple[datetime, float | None]]]:
+        """Stream one parameter file and return the values of the given points.
 
         Files contain every forecast point (~33 MB for hourly parameters) and
         are sorted by time first, so with ``until`` the download is stopped as
         soon as the requested horizon has been read.
         """
-        prefix = f"{point[0]};{point[1]};".encode()
-        series: list[tuple[datetime, float | None]] = []
+        points = list(points)
+        prefixes = {f"{p[0]};{p[1]};".encode(): p for p in points}
+        series: dict[tuple[int, int], list[tuple[datetime, float | None]]] = {
+            p: [] for p in points
+        }
         try:
             async with self._session.get(url, timeout=STREAM_TIMEOUT) as resp:
                 resp.raise_for_status()
                 async for raw_line in resp.content:
-                    if not raw_line.startswith(prefix):
+                    # "point_id;point_type_id;" is the line prefix.
+                    cut = raw_line.find(b";", raw_line.find(b";") + 1)
+                    point = prefixes.get(raw_line[: cut + 1]) if cut > 0 else None
+                    if point is None:
                         continue
-                    parts = raw_line.decode("latin-1").rstrip("\r\n").split(";")
+                    parts = raw_line.decode("latin-1").rstrip("
+").split(";")
                     if len(parts) < 4:
                         continue
                     timestamp = parse_timestamp(parts[2])
@@ -378,7 +387,7 @@ class MeteoSwissClient:
                         # Closing early aborts the rest of the download.
                         resp.close()
                         break
-                    series.append((timestamp, parse_float(parts[3])))
+                    series[point].append((timestamp, parse_float(parts[3])))
         except (aiohttp.ClientError, TimeoutError) as err:
             raise MeteoSwissConnectionError(f"Error fetching {url}: {err}") from err
         return series
@@ -390,34 +399,45 @@ class MeteoSwissClient:
         hourly_params: Iterable[str] = (),
         hourly_hours: int = 48,
         now: datetime | None = None,
+        extra_points: Iterable[tuple[int, int]] = (),
     ) -> LocalForecast:
-        """Download daily (and optionally hourly) forecasts for one point."""
+        """Download daily (and optionally hourly) forecasts for one point.
+
+        ``extra_points`` get the daily forecast too (read from the same files,
+        so at no extra download cost), e.g. for an overview map.
+        """
         now = now or datetime.now(UTC)
         daily_params = tuple(daily_params)
         hourly_params = tuple(hourly_params)
+        extra = [p for p in dict.fromkeys(extra_points) if p != point]
         run = await self.async_get_latest_run((*daily_params, *hourly_params), now)
         until = now + timedelta(hours=hourly_hours)
         semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
 
-        async def fetch(param: str, limit: datetime | None):
+        async def fetch(param: str, points: list[tuple[int, int]], limit: datetime | None):
             async with semaphore:
-                return param, await self.async_get_point_series(
-                    run.urls[param], point, limit
+                return param, await self.async_get_points_series(
+                    run.urls[param], points, limit
                 )
 
-        results = await asyncio.gather(
-            *(fetch(p, None) for p in daily_params),
-            *(fetch(p, until) for p in hourly_params),
+        daily = dict(
+            await asyncio.gather(*(fetch(p, [point, *extra], None) for p in daily_params))
         )
-        series = dict(results)
+        hourly = dict(
+            await asyncio.gather(*(fetch(p, [point], until) for p in hourly_params))
+        )
         return LocalForecast(
             reference_time=run.reference_time,
-            daily=_merge_series({p: series[p] for p in daily_params}),
+            daily=_merge_series({p: daily[p][point] for p in daily_params}),
             hourly=_merge_series(
-                {p: series[p] for p in hourly_params},
+                {p: hourly[p][point] for p in hourly_params},
                 # Keep the hour in progress (its timestamp is its end).
                 not_before=now - timedelta(hours=1),
             ),
+            others={
+                other: _merge_series({p: daily[p][other] for p in daily_params})
+                for other in extra
+            },
         )
 
 
