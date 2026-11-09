@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, replace
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -12,7 +12,15 @@ from homeassistant.helpers.sun import is_up
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
-from .api import CurrentConditions, LocalForecast, MeteoSwissClient, MeteoSwissError
+from .api import (
+    CurrentConditions,
+    LocalForecast,
+    MeteoSwissClient,
+    MeteoSwissError,
+    PollenMeasurement,
+    Station,
+)
+from .pollen import PollenData, summarize
 from .symbols import NIGHT_OFFSET, is_night_code
 from .const import (
     DAILY_SYMBOL,
@@ -31,6 +39,7 @@ from .const import (
     DEFAULT_HOURLY_INTERVAL,
     DOMAIN,
     FORECAST_UPDATE_INTERVAL,
+    POLLEN_UPDATE_INTERVAL,
     HOURLY_PARAMS,
 )
 
@@ -44,6 +53,51 @@ class MeteoSwissData:
     client: MeteoSwissClient
     current: CurrentCoordinator
     forecast: ForecastCoordinator
+    pollen: PollenCoordinator | None = None
+
+
+class PollenCoordinator(DataUpdateCoordinator[PollenData]):
+    """Fetch hourly pollen measurements of the nearest pollen station.
+
+    Today's values come from a small file polled every hour; the end of
+    yesterday (needed for the 24-hour mean) is read once a day.
+    """
+
+    config_entry: MeteoSwissConfigEntry
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: MeteoSwissConfigEntry,
+        client: MeteoSwissClient,
+        station: Station,
+    ) -> None:
+        """Initialize the coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=entry,
+            name=f"{DOMAIN} pollen {station.abbr}",
+            update_interval=POLLEN_UPDATE_INTERVAL,
+        )
+        self._client = client
+        self.station = station
+        self._recent: list[PollenMeasurement] = []
+        self._recent_day: date | None = None
+
+    async def _async_update_data(self) -> PollenData:
+        now = dt_util.utcnow()
+        try:
+            if self._recent_day != now.date():
+                recent = await self._client.async_get_pollen(self.station.abbr, recent=True)
+                self._recent = [r for r in recent if r.time > now - timedelta(hours=48)]
+                self._recent_day = now.date()
+            today = await self._client.async_get_pollen(self.station.abbr)
+        except MeteoSwissError as err:
+            raise UpdateFailed(f"Error fetching pollen data: {err}") from err
+        seen = {r.time for r in today}
+        rows = today + [r for r in self._recent if r.time not in seen]
+        return summarize(self.station.abbr, rows, now)
 
 
 type MeteoSwissConfigEntry = ConfigEntry[MeteoSwissData]

@@ -33,7 +33,13 @@ from .const import (
     ICON_PACKS,
     ICONS_URL,
 )
-from .coordinator import CurrentCoordinator, ForecastCoordinator, MeteoSwissConfigEntry
+from .coordinator import (
+    CurrentCoordinator,
+    ForecastCoordinator,
+    MeteoSwissConfigEntry,
+    PollenCoordinator,
+)
+from .pollen import LEVELS, SPECIES, PollenSpecies
 from .entity import MeteoSwissEntity
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
 from .symbols import symbol_to_condition
@@ -151,6 +157,9 @@ async def async_setup_entry(
     forecast = entry.runtime_data.forecast
     entities.append(SymbolSensor(forecast, entry))
     entities.append(DescriptionSensor(forecast, entry, hass.config.language))
+    if (pollen := entry.runtime_data.pollen) is not None:
+        entities.extend(PollenSensor(pollen, entry, species) for species in SPECIES)
+        entities.append(PollenLevelSensor(pollen, entry))
     async_add_entities(entities)
 
 
@@ -276,3 +285,96 @@ class DescriptionSensor(_SymbolBase):
         code = self._code
         texts = SYMBOL_DESCRIPTIONS.get(code) if code is not None else None
         return texts[self._index] if texts else None
+
+
+class PollenSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
+    """Latest hourly concentration of one pollen type."""
+
+    _attr_native_unit_of_measurement = "grains/m³"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(
+        self,
+        coordinator: PollenCoordinator,
+        entry: MeteoSwissConfigEntry,
+        species: PollenSpecies,
+    ) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, entry)
+        self._species = species
+        self._attr_translation_key = f"pollen_{species.key}"
+        self._attr_unique_id = f"{entry.entry_id}_pollen_{species.key}"
+        self._attr_icon = species.icon
+
+    @property
+    def available(self) -> bool:
+        """Available when data was received."""
+        return super().available and self.coordinator.data is not None
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the latest hourly concentration."""
+        if self.coordinator.data is None:
+            return None
+        return self.coordinator.data.latest.get(self._species.key)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the 24-hour mean, its level and the station."""
+        data = self.coordinator.data
+        if data is None:
+            return {}
+        level = data.level(self._species)
+        return {
+            "mean_24h": data.mean_24h.get(self._species.key),
+            "level": LEVELS[level] if level is not None else None,
+            "level_index": level,
+            "station": self.coordinator.station.abbr,
+            "station_name": self.coordinator.station.name,
+            "measured_at": data.measured_at.isoformat() if data.measured_at else None,
+        }
+
+
+class PollenLevelSensor(MeteoSwissEntity[PollenCoordinator], SensorEntity):
+    """Highest pollen level among all species (none .. very strong)."""
+
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = list(LEVELS)
+    _attr_translation_key = "pollen_level"
+    _attr_icon = "mdi:flower-pollen"
+
+    def __init__(self, coordinator: PollenCoordinator, entry: MeteoSwissConfigEntry) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, entry)
+        self._attr_unique_id = f"{entry.entry_id}_pollen_level"
+
+    @property
+    def available(self) -> bool:
+        """Available when data was received."""
+        return super().available and self.coordinator.data is not None
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the highest level."""
+        if self.coordinator.data is None:
+            return None
+        level, _ = self.coordinator.data.overall()
+        return LEVELS[level] if level is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the dominant species and every species level."""
+        data = self.coordinator.data
+        if data is None:
+            return {}
+        level, dominant = data.overall()
+        attrs: dict[str, Any] = {
+            "level_index": level,
+            "dominant": dominant,
+            "station": self.coordinator.station.abbr,
+            "station_name": self.coordinator.station.name,
+        }
+        for species in SPECIES:
+            index = data.level(species)
+            attrs[species.key] = LEVELS[index] if index is not None else None
+        return attrs

@@ -65,6 +65,37 @@
       },
       "description": {
         "name": "Description météo"
+      },
+      "pollen_hazel": {
+        "name": "Pollen de noisetier"
+      },
+      "pollen_alder": {
+        "name": "Pollen d’aulne"
+      },
+      "pollen_birch": {
+        "name": "Pollen de bouleau"
+      },
+      "pollen_ash": {
+        "name": "Pollen de frêne"
+      },
+      "pollen_beech": {
+        "name": "Pollen de hêtre"
+      },
+      "pollen_oak": {
+        "name": "Pollen de chêne"
+      },
+      "pollen_grasses": {
+        "name": "Pollen de graminées"
+      },
+      "pollen_level": {
+        "name": "Niveau de pollen",
+        "state": {
+          "none": "Aucun",
+          "weak": "Faible",
+          "moderate": "Moyen",
+          "strong": "Fort",
+          "very_strong": "Très fort"
+        }
       }
     }
   },

@@ -65,6 +65,37 @@
       },
       "description": {
         "name": "Wetterbeschreibung"
+      },
+      "pollen_hazel": {
+        "name": "Haselpollen"
+      },
+      "pollen_alder": {
+        "name": "Erlenpollen"
+      },
+      "pollen_birch": {
+        "name": "Birkenpollen"
+      },
+      "pollen_ash": {
+        "name": "Eschenpollen"
+      },
+      "pollen_beech": {
+        "name": "Buchenpollen"
+      },
+      "pollen_oak": {
+        "name": "Eichenpollen"
+      },
+      "pollen_grasses": {
+        "name": "Gräserpollen"
+      },
+      "pollen_level": {
+        "name": "Pollenbelastung",
+        "state": {
+          "none": "Keine",
+          "weak": "Schwach",
+          "moderate": "Mässig",
+          "strong": "Stark",
+          "very_strong": "Sehr stark"
+        }
       }
     }
   },

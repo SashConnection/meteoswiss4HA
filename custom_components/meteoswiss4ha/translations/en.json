@@ -65,6 +65,37 @@
       },
       "description": {
         "name": "Weather description"
+      },
+      "pollen_hazel": {
+        "name": "Hazel pollen"
+      },
+      "pollen_alder": {
+        "name": "Alder pollen"
+      },
+      "pollen_birch": {
+        "name": "Birch pollen"
+      },
+      "pollen_ash": {
+        "name": "Ash pollen"
+      },
+      "pollen_beech": {
+        "name": "Beech pollen"
+      },
+      "pollen_oak": {
+        "name": "Oak pollen"
+      },
+      "pollen_grasses": {
+        "name": "Grass pollen"
+      },
+      "pollen_level": {
+        "name": "Pollen level",
+        "state": {
+          "none": "None",
+          "weak": "Weak",
+          "moderate": "Moderate",
+          "strong": "Strong",
+          "very_strong": "Very strong"
+        }
       }
     }
   },

@@ -33,6 +33,9 @@ POINT_TYPE_STATION = 1
 POINT_TYPE_POSTAL_CODE = 2
 POINT_TYPE_MOUNTAIN = 3
 
+POLLEN_BASE_URL = f"{BASE_URL}/ch.meteoschweiz.ogd-pollen"
+POLLEN_STATIONS_META_URL = f"{POLLEN_BASE_URL}/ogd-pollen_meta_stations.csv"
+
 STAC_ITEMS_URL = (
     f"{BASE_URL}/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items"
 )
@@ -81,6 +84,14 @@ class ForecastPoint:
     altitude: float | None
     latitude: float
     longitude: float
+
+
+@dataclass(frozen=True, slots=True)
+class PollenMeasurement:
+    """Hourly pollen concentrations (grains/m³) keyed by parameter id."""
+
+    time: datetime
+    values: dict[str, float | None]
 
 
 @dataclass(slots=True)
@@ -179,6 +190,26 @@ def parse_current_csv(text: str) -> dict[str, CurrentConditions]:
     return result
 
 
+def parse_pollen_csv(text: str) -> list[PollenMeasurement]:
+    """Parse an hourly pollen file (timestamps "DD.MM.YYYY HH:MM", UTC)."""
+    reader = csv.DictReader(io.StringIO(text), delimiter=";")
+    result: list[PollenMeasurement] = []
+    for row in reader:
+        try:
+            time = datetime.strptime(
+                (row.get("reference_timestamp") or "").strip(), "%d.%m.%Y %H:%M"
+            ).replace(tzinfo=UTC)
+        except ValueError:
+            continue
+        values = {
+            key: parse_float(value)
+            for key, value in row.items()
+            if key not in ("station_abbr", "reference_timestamp")
+        }
+        result.append(PollenMeasurement(time=time, values=values))
+    return result
+
+
 def parse_stations_csv(text: str) -> list[Station]:
     """Parse the SwissMetNet station metadata file."""
     reader = csv.DictReader(io.StringIO(text), delimiter=";")
@@ -259,6 +290,28 @@ class MeteoSwissClient:
     async def async_get_points(self) -> list[ForecastPoint]:
         """Return local forecast point metadata."""
         return parse_points_csv(await self._get_text(POINTS_META_URL, "latin-1"))
+
+    # ------------------------------------------------------------------
+    # Pollen
+    # ------------------------------------------------------------------
+
+    async def async_get_pollen_stations(self) -> list[Station]:
+        """Return the pollen monitoring stations."""
+        return parse_stations_csv(
+            await self._get_text(POLLEN_STATIONS_META_URL, "cp1252")
+        )
+
+    async def async_get_pollen(
+        self, station: str, recent: bool = False
+    ) -> list[PollenMeasurement]:
+        """Return hourly pollen concentrations of a station.
+
+        ``recent=False`` returns today's values (small file, updated hourly);
+        ``recent=True`` returns the current year up to yesterday (~300 kB).
+        """
+        period = "recent" if recent else "now"
+        url = f"{POLLEN_BASE_URL}/{station.lower()}/ogd-pollen_{station.lower()}_h_{period}.csv"
+        return parse_pollen_csv(await self._get_text(url, "cp1252"))
 
     # ------------------------------------------------------------------
     # Local forecast
