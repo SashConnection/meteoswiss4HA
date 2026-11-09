@@ -2,7 +2,7 @@
   "domain": "meteoswiss4ha",
   "name": "MeteoSwiss Open Data",
   "codeowners": ["@SashConnection"],
-  "config_flow": false,
+  "config_flow": true,
   "dependencies": ["http"],
   "documentation": "https://github.com/SashConnection/meteoswiss4HA",
   "integration_type": "service",

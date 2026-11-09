@@ -1,0 +1,65 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MeteoSchweiz Open Data",
+        "description": "Wählen Sie die SwissMetNet-Station für die aktuellen Werte (nach Entfernung sortiert) und die Postleitzahl für die Lokalprognose.",
+        "data": {
+          "station": "Messstation",
+          "postal_code": "Postleitzahl (Prognose)"
+        }
+      }
+    },
+    "error": {
+      "unknown_station": "Unbekannte Station.",
+      "unknown_postal_code": "Kein MeteoSchweiz-Prognosepunkt für diese Postleitzahl."
+    },
+    "abort": {
+      "cannot_connect": "MeteoSchweiz Open Data nicht erreichbar.",
+      "already_configured": "Diese Station und Postleitzahl sind bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "dew_point": {
+        "name": "Taupunkt"
+      },
+      "precipitation": {
+        "name": "Niederschlag (10 min)"
+      },
+      "sunshine": {
+        "name": "Sonnenscheindauer (10 min)"
+      },
+      "global_radiation": {
+        "name": "Globalstrahlung"
+      },
+      "wind_speed": {
+        "name": "Windgeschwindigkeit"
+      },
+      "wind_gust": {
+        "name": "Windböen"
+      },
+      "wind_bearing": {
+        "name": "Windrichtung"
+      },
+      "pressure_qff": {
+        "name": "Luftdruck (QFF)"
+      },
+      "pressure_qnh": {
+        "name": "Luftdruck (QNH)"
+      },
+      "pressure_qfe": {
+        "name": "Luftdruck Station (QFE)"
+      },
+      "measured_at": {
+        "name": "Messzeit"
+      }
+    }
+  }
+}
