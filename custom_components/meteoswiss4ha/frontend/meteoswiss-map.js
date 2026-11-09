@@ -36,8 +36,8 @@ const RAIN_SCALE = [
   ["#9a7e95", "0.1 – 1"], ["#0001fc", "1 – 2"], ["#058c2d", "2 – 4"], ["#05ff05", "4 – 6"],
   ["#feff01", "6 – 10"], ["#ffc703", "10 – 20"], ["#ff7d01", "20 – 40"], ["#ff1900", "> 40"],
 ];
-const FRAME_MS = 700;   // time per radar frame
-const FADE_MS = 450;    // cross-fade between frames
+const FRAME_MS = 350;   // time per radar frame (3 hours ≈ 13 s)
+const FADE_MS = 250;    // cross-fade between frames
 
 const LINKS = {
   fr: { hazards: "https://www.dangers-naturels.ch", avalanche: "https://www.slf.ch/fr/" },
@@ -54,7 +54,7 @@ const I18N = {
       weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
-    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
+    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, 3 dernières heures, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
     pollenLevels: ["Aucun", "Faible", "Moyen", "Fort", "Très fort"],
@@ -69,7 +69,7 @@ const I18N = {
       weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
-    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
+    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte 3 Stunden, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
     pollenLevels: ["Keine", "Schwach", "Mässig", "Stark", "Sehr stark"],
@@ -84,7 +84,7 @@ const I18N = {
       weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
-    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
+    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultime 3 ore, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
     pollenLevels: ["Nessuno", "Debole", "Moderato", "Forte", "Molto forte"],
@@ -99,7 +99,7 @@ const I18N = {
       weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
-    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
+    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last 3 hours, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
     pollenLevels: ["None", "Weak", "Moderate", "Strong", "Very strong"],
@@ -608,7 +608,7 @@ class MeteoSwissMap {
       const n = this._radarFrames?.length || 0;
       if (!n) return;
       // Pause a little on the latest frame before looping.
-      if (this._frame === n - 1 && (this._hold = (this._hold || 0) + 1) < 3) return;
+      if (this._frame === n - 1 && (this._hold = (this._hold || 0) + 1) < 6) return;
       this._hold = 0;
       this._showFrame((this._frame + 1) % n);
     }, FRAME_MS);

@@ -3,9 +3,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const missing = `// Radar frames of the last hour (one every 5 minutes) not yet converted.
+const missing = `// Radar frames of the last 3 hours (one every 5 minutes) not yet converted.
 // File names are predictable: rzc<YY><day of year><HHMM>vl.001.h5 (UTC).
-const KEEP = 12;            // frames kept (1 hour)
+const KEEP = 36;            // frames kept (3 hours)
 const DELAY_MIN = 7;        // publication delay
 flow.set("radarLastRun", new Date().toISOString());
 const frames = flow.get("radarFrames") || {};
