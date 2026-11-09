@@ -54,7 +54,7 @@ const I18N = {
       weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
-    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", levels: "Degrés de danger", updated: "Mise à jour le",
+    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", radarSetup: "Radar non configuré : indiquez l’URL du serveur radar dans Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Affichage.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
     pollenLevels: ["Aucun", "Faible", "Moyen", "Fort", "Très fort"],
@@ -69,7 +69,7 @@ const I18N = {
       weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
-    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
+    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", radarSetup: "Radar nicht eingerichtet: URL des Radar-Servers unter Einstellungen → Geräte & Dienste → MeteoSwiss Complete For HA → Konfigurieren → Anzeige eintragen.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
     pollenLevels: ["Keine", "Schwach", "Mässig", "Stark", "Sehr stark"],
@@ -84,7 +84,7 @@ const I18N = {
       weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
-    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", levels: "Gradi di pericolo", updated: "Aggiornato il",
+    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", radarSetup: "Radar non configurato: inserire l’URL del server radar in Impostazioni → Dispositivi e servizi → MeteoSwiss Complete For HA → Configura → Visualizzazione.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
     pollenLevels: ["Nessuno", "Debole", "Moderato", "Forte", "Molto forte"],
@@ -99,7 +99,7 @@ const I18N = {
       weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
-    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", levels: "Danger levels", updated: "Updated",
+    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", radarSetup: "Radar not set up: enter the radar server URL in Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Display.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
     pollenLevels: ["None", "Weak", "Moderate", "Strong", "Very strong"],
@@ -133,6 +133,12 @@ const STYLE = `
 .toolbar button { position: relative; width: 48px; height: 46px; border: 0; background: transparent; color: #fff;
   cursor: pointer; display: flex; align-items: center; justify-content: center; border-top: 4px solid #8a949c; }
 .toolbar button.on { background: #3d4d59; }
+.wrap.narrow .toolbar { left: 8px; max-width: calc(100% - 16px); overflow-x: auto; }
+.wrap.narrow .toolbar button { width: 40px; flex: 0 0 40px; }
+.wrap.narrow .heading { left: 12px; top: 66px; font-size: 16px; }
+.wrap.narrow .tabs { overflow-x: auto; }
+.wrap.narrow .tabs button { flex: 1 0 auto; padding: 10px 8px; font-size: 14px; }
+.toolbar button.menu { border-top-color: transparent; border-right: 1px solid #3d4d59; }
 .toolbar button ha-icon, .toolbar button .fallback { --mdc-icon-size: 22px; font-size: 13px; }
 .heading { position: absolute; z-index: 600; left: 20px; top: 74px; font-size: 18px; font-weight: 700;
   text-shadow: 0 1px 3px rgba(0,0,0,.8); pointer-events: none; }
@@ -251,8 +257,11 @@ class MeteoSwissMap {
     this.map.on("zoomend", () => this._render());
 
     new ResizeObserver(() => {
-      this.wrap.classList.toggle("narrow", this.wrap.clientWidth < 900);
+      const narrow = this.wrap.clientWidth < 900;
+      const changed = narrow !== this.wrap.classList.contains("narrow");
+      this.wrap.classList.toggle("narrow", narrow);
       this.map.invalidateSize();
+      if (changed) this._render(); // day names, legend placement
     }).observe(this.wrap);
   }
 
@@ -294,15 +303,26 @@ class MeteoSwissMap {
     this.map.remove();
   }
 
+  set narrow(narrow) {
+    this._narrowPanel = !!narrow;
+    if (this.toolbar) this.toolbar.dataset.layers = ""; // rebuild with/without menu button
+    if (this.data) this._toolbar();
+  }
+
   _toolbar() {
-    const shown = (this.options.layers || LAYERS).filter((l) => l !== "radar" || this.data?.radar);
-    if (this.toolbar.dataset.layers !== shown.join()) {
-      this.toolbar.dataset.layers = shown.join();
+    const shown = this.options.layers || LAYERS;
+    const menu = this.options.menuButton && this._narrowPanel;
+    const key = shown.join() + (menu ? "+menu" : "");
+    if (this.toolbar.dataset.layers !== key) {
+      this.toolbar.dataset.layers = key;
       const hasIcon = !!customElements.get("ha-icon");
-      this.toolbar.innerHTML = shown.map((l) => `<button data-layer="${l}" title="${this.t.layer[l]}">${
-        hasIcon ? `<ha-icon icon="${ICONS[l]}"></ha-icon>` : `<span class="fallback">${this.t.layer[l].slice(0, 3)}</span>`
-      }</button>`).join("");
-      this.toolbar.querySelectorAll("button").forEach((b) =>
+      const icon = (name, text) =>
+        hasIcon ? `<ha-icon icon="${name}"></ha-icon>` : `<span class="fallback">${text}</span>`;
+      this.toolbar.innerHTML = (menu ? `<button class="menu" title="Menu">${icon("mdi:menu", "☰")}</button>` : "") +
+        shown.map((l) => `<button data-layer="${l}" title="${this.t.layer[l]}">${icon(ICONS[l], this.t.layer[l].slice(0, 3))}</button>`).join("");
+      this.toolbar.querySelector(".menu")?.addEventListener("click", () =>
+        this.root.host?.dispatchEvent(new Event("hass-toggle-menu", { bubbles: true, composed: true })));
+      this.toolbar.querySelectorAll("button[data-layer]").forEach((b) =>
         b.addEventListener("click", () => {
           this.layer = b.dataset.layer;
           this._render();
@@ -310,7 +330,7 @@ class MeteoSwissMap {
     }
     // Colored top bar: highest current level of each hazard in Switzerland.
     const max = this.data?.maxima || {};
-    this.toolbar.querySelectorAll("button").forEach((b) => {
+    this.toolbar.querySelectorAll("button[data-layer]").forEach((b) => {
       const l = b.dataset.layer;
       b.classList.toggle("on", l === this.layer);
       const level = max[l];
@@ -395,12 +415,13 @@ class MeteoSwissMap {
   }
 
   _dayTabs(days) {
-    const key = days.map((d) => d.date).join();
+    const narrow = this.wrap.classList.contains("narrow");
+    const key = days.map((d) => d.date).join() + narrow;
     if (this._tabsKey !== key) {
       this._tabsKey = key;
       this.tabs.innerHTML = days.map((d, i) => `<button data-day="${i}">${
         i === 0 ? this.t.today
-          : new Date(`${d.date}T12:00:00`).toLocaleDateString(lang(this._hass), { weekday: "long" })
+          : new Date(`${d.date}T12:00:00`).toLocaleDateString(lang(this._hass), { weekday: narrow ? "short" : "long" })
       }</button>`).join("");
       this.tabs.querySelectorAll("button").forEach((b) =>
         b.addEventListener("click", () => {
@@ -504,6 +525,14 @@ class MeteoSwissMap {
     const rows = RAIN_SCALE.map(([c, l]) => `<div class="row"><i style="background:${c}"></i><span>${l}</span></div>`).join("");
     this.side.hidden = false;
     this.side.innerHTML = `<h2>${this.t.legend}</h2><h3>${this.t.rain}</h3>${rows}<p class="extra">${this.t.radarNote}</p>`;
+    if (!this.data.radar) {
+      // No radar server configured in the integration options.
+      this._clearRadar();
+      this.player.hidden = true;
+      this.note.hidden = false;
+      this.note.textContent = this.t.radarSetup;
+      return;
+    }
     if (this._radarFrames && Date.now() - this._radarLoaded < 4 * 60000) return; // still fresh
     let list;
     try {
@@ -638,8 +667,14 @@ class MeteoSwissMap {
 
 class MeteoSwissPanel extends HTMLElement {
   connectedCallback() {
+    // A custom panel gets no height from its container: take the full window.
+    this.style.display = "block";
+    this.style.height = "100vh";
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
-    if (!this._map) this._map = new MeteoSwissMap(this.shadowRoot);
+    if (!this._map) {
+      this._map = new MeteoSwissMap(this.shadowRoot, { menuButton: true });
+      this._map.narrow = this._narrow;
+    }
     if (this._hass) this._map.hass = this._hass;
   }
   disconnectedCallback() {
@@ -652,7 +687,11 @@ class MeteoSwissPanel extends HTMLElement {
     if (this._map) this._map.hass = hass;
   }
   set panel(_p) {}
-  set narrow(_n) {}
+  set narrow(narrow) {
+    // HA hides the sidebar on narrow screens: show a menu button instead.
+    this._narrow = narrow;
+    if (this._map) this._map.narrow = narrow;
+  }
 }
 
 class MeteoSwissMapCard extends HTMLElement {
