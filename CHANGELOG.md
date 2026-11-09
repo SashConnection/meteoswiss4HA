@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.9
+
+- Monument pictograms: a line drawing of the best-known monument of each of the 31 towns of the map (and the summits), on the map labels and next to the place name in the cards.
+
 ## 2026.11.8
 
 - Watched places (postal codes or place names) and followed persons: weather warning sensors for each.

@@ -13,6 +13,8 @@
 // of measurements chosen one by one, an hourly chart (temperature with its
 // 10-90 % band, precipitation) and daily columns.
 
+import { monument } from "./meteoswiss-monuments.js";
+
 const DOMAIN = "meteoswiss4ha";
 
 // Measurements that can be shown in the grid, in their default order.
@@ -94,7 +96,8 @@ const findEntity = (hass) =>
 
 const STYLE = `
 ha-card { padding: 14px; overflow: hidden; }
-.title { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+.title { font-size: 20px; font-weight: 600; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+.title svg.monument { width: 28px; height: 28px; flex: 0 0 28px; color: var(--secondary-text-color); }
 .head { display: flex; align-items: center; gap: 14px; cursor: pointer; }
 .head img { width: 120px; height: 120px; flex: 0 0 120px; margin: -10px -6px -10px -10px; }
 .head .mid { flex: 1; min-width: 0; }
@@ -311,7 +314,7 @@ class MeteoSwissWeatherCard extends HTMLElement {
       const title = c.name || (a.altitude != null ? `${place}, ${num(a.altitude)} ${t.altitude}` : place);
       const cond = this._hass.formatEntityState ? this._hass.formatEntityState(st) : st.state;
       const station = a.station ? `${t.station} ${esc(a.station)}${a.measured_at ? ` · ${time(a.measured_at)}` : ""}` : "";
-      parts.push(`<div class="title">${esc(title)}</div>
+      parts.push(`<div class="title">${c.monument === false ? "" : monument(a.location)}${esc(title)}</div>
         <div class="head">${img(a.meteoswiss_symbol)}<div class="mid"><div class="cond">${esc(cond)}</div><div class="st">${station}</div></div>
         <div class="temp">${num(a.temperature, 1)}<small>${esc(a.temperature_unit || "°C")}</small></div></div>`);
     }

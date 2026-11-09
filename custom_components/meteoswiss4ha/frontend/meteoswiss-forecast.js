@@ -11,6 +11,8 @@
 // Pictograms come from the pack chosen in the integration options (the
 // weather entity exposes its base URL in the "icons_url" attribute).
 
+import { monument } from "./meteoswiss-monuments.js";
+
 const DOMAIN = "meteoswiss4ha";
 
 const T = {
@@ -47,7 +49,8 @@ ha-card { padding: 16px; overflow: hidden; }
 .cur { display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .cur img { width: 96px; height: 96px; flex: 0 0 96px; margin: -8px 0; }
 .cur .main { flex: 1; min-width: 0; }
-.cur .name { color: var(--secondary-text-color); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cur .name { color: var(--secondary-text-color); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+.cur .name svg.monument { width: 20px; height: 20px; flex: 0 0 20px; }
 .cur .cond { font-size: 18px; margin-top: 2px; }
 .cur .temp { font-size: 44px; font-weight: 300; line-height: 1; white-space: nowrap; }
 .cur .temp small { font-size: 20px; vertical-align: top; }
@@ -156,7 +159,7 @@ class MeteoSwissForecastCard extends HTMLElement {
         a.pressure != null && `${t.pressure} <b>${num(a.pressure)} ${esc(a.pressure_unit || "")}</b>`,
       ].filter(Boolean).join("")}</div>`;
       parts.push(`<div class="sec"><div class="cur">${img(a.meteoswiss_symbol, cond)}
-        <div class="main"><div class="name">${esc(c.name || a.friendly_name)}</div><div class="cond">${esc(cond)}</div></div>
+        <div class="main"><div class="name">${c.monument === false ? "" : monument(a.location)}${esc(c.name || a.friendly_name)}</div><div class="cond">${esc(cond)}</div></div>
         <div class="temp">${num(a.temperature, 1)}<small>${esc(a.temperature_unit || "°C")}</small></div></div>${details}</div>`);
     }
 

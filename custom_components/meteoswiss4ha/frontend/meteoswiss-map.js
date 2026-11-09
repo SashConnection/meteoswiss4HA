@@ -10,6 +10,7 @@
 
 import * as L from "./leaflet/leaflet-src.esm.js";
 import "./meteoswiss-forecast.js";
+import { monument } from "./meteoswiss-monuments.js";
 import "./meteoswiss-weather-card.js";
 import "./meteoswiss-pollen-card.js";
 import "./meteoswiss-app-cards.js";
@@ -203,7 +204,8 @@ const STYLE = `
 .pill.home { background: #f57c00; }
 .pill img { position: absolute; left: -30px; top: 50%; transform: translateY(-58%); width: 50px; height: 50px;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
-.pill .n { font-weight: 600; }
+.pill .n { font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.pill .n svg.monument { width: 17px; height: 17px; flex: 0 0 17px; }
 .pill .t { display: flex; gap: 3px; margin-top: 3px; }
 .pill .t span { min-width: 26px; text-align: center; padding: 1px 4px; border-radius: 4px; background: rgba(0,0,0,.28); font-weight: 600; }
 .place { white-space: nowrap; font-size: 14px; color: #263238; font-weight: 500;
@@ -567,7 +569,7 @@ class MeteoSwissMap {
       if (!d || d.symbol == null) continue;
       const html = `<div class="pill ${place.kind || "city"}">
         <img src="${this.data.icons_url}/${d.symbol}.svg" alt="">
-        <span class="n">${place.name}</span>
+        <span class="n">${this.options.monuments === false ? "" : monument(place.name)}${place.name}</span>
         <span class="t"><span>${round(d.tmin)}</span><span>${round(d.tmax)}</span></span></div>`;
       draw.push(L.marker([place.lat, place.lon], {
         icon: L.divIcon({ html, className: "", iconSize: null, iconAnchor: [22, 22] }),

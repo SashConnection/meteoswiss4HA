@@ -11,6 +11,8 @@
 //
 // All: entity (optional), language (auto, de, fr, it, rm, en). Dark design.
 
+import { monument } from "./meteoswiss-monuments.js";
+
 const DOMAIN = "meteoswiss4ha";
 const DANGER = ["#9e9e9e", "#ccff66", "#ffff00", "#ff9900", "#ff0000", "#8b0000"];
 const RAIN_SCALE = ["#9a7e95", "#0001fc", "#058c2d", "#05ff05", "#feff01", "#ffc703", "#ff7d01", "#ff1900"];
@@ -150,12 +152,13 @@ class MeteoSwissNowCard extends ForecastMixin {
     const chart = this._config.show_chart !== false && hours.length > 1 ? `<div class="chart">${this._chart(hours, a.icons_url, loc)}</div>` : "";
     root.innerHTML = `<style>${BASE_STYLE}
       .hero { position: relative; padding: 22px 22px 8px; min-height: 210px; cursor: pointer; }
-      .place { font-size: 30px; font-weight: 700; line-height: 1.1; max-width: 60%; }
+      .place { font-size: 30px; font-weight: 700; line-height: 1.1; max-width: 60%; display: flex; align-items: center; gap: 8px; }
+      .place svg.monument { width: 34px; height: 34px; flex: 0 0 34px; opacity: .9; }
       .cond { font-size: 20px; margin-top: 6px; max-width: 60%; }
       .temp { position: absolute; left: 22px; bottom: 14px; font-size: 32px; font-weight: 700; }
       .big { position: absolute; right: 6px; top: 6px; width: 200px; height: 200px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
       .chart { margin: 0 12px 14px; }
-    </style><ha-card><div class="hero"><div class="place">${esc(this._config.name || a.location || a.friendly_name)}</div>
+    </style><ha-card><div class="hero"><div class="place">${this._config.monument === false ? "" : monument(a.location || this._config.name)}${esc(this._config.name || a.location || a.friendly_name)}</div>
       <div class="cond">${esc(cond)}</div><div class="temp">${temp}</div>${icon}</div>${chart}</ha-card>`;
     root.querySelector(".hero").addEventListener("click", () =>
       this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: this._entity } })));
@@ -249,7 +252,8 @@ class MeteoSwissDaysCard extends ForecastMixin {
     }).join("");
     root.innerHTML = `<style>${BASE_STYLE}
       ha-card { background: #1c1f24; border-radius: 22px; }
-      .title { font-size: 26px; font-weight: 700; padding: 18px 20px 6px; }
+      .title { font-size: 26px; font-weight: 700; padding: 18px 20px 6px; display: flex; align-items: center; gap: 8px; }
+      .title svg.monument { width: 30px; height: 30px; flex: 0 0 30px; opacity: .9; }
       .wrap { overflow-x: auto; scrollbar-width: none; }
       .wrap::-webkit-scrollbar { display: none; }
       .inner { width: 100%; min-width: ${days.length * 58}px; }
@@ -260,7 +264,7 @@ class MeteoSwissDaysCard extends ForecastMixin {
       .d img { width: 46px; height: 46px; margin: 2px 0; }
       .mm { font-size: 14px; color: #bdbdbd; white-space: nowrap; }
       svg { display: block; width: 100%; height: 140px; }
-    </style><ha-card><div class="title">${esc(this._config.name || a.location || a.friendly_name)}</div>
+    </style><ha-card><div class="title">${this._config.monument === false ? "" : monument(a.location || this._config.name)}${esc(this._config.name || a.location || a.friendly_name)}</div>
       <div class="wrap"><div class="inner"><div class="head">${head}</div>
       <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${p.join("")}</svg></div></div></ha-card>`;
   }

@@ -42,6 +42,12 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 
 Add them with **Edit dashboard → Add card → search "MeteoSwiss"**. Every setting is in the card editor: no YAML needed.
 
+## A monument for every town
+
+Each town of the map has its own line pictogram of its best-known monument — the Zytglogge in Bern, the Jet d’eau in Geneva, the Kapellbrücke in Lucerne, the Matterhorn in Zermatt… They appear on the map labels and next to the place name in the cards (option `monument: false` to hide them).
+
+![Monuments](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/monuments.png)
+
 ## Five languages
 
 Everything — settings, entities, cards and map — speaks **Deutsch, Français, Italiano, Rumantsch and English**. By default the cards follow the Home Assistant language; each card can also be set to another one.

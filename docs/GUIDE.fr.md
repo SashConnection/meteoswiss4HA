@@ -21,6 +21,12 @@ Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à pro
 | 🗺️ **Carte de la Suisse** | Tout cela sur une carte, ou zoomé sur votre région |
 | 📍 **Vos lieux** | Alertes pour d’autres lieux (p. ex. Berne, Cernier) et **là où vous êtes** (suit votre téléphone), avec des déclencheurs d’automatisation prêts à l’emploi |
 
+## Un monument pour chaque ville
+
+Chaque ville de la carte a son pictogramme dessiné de son monument le plus connu : la Zytglogge à Berne, le Jet d’eau à Genève, la Kapellbrücke à Lucerne, le château et la Collégiale à Neuchâtel, le Cervin à Zermatt… Ils apparaissent sur les étiquettes de la carte et à côté du nom du lieu dans les panneaux (option `monument: false` pour les masquer).
+
+![Monuments](images/monuments.png)
+
 ## Cinq langues
 
 Tout — réglages, entités, cartes et carte de la Suisse — existe en **Deutsch, Français, Italiano, Rumantsch et English**. Les cartes suivent la langue de Home Assistant ; chaque carte peut aussi être réglée sur une autre langue.
