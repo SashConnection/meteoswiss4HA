@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.4
+
+- Logo: Swiss flag added.
+
 ## 2026.11.3
 
 - Integration logo (original artwork), shown by Home Assistant 2026.3 and newer.
