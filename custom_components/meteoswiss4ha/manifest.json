@@ -15,5 +15,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/SashConnection/meteoswiss4HA/issues",
   "requirements": [],
-  "version": "2026.01.4"
+  "version": "2026.01.5"
 }

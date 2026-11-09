@@ -26,6 +26,7 @@ from .api import (
     POINT_TYPE_POSTAL_CODE,
     MeteoSwissClient,
     MeteoSwissError,
+    normalize_radar_url,
 )
 from .cities import CITIES, MOUNTAINS
 from .const import (
@@ -120,7 +121,7 @@ class _BaseView(HomeAssistantView):
 
 
 def _radar_url(entry) -> str | None:
-    return entry.options.get(CONF_RADAR_URL) if entry else None
+    return normalize_radar_url(entry.options.get(CONF_RADAR_URL)) if entry else None
 
 
 class RadarFramesView(_BaseView):

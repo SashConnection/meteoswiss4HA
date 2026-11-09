@@ -35,6 +35,7 @@ from .api import (
     ForecastPoint,
     MeteoSwissClient,
     MeteoSwissError,
+    normalize_radar_url,
     Station,
     distance_km,
 )
@@ -256,7 +257,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
                 {
                     CONF_ICON_PACK: user_input[CONF_ICON_PACK],
                     # Empty means: no radar server.
-                    CONF_RADAR_URL: (user_input.get(CONF_RADAR_URL) or "").strip().rstrip("/")
+                    CONF_RADAR_URL: normalize_radar_url(user_input.get(CONF_RADAR_URL))
                     or AUTO,
                 }
             )

@@ -134,6 +134,22 @@ class LocalForecast:
     others: dict[tuple[int, int], list[ForecastStep]] = field(default_factory=dict)
 
 
+def normalize_radar_url(url: str | None) -> str | None:
+    """Base URL of the radar server, whatever endpoint was pasted.
+
+    "https://host/endpoint/meteoswiss/radar/status" (or /frames, /frame?…)
+    becomes "https://host/endpoint/meteoswiss/radar".
+    """
+    if not url:
+        return None
+    url = url.strip().split("?", 1)[0].rstrip("/")
+    for suffix in ("/status", "/frames", "/frame"):
+        if url.endswith(suffix):
+            url = url[: -len(suffix)]
+            break
+    return url or None
+
+
 def parse_timestamp(value: str) -> datetime:
     """Parse a MeteoSwiss timestamp (YYYYMMDDHHMM, UTC)."""
     try:

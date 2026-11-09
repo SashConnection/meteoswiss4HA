@@ -54,7 +54,7 @@ const I18N = {
       weather: "Prévisions météo", radar: "Radar des précipitations", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
       drought: "Danger de sécheresse", avalanche: "Danger d’avalanches", pollen: "Pollen (mesures)",
     },
-    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Aucune image radar disponible pour le moment.", levels: "Degrés de danger", updated: "Mise à jour le",
+    legend: "Légende", rain: "Intensité (mm/h)", radarNote: "Radar MétéoSuisse, dernière heure, une image toutes les 5 minutes.", noRadar: "Le radar n’est pas disponible pour le moment.", levels: "Degrés de danger", updated: "Mise à jour le",
     explain: "Explication des degrés de danger", bulletin: "Bulletin d’avalanches (SLF)",
     danger: ["Pas de bulletin", "Aucun danger ou faible danger", "Danger limité", "Danger marqué", "Fort danger", "Très fort danger"],
     pollenLevels: ["Aucun", "Faible", "Moyen", "Fort", "Très fort"],
@@ -69,7 +69,7 @@ const I18N = {
       weather: "Wetterprognose", radar: "Niederschlagsradar", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
       drought: "Trockenheitsgefahr", avalanche: "Lawinengefahr", pollen: "Pollen (Messungen)",
     },
-    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Zurzeit keine Radarbilder verfügbar.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
+    legend: "Legende", rain: "Intensität (mm/h)", radarNote: "MeteoSchweiz-Radar, letzte Stunde, ein Bild alle 5 Minuten.", noRadar: "Das Radar ist im Moment nicht verfügbar.", levels: "Gefahrenstufen", updated: "Aktualisiert am",
     explain: "Erklärung der Gefahrenstufen", bulletin: "Lawinenbulletin (SLF)",
     danger: ["Kein Bulletin", "Keine oder geringe Gefahr", "Mässige Gefahr", "Erhebliche Gefahr", "Grosse Gefahr", "Sehr grosse Gefahr"],
     pollenLevels: ["Keine", "Schwach", "Mässig", "Stark", "Sehr stark"],
@@ -84,7 +84,7 @@ const I18N = {
       weather: "Previsioni meteo", radar: "Radar delle precipitazioni", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
       drought: "Pericolo di siccità", avalanche: "Pericolo di valanghe", pollen: "Polline (misure)",
     },
-    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Nessuna immagine radar disponibile al momento.", levels: "Gradi di pericolo", updated: "Aggiornato il",
+    legend: "Legenda", rain: "Intensità (mm/h)", radarNote: "Radar MeteoSvizzera, ultima ora, un’immagine ogni 5 minuti.", noRadar: "Il radar non è disponibile al momento.", levels: "Gradi di pericolo", updated: "Aggiornato il",
     explain: "Spiegazione dei gradi di pericolo", bulletin: "Bollettino valanghe (SLF)",
     danger: ["Nessun bollettino", "Pericolo debole o assente", "Pericolo moderato", "Pericolo marcato", "Pericolo forte", "Pericolo molto forte"],
     pollenLevels: ["Nessuno", "Debole", "Moderato", "Forte", "Molto forte"],
@@ -99,7 +99,7 @@ const I18N = {
       weather: "Weather forecast", radar: "Precipitation radar", fire: "Forest fire danger", flood: "Flood danger",
       drought: "Drought danger", avalanche: "Avalanche danger", pollen: "Pollen (measurements)",
     },
-    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "No radar image available at the moment.", levels: "Danger levels", updated: "Updated",
+    legend: "Legend", rain: "Intensity (mm/h)", radarNote: "MeteoSwiss radar, last hour, one image every 5 minutes.", noRadar: "The radar is not available at the moment.", levels: "Danger levels", updated: "Updated",
     explain: "Danger levels explained", bulletin: "Avalanche bulletin (SLF)",
     danger: ["No bulletin", "No or low danger", "Moderate danger", "Considerable danger", "High danger", "Very high danger"],
     pollenLevels: ["None", "Weak", "Moderate", "Strong", "Very strong"],
@@ -351,7 +351,7 @@ class MeteoSwissMap {
     this.heading.textContent = this.t.heading[layer];
     this.note.hidden = true;
     this.tabs.hidden = layer !== "weather";
-    this.player.hidden = layer !== "radar";
+    if (layer !== "radar") this.player.hidden = true;
     if (layer !== "radar") this._clearRadar();
     if (this.tint) this.tint.setStyle({ fillOpacity: layer === "weather" ? 0.85 : 0.35 });
     const token = (this._token = (this._token || 0) + 1);
@@ -515,10 +515,10 @@ class MeteoSwissMap {
     if (token !== this._token) return;
     this._clearRadar();
     if (!list.frames?.length) {
-      this.note.hidden = false;
-      this.note.textContent = this.t.noRadar;
+      this._radarUnavailable();
       return;
     }
+    this.player.hidden = false;
     // Image URLs must be signed: <img> requests cannot carry the HA token.
     const urls = await Promise.all(list.frames.map(async (time) => {
       const path = `/api/meteoswiss4ha/radar/frame/${encodeURIComponent(time)}${
@@ -531,12 +531,19 @@ class MeteoSwissMap {
       }
     }));
     if (token !== this._token) return;
-    this._radarFrames = list.frames.map((time, i) => ({
-      time,
-      layer: L.imageOverlay(urls[i], list.bounds, {
+    this._radarFrames = list.frames.map((time, i) => {
+      const frame = { time, broken: false };
+      frame.layer = L.imageOverlay(urls[i], list.bounds, {
         pane: "ms-radar", opacity: 0, interactive: false, className: "radar-img",
-      }).addTo(this.map),
-    }));
+      });
+      // A frame that fails to load is skipped; if none loads, say so.
+      frame.layer.on("error", () => {
+        frame.broken = true;
+        if (this._radarFrames?.every((f) => f.broken)) this._radarUnavailable();
+      });
+      frame.layer.addTo(this.map);
+      return frame;
+    });
     this._radarLoaded = Date.now();
     const slider = this.player.querySelector("input");
     slider.max = this._radarFrames.length - 1;
@@ -545,8 +552,19 @@ class MeteoSwissMap {
     this._playRadar();
   }
 
+  _radarUnavailable() {
+    this._clearRadar();
+    this.player.hidden = true;
+    this.note.hidden = false;
+    this.note.textContent = this.t.noRadar;
+    this._radarLoaded = 0; // retry on the next render / refresh
+  }
+
   _showFrame(index) {
     if (!this._radarFrames) return;
+    // Skip frames whose image could not be loaded.
+    const n = this._radarFrames.length;
+    for (let k = 0; k < n && this._radarFrames[index].broken; k++) index = (index + 1) % n;
     this._frame = index;
     this._radarFrames.forEach((f, i) => f.layer.setOpacity(i === index ? 0.85 : 0));
     this.player.querySelector("input").value = index;
