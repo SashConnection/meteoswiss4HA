@@ -1,4 +1,4 @@
-"""Config flow for MeteoSwiss Open Data."""
+"""Config flow for MeteoSwiss for HA."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class MeteoSwissConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for MeteoSwiss Open Data."""
+    """Handle a config flow for MeteoSwiss for HA."""
 
     VERSION = 1
 

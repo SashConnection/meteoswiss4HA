@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "MeteoSwiss Open Data",
+        "title": "MeteoSwiss for HA",
         "description": "Choose the SwissMetNet station used for current conditions (sorted by distance from your home) and the postal code used for the local forecast.",
         "data": {
           "station": "Measurement station",

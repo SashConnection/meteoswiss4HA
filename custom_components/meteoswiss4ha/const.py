@@ -1,4 +1,4 @@
-"""Constants for the MeteoSwiss Open Data integration."""
+"""Constants for the MeteoSwiss for HA integration."""
 
 from __future__ import annotations
 

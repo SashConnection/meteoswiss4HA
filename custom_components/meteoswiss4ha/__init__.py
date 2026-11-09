@@ -1,4 +1,4 @@
-"""The MeteoSwiss Open Data integration."""
+"""The MeteoSwiss for HA integration."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> bool:
-    """Set up MeteoSwiss Open Data from a config entry."""
+    """Set up MeteoSwiss for HA from a config entry."""
     client = MeteoSwissClient(async_get_clientsession(hass))
 
     current = CurrentCoordinator(hass, entry, client)

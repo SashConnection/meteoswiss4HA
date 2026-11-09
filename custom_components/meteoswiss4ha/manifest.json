@@ -1,6 +1,6 @@
 {
   "domain": "meteoswiss4ha",
-  "name": "MeteoSwiss Open Data",
+  "name": "MeteoSwiss for HA",
   "codeowners": ["@SashConnection"],
   "config_flow": true,
   "dependencies": ["http"],
@@ -9,5 +9,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/SashConnection/meteoswiss4HA/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "2026.01"
 }

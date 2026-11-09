@@ -1,4 +1,4 @@
-"""Weather entity for MeteoSwiss Open Data."""
+"""Weather entity for MeteoSwiss for HA."""
 
 from __future__ import annotations
 
