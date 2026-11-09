@@ -1,119 +1,220 @@
 # MeteoSwiss Complete For HA
 
-A Home Assistant custom integration that brings official [MeteoSwiss Open Data](https://opendatadocs.meteoswiss.ch/) into Home Assistant.
+Official MeteoSwiss weather in Home Assistant: current conditions, local forecast with animated pictograms, precipitation radar, weather warnings, natural hazards and pollen, with a Switzerland map for your dashboards.
 
-**User guide with screenshots (French):** [docs/GUIDE.fr.md](docs/GUIDE.fr.md)
+🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**
 
-## Features
+![Switzerland map](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg)
 
-- **Current conditions** from a SwissMetNet automatic weather station (nearest one preselected), updated every 10 minutes: temperature, humidity, dew point, precipitation, sunshine, global radiation, wind, gusts, wind direction and pressure.
-- **Local forecast** for any Swiss postal code, from the MeteoSwiss point forecasts (~5,800 points), refreshed hourly:
-  - daily forecast for 9 days (symbol, min/max temperature, precipitation),
-  - hourly forecast (symbol, temperature, precipitation and its probability, wind, gusts, direction).
-- **Two condition values**:
-  - the standard Home Assistant condition (`sunny`, `rainy`, …) on the `weather` entity, so every weather card works out of the box;
-  - the native **MeteoSwiss symbol code** (1–42 day, 101–142 night) with its official description in German, French, Italian and English, and three pictogram packs (animated, vivid, classic).
-- **Pollen** from the nearest of the 15 SwissPollen stations (hourly): 7 species with MeteoSwiss intensity levels.
-- **Weather warnings** at your home: rain, thunderstorms, wind, snow, slippery roads, heat and frost (official MeteoSwiss warnings, via MeteoAlarm), with the warning text and upcoming warnings.
-- **Natural hazards** at your home: avalanche danger (SLF bulletin), flood, forest fire and drought danger (FOEN), on the 5-level Swiss scale.
-- **Switzerland map** as a dashboard card (and optionally as a page in the sidebar): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, weather warning regions, flood, forest fire and drought warning maps.
+> Screenshots were taken with the integration; some values (forecasts, pollen) are examples.
 
-## Switzerland map
+## Contents
 
-Add the map to any dashboard. A full-page **MeteoSwiss** entry in the sidebar can be turned on in the options (Configure → Display); it is off by default. The ⌖ button re-centers the map.
+1. [Installation](#1-installation)
+2. [Settings](#2-settings)
+3. [Forecast card](#3-forecast-card)
+4. [Switzerland map](#4-switzerland-map)
+5. [One map per hazard, or zoomed on your region](#5-one-map-per-hazard-or-zoomed-on-your-region)
+6. [On a phone](#6-on-a-phone)
+7. [Entities for your automations](#7-entities-for-your-automations)
+8. [Updates and versions](#8-updates-and-versions)
+9. [Troubleshooting](#9-troubleshooting)
+10. [Technical notes](#10-technical-notes)
+11. [Data sources and license](#11-data-sources-and-license)
 
-```yaml
-type: custom:meteoswiss-map-card
-layer: weather        # layer shown first: weather, radar, warnings, fire, flood, drought, avalanche, pollen
-layers: [fire]        # optional: layers offered; a single one gives a single-hazard map without toolbar
-area: home            # optional: switzerland (default) or home = zoomed on your region
-zoom: 9               # zoom level when area is home (7 to 12)
-legend: true
-height: 420
-```
+---
 
-All options can be set in the card editor.
+## 1. Installation
 
-## Forecast card
+Requires Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 
-Current weather, hourly and daily forecast with the integration pictograms (the pack chosen in the options, animated by default). The standard Home Assistant weather card always uses its own icons.
+1. In HACS, open the menu **⋮ → Custom repositories**.
+2. Add `https://github.com/SashConnection/meteoswiss4HA`, category **Integration**.
+3. Search for **MeteoSwiss Complete For HA**, click **Download**, then **restart Home Assistant**.
+4. **Settings → Devices & services → Add integration**, search for **MeteoSwiss Complete For HA**.
+5. Choose:
+   - the **weather station** (sorted from nearest to farthest from your home): it gives the current temperature, wind, etc.;
+   - the **postal code** used for the local forecast.
+
+The integration creates a weather entity and sensors, and adds two cards for your dashboards.
+
+## 2. Settings
+
+**Settings → Devices & services → MeteoSwiss Complete For HA → Configure**. The menu has three pages:
+
+| Page | Settings |
+|---|---|
+| **Display** | Pictogram pack: **Animated** (default), **Vivid** or **Classic**. Option **"Show the map page in the sidebar"** (off by default). |
+| **Forecast** | Hourly forecast on/off, horizon (48 h by default) and refresh interval. MeteoSwiss hourly files are large: reduce the horizon to save bandwidth. |
+| **Pollen and hazards** | Pollen station and avalanche region. "Automatic" picks the one nearest to your home. |
+
+The integration reloads by itself after a change.
+
+## 3. Forecast card
+
+The standard Home Assistant weather card always uses its own icons. To see **our pictograms** (animated by default), use the **MeteoSwiss forecast** card:
+
+**Edit dashboard → Add card → search for "MeteoSwiss forecast"**.
+
+| Hours and days | Days only, no details |
+|---|---|
+| ![Forecast card](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png) | ![Daily forecast card](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast-daily.png) |
+
+- **Top**: current weather (pictogram, sky condition, measured temperature) and details (humidity, wind, gusts, pressure). A click opens the entity dialog.
+- **Middle**: the next hours (time, pictogram, temperature, rain in mm or probability in %). Scroll to the right.
+- **Bottom**: the next days (minimum, maximum, rain).
+
+Settings in the card editor, or in YAML:
 
 ```yaml
 type: custom:meteoswiss-forecast-card
 entity: weather.home  # optional: the first MeteoSwiss weather entity
-forecast: both        # both, daily, hourly or none
+forecast: both        # both = hours and days, daily, hourly or none
 days: 7               # 1 to 9
 hours: 12
-show_current: true
-show_details: true    # humidity, wind, gusts, pressure
+show_current: true    # current weather
+show_details: true    # humidity, wind, pressure
 ```
 
-Hourly forecasts need the hourly forecast enabled in the integration options. The weather entity exposes the pictogram base URL in its `icons_url` attribute.
+The hourly part needs the **hourly forecast** turned on (Forecast settings page).
 
-Base map © swisstopo. Warning maps: MeteoSwiss (via MeteoAlarm), SLF, FOEN.
+## 4. Switzerland map
+
+Add the **MeteoSwiss map** card to a dashboard (or turn on the sidebar page, see [Settings](#2-settings)). The toolbar at the top left switches maps; the **colored line** above each button shows the highest danger level currently in force in Switzerland.
+
+Buttons under the zoom: **⌖** re-centers the map, **+ / −** zoom.
+
+### Weather
+
+Pictogram, minimum and maximum for 31 towns and a few summits (green); your home is orange (see the picture at the top). The tabs at the bottom choose the day. More places appear when you zoom in.
 
 ### Precipitation radar
 
-The MeteoSwiss radar is published as HDF5 grids every 5 minutes. They are converted into map images by a Node-RED flow run by the project at `https://ha.jesaispas.ch/endpoint/meteoswiss/radar`, which the integration uses automatically (nothing to configure). The map shows the last 3 hours of radar, then an hourly precipitation forecast for the next 12 hours (orange part of the time slider), interpolated by the same flow from the MeteoSwiss local forecast (`rre150h0`, ~5800 points, refreshed every 3 hours). If the server cannot be reached, the map says that the radar is not available for the moment.
+![Radar](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar.jpg)
 
-The flow itself is in `nodered/meteoswiss-radar-flow.json` (downloads the RZC composite, renders transparent PNG frames with `jsfive` and `pngjs`). Endpoints: `/frames`, `/frame?time=…`, and `/status` for diagnostics.
+The **last 3 hours** of the MeteoSwiss radar, one image every 5 minutes, then the **hourly precipitation forecast** (**orange** part of the slider, labelled "Forecast"):
 
-## Entities
+![Radar forecast](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-radar-forecast.jpg)
 
-| Entity | Description |
+▶ / ❚❚ starts or stops the animation; the slider picks a time. If the radar server does not answer, the map says that the radar is not available for the moment.
+
+### Weather warnings
+
+![Weather warnings](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-warnings.jpg)
+
+The official MeteoSwiss warnings: **rain, thunderstorms, wind, snow, slippery roads, heat, frost** (tabs at the bottom). Switzerland is green when there is no warning; warning regions take the color of their danger level. **Upcoming** warnings are dashed. Hover (or tap) a region to see the warning text, start and end.
+
+### Forest fire, floods, drought
+
+| Forest fire | Floods | Drought |
+|---|---|---|
+| ![Forest fire](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-fire.jpg) | ![Floods](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-flood.jpg) | ![Drought](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-drought.jpg) |
+
+FOEN maps by region (and by river for floods). The **Avalanches** (SLF bulletin, in season) and **Pollen** (15 measuring stations) layers work the same way.
+
+### Danger levels
+
+| Level | Color | Meaning |
+|---|---|---|
+| 1 | green | No or low danger (no warning) |
+| 2 | yellow | Moderate danger |
+| 3 | orange | Considerable danger |
+| 4 | red | High danger |
+| 5 | dark red | Very high danger |
+
+## 5. One map per hazard, or zoomed on your region
+
+In the **MeteoSwiss map** card editor:
+
+- **Layers shown**: tick **a single** hazard for a dedicated map without toolbar (you can put several on one dashboard);
+- **Area**: **Whole Switzerland** or **My region (home)**, with a **zoom** level from 7 to 12;
+- **Legend** on or off, map **height**.
+
+| Forest fire only | Radar zoomed on home |
 |---|---|
-| `weather.<location>` | Current conditions + daily and hourly forecasts. Forecast items also carry `meteoswiss_symbol`. |
+| ![Forest fire card](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-fire.png) | ![Zoomed radar](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png) |
+
+In YAML:
+
+```yaml
+type: custom:meteoswiss-map-card
+layer: weather        # layer shown first
+layers: [radar]       # one or more of: weather, radar, warnings, fire, flood, drought, avalanche, pollen
+area: home            # switzerland (default) or home
+zoom: 9
+legend: true
+height: 360
+```
+
+## 6. On a phone
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/mobile.jpg" alt="On a phone" width="300">
+
+On a narrow screen the legend becomes one compact line and the tabs use icons. On the sidebar page, the ☰ button opens the Home Assistant menu.
+
+## 7. Entities for your automations
+
+| Entity | Content |
+|---|---|
+| `weather.<location>` | Current weather and daily/hourly forecast. Forecast items also carry `meteoswiss_symbol`; the `icons_url` attribute gives the pictogram pack URL. |
 | `sensor.<location>_temperature`, `_humidity`, … | Station measurements (only those the station actually measures). |
-| `sensor.<location>_meteoswiss_symbol` | Current MeteoSwiss symbol code; attributes: HA condition, day/night, descriptions in 4 languages. Shows the matching pictogram. |
+| `sensor.<location>_meteoswiss_symbol` | Current MeteoSwiss symbol code (1–42 day, 101–142 night); its picture is the pictogram of the chosen pack. |
 | `sensor.<location>_weather_description` | Official MeteoSwiss description in the Home Assistant language. |
-| `sensor.<location>_birch_pollen`, `_grass_pollen`, … | Latest hourly pollen concentration (grains/m³); attributes: 24-hour mean, level, station. |
-| `sensor.<location>_pollen_level` | Highest pollen level (none, weak, moderate, strong, very strong) and dominant species. |
-| `sensor.<location>_avalanche_danger` | SLF avalanche danger of your region (low … very high, or no bulletin off-season); attributes: subdivision, elevation, avalanche problems, validity. |
-| `sensor.<location>_rain_warning`, `_thunderstorm_warning`, `_wind_warning`, `_snow_warning`, `_slippery_roads_warning`, `_heat_warning`, `_frost_warning` | MeteoSwiss weather warning in force at your home (`low` = no warning, then moderate … very high); attributes: event, region, description, instruction, onset, expires, upcoming warnings. |
-| `sensor.<location>_flood_danger`, `_forest_fire_danger`, `_drought_danger` | FOEN warning level of your region (low … very high). |
+| `sensor.<location>_rain_warning`, `_thunderstorm_warning`, `_wind_warning`, `_snow_warning`, `_slippery_roads_warning`, `_heat_warning`, `_frost_warning` | Warning in force at your home (`low` = no warning). Attributes: event, region, description, instruction, onset, expires, and `upcoming` for announced warnings. |
+| `sensor.<location>_flood_danger`, `_forest_fire_danger`, `_drought_danger` | FOEN danger level of your region. |
+| `sensor.<location>_avalanche_danger` | SLF avalanche danger of your region (or no bulletin off-season). |
+| `sensor.<location>_pollen_level`, `_birch_pollen`, `_grass_pollen`, … | Overall pollen level and concentration per species. |
 
-## Pictograms
+Example: get notified as soon as a thunderstorm warning is announced.
 
-Three pictogram packs are included, one icon per MeteoSwiss symbol (84 each):
+```yaml
+triggers:
+  - trigger: state
+    entity_id: sensor.home_thunderstorm_warning
+    attribute: upcoming
+conditions:
+  - condition: template
+    value_template: "{{ state_attr('sensor.home_thunderstorm_warning', 'upcoming') | count > 0 }}"
+actions:
+  - action: notify.notify
+    data:
+      message: "Thunderstorm warning announced: {{ state_attr('sensor.home_thunderstorm_warning', 'upcoming')[0].event }}"
+```
 
-| Pack | Style |
-|---|---|
-| `animated` (default) | Gradients, rotating sun rays, drifting clouds, falling rain and snow, flashing lightning, twinkling stars. Animations stop when the device asks for reduced motion. |
-| `vivid` | Static, strong colors, large shapes. |
-| `classic` | Static, sober colors. |
-
-Choose the pack in **Configure** (it sets the picture of the MeteoSwiss symbol sensor). All packs are served at `/meteoswiss4ha/icons/<pack>/<code>.svg` (e.g. `/meteoswiss4ha/icons/animated/6.svg`), so they can be used in any card, for example:
+The pictograms can also be used in any card: they are served at `/meteoswiss4ha/icons/<pack>/<code>.svg`, for example:
 
 ```yaml
 type: picture-entity
 entity: sensor.home_meteoswiss_symbol
 ```
 
-The icons are generated by `node scripts/generate_icons.mjs`: edit `THEMES` / `SPEC` there (static packs) or `scripts/animated_icons.mjs` (animated pack) to restyle a whole pack.
+## 8. Updates and versions
 
-## Options
+Versions follow the calendar: **YEAR.MONTH.N**, for example 2026.11.0, then 2026.11.1 for the next update in the same month, 2026.12.0 the following month. What changed in each version is in the [CHANGELOG](https://github.com/SashConnection/meteoswiss4HA/blob/main/CHANGELOG.md).
 
-- **Pictogram pack**: animated, vivid or classic.
+To update: HACS offers the new version → **Download** → **restart Home Assistant** → in the browser, **Ctrl+F5** to reload the cards.
 
-Hourly forecast files are large: MeteoSwiss publishes one file per parameter for all points (~33 MB each). The integration streams them and stops reading once the requested horizon is reached (~8 MB per parameter for 48 h), but this still adds up. In **Settings → Devices & services → MeteoSwiss Complete For HA → Configure** you can also:
+## 9. Troubleshooting
 
-- disable the hourly forecast,
-- change its horizon (default 48 h),
-- change how often it is refreshed (default every 180 minutes; the daily forecast is refreshed every hour).
+| Problem | Solution |
+|---|---|
+| The cards did not change after an update | Ctrl+F5 in the browser; in the mobile app, *App settings → Debugging → Reload frontend*. |
+| The map is off-center | **⌖** button under the zoom. |
+| "The radar is not available at the moment" | The project's radar server does not answer; it recovers by itself, try again later. |
+| No hourly forecast | Turn on the **hourly forecast** in the settings (Forecast page). |
+| A warning or hazard is "unavailable" | Its source (MeteoSwiss/MeteoAlarm, FOEN, SLF) does not answer; the value comes back at the next update. |
 
-## Installation (HACS)
+## 10. Technical notes
 
-1. In HACS, open the menu → **Custom repositories**.
-2. Add `https://github.com/SashConnection/meteoswiss4HA` with category **Integration**.
-3. Install **MeteoSwiss Complete For HA** and restart Home Assistant.
-4. Go to **Settings → Devices & services → Add integration** and search for **MeteoSwiss Complete For HA**.
+- **Bandwidth**: MeteoSwiss publishes one hourly forecast file per parameter for all ~5,800 points (~33 MB each). The integration streams them and stops once the requested horizon is reached (~8 MB per parameter for 48 h).
+- **Radar**: the MeteoSwiss radar is published as HDF5 grids every 5 minutes. A Node-RED flow run by the project at `https://ha.jesaispas.ch/endpoint/meteoswiss/radar` converts them into map images and interpolates the hourly precipitation forecast from the MeteoSwiss local forecast (`rre150h0`). The integration uses it automatically. The flow is in [`nodered/meteoswiss-radar-flow.json`](nodered/meteoswiss-radar-flow.json); endpoints `/frames`, `/frame?time=…` and `/status`.
+- **Pictograms**: generated by `node scripts/generate_icons.mjs` (vivid and classic packs, `THEMES` / `SPEC`) and `scripts/animated_icons.mjs` (animated pack). The animations stop when the device asks for reduced motion.
 
-Requires Home Assistant 2026.1 or newer.
-
-## Data source and license
+## 11. Data sources and license
 
 Data: **Source: MeteoSwiss** — Open Government Data under [CC BY 4.0](https://opendatadocs.meteoswiss.ch/general/terms-of-use). Symbol descriptions are the official MeteoSwiss texts.
 Weather warnings: MeteoSwiss, published through [MeteoAlarm](https://meteoalarm.org) (EUMETNET, CC BY 4.0); they are not part of the MeteoSwiss Open Data catalogue. MeteoAlarm uses 4 colors, so MeteoSwiss levels 4 and 5 both show as level 4.
+Natural hazards: FOEN (forest fire, floods, drought) and SLF (avalanches). Base map © swisstopo.
 This project is not affiliated with or endorsed by MeteoSwiss. The pictograms are original artwork, not the official MeteoSwiss pictograms.
 
 Code and pictograms: MIT License.
