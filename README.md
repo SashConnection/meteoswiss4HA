@@ -14,11 +14,11 @@ A Home Assistant custom integration that brings official [MeteoSwiss Open Data](
 - **Pollen** from the nearest of the 15 SwissPollen stations (hourly): 7 species with MeteoSwiss intensity levels.
 - **Weather warnings** at your home: rain, thunderstorms, wind, snow, slippery roads, heat and frost (official MeteoSwiss warnings, via MeteoAlarm), with the warning text and upcoming warnings.
 - **Natural hazards** at your home: avalanche danger (SLF bulletin), flood, forest fire and drought danger (FOEN), on the 5-level Swiss scale.
-- **Switzerland map** in the sidebar (and as a dashboard card): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, weather warning regions, flood, forest fire and drought warning maps.
+- **Switzerland map** as a dashboard card (and optionally as a page in the sidebar): weather pictograms for 31 cities over 9 days, avalanche regions, pollen stations, weather warning regions, flood, forest fire and drought warning maps.
 
 ## Switzerland map
 
-After installation a **MeteoSwiss** entry appears in the sidebar. The same map can be added to any dashboard:
+Add the map to any dashboard. A full-page **MeteoSwiss** entry in the sidebar can be turned on in the options (Configure → Display); it is off by default. The ⌖ button re-centers the map.
 
 ```yaml
 type: custom:meteoswiss-map-card

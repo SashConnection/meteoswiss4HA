@@ -6,8 +6,9 @@ import logging
 from pathlib import Path
 
 from homeassistant.components import panel_custom
-from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.frontend import DATA_PANELS, add_extra_js_url, async_remove_panel
 from homeassistant.components.http import StaticPathConfig
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
@@ -17,6 +18,8 @@ from homeassistant.helpers.typing import ConfigType
 from .api import MeteoSwissClient, MeteoSwissError, distance_km
 from .const import (
     CONF_POLLEN_STATION,
+    CONF_SIDEBAR_PANEL,
+    DEFAULT_SIDEBAR_PANEL,
     DOMAIN,
     FRONTEND_URL,
     ICONS_URL,
@@ -42,7 +45,7 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Serve pictograms and the map, register the sidebar page and the card."""
+    """Serve pictograms and the map, and load the dashboard cards."""
     root = Path(__file__).parent
     await hass.http.async_register_static_paths(
         [
@@ -52,21 +55,41 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     )
     async_register_views(hass)
 
-    module_url = f"{FRONTEND_URL}/meteoswiss-map.js?v={VERSION}"
-    # Card: load the module on every dashboard.
-    add_extra_js_url(hass, module_url)
-    # Full page in the sidebar.
-    await panel_custom.async_register_panel(
-        hass,
-        frontend_url_path=PANEL_URL_PATH,
-        webcomponent_name="meteoswiss-panel",
-        sidebar_title="MeteoSwiss",
-        sidebar_icon="mdi:weather-partly-snowy-rainy",
-        module_url=module_url,
-        embed_iframe=False,
-        require_admin=False,
-    )
+    # Cards: load the module on every dashboard.
+    add_extra_js_url(hass, MODULE_URL)
     return True
+
+
+MODULE_URL = f"{FRONTEND_URL}/meteoswiss-map.js?v={VERSION}"
+
+
+async def _async_update_panel(hass: HomeAssistant, entries: list[MeteoSwissConfigEntry]) -> None:
+    """Show the map page in the sidebar if one of the entries asks for it."""
+    wanted = any(e.options.get(CONF_SIDEBAR_PANEL, DEFAULT_SIDEBAR_PANEL) for e in entries)
+    shown = PANEL_URL_PATH in hass.data.get(DATA_PANELS, {})
+    if wanted and not shown:
+        await panel_custom.async_register_panel(
+            hass,
+            frontend_url_path=PANEL_URL_PATH,
+            webcomponent_name="meteoswiss-panel",
+            sidebar_title="MeteoSwiss",
+            sidebar_icon="mdi:weather-partly-snowy-rainy",
+            module_url=MODULE_URL,
+            embed_iframe=False,
+            require_admin=False,
+        )
+    elif shown and not wanted:
+        async_remove_panel(hass, PANEL_URL_PATH)
+
+
+def _other_loaded_entries(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> list[MeteoSwissConfigEntry]:
+    return [
+        e
+        for e in hass.config_entries.async_entries(DOMAIN)
+        if e.entry_id != entry.entry_id and e.state is ConfigEntryState.LOADED
+    ]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> bool:
@@ -87,6 +110,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await _async_update_panel(hass, [*_other_loaded_entries(hass, entry), entry])
     return True
 
 
@@ -137,4 +161,7 @@ async def _async_options_updated(hass: HomeAssistant, entry: MeteoSwissConfigEnt
 
 async def async_unload_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unloaded:
+        await _async_update_panel(hass, _other_loaded_entries(hass, entry))
+    return unloaded

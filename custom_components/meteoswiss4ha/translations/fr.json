@@ -223,7 +223,8 @@
       "display": {
         "title": "Affichage",
         "data": {
-          "icon_pack": "Pack de pictogrammes"
+          "icon_pack": "Pack de pictogrammes",
+          "sidebar_panel": "Afficher la page carte dans la barre latérale"
         }
       },
       "forecast": {

@@ -57,7 +57,7 @@ const LINKS = {
 
 const I18N = {
   fr: {
-    title: "MétéoSuisse", today: "Aujourd’hui", home: "Domicile", error: "Données indisponibles",
+    title: "MétéoSuisse", recenter: "Recentrer", today: "Aujourd’hui", home: "Domicile", error: "Données indisponibles",
     layer: { weather: "Météo", radar: "Radar", warnings: "Intempéries", fire: "Incendies de forêt", flood: "Crues", drought: "Sécheresse", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
       weather: "Prévisions météo", radar: "Radar des précipitations", warnings: "Alertes intempéries", fire: "Danger d’incendie de forêt", flood: "Danger de crues",
@@ -74,7 +74,7 @@ const I18N = {
     species: { hazel: "Noisetier", alder: "Aulne", birch: "Bouleau", ash: "Frêne", beech: "Hêtre", oak: "Chêne", grasses: "Graminées" },
   },
   de: {
-    title: "MeteoSchweiz", today: "Heute", home: "Zuhause", error: "Daten nicht verfügbar",
+    title: "MeteoSchweiz", recenter: "Zentrieren", today: "Heute", home: "Zuhause", error: "Daten nicht verfügbar",
     layer: { weather: "Wetter", radar: "Radar", warnings: "Unwetter", fire: "Waldbrand", flood: "Hochwasser", drought: "Trockenheit", avalanche: "Lawinen", pollen: "Pollen" },
     heading: {
       weather: "Wetterprognose", radar: "Niederschlagsradar", warnings: "Unwetterwarnungen", fire: "Waldbrandgefahr", flood: "Hochwassergefahr",
@@ -91,7 +91,7 @@ const I18N = {
     species: { hazel: "Hasel", alder: "Erle", birch: "Birke", ash: "Esche", beech: "Buche", oak: "Eiche", grasses: "Gräser" },
   },
   it: {
-    title: "MeteoSvizzera", today: "Oggi", home: "Casa", error: "Dati non disponibili",
+    title: "MeteoSvizzera", recenter: "Centrare", today: "Oggi", home: "Casa", error: "Dati non disponibili",
     layer: { weather: "Meteo", radar: "Radar", warnings: "Maltempo", fire: "Incendi boschivi", flood: "Piene", drought: "Siccità", avalanche: "Valanghe", pollen: "Polline" },
     heading: {
       weather: "Previsioni meteo", radar: "Radar delle precipitazioni", warnings: "Allerte maltempo", fire: "Pericolo d’incendi boschivi", flood: "Pericolo di piene",
@@ -108,7 +108,7 @@ const I18N = {
     species: { hazel: "Nocciolo", alder: "Ontano", birch: "Betulla", ash: "Frassino", beech: "Faggio", oak: "Quercia", grasses: "Graminacee" },
   },
   en: {
-    title: "MeteoSwiss", today: "Today", home: "Home", error: "Data unavailable",
+    title: "MeteoSwiss", recenter: "Re-center", today: "Today", home: "Home", error: "Data unavailable",
     layer: { weather: "Weather", radar: "Radar", warnings: "Severe weather", fire: "Forest fire", flood: "Floods", drought: "Drought", avalanche: "Avalanches", pollen: "Pollen" },
     heading: {
       weather: "Weather forecast", radar: "Precipitation radar", warnings: "Weather warnings", fire: "Forest fire danger", flood: "Flood danger",
@@ -156,6 +156,7 @@ const STYLE = `
 .wrap.single .note { top: 44px; }
 .place.home { font-weight: 700; }
 .place.home::before { width: 9px; height: 9px; background: #f57c00; vertical-align: 1px; }
+.leaflet-bar a.ms-fit { font-size: 20px; line-height: 30px; }
 .wrap.narrow .toolbar { left: 8px; max-width: calc(100% - 16px); overflow-x: auto; }
 .wrap.narrow .toolbar button { width: 40px; flex: 0 0 40px; }
 .wrap.narrow .heading { left: 12px; top: 66px; font-size: 16px; }
@@ -262,6 +263,24 @@ class MeteoSwissMap {
       maxBounds: [[44.8, 4.4], [48.8, 12.1]],
     });
     L.control.zoom({ position: "bottomright" }).addTo(this.map);
+    // Button to re-center the map (whole Switzerland or the home region).
+    const Fit = L.Control.extend({
+      onAdd: () => {
+        const box = L.DomUtil.create("div", "leaflet-bar");
+        const a = L.DomUtil.create("a", "ms-fit", box);
+        a.href = "#";
+        a.role = "button";
+        this._fitBtn = a;
+        a.innerHTML = "⌖";
+        L.DomEvent.disableClickPropagation(box);
+        L.DomEvent.on(a, "click", (e) => {
+          L.DomEvent.preventDefault(e);
+          this._fitView();
+        });
+        return box;
+      },
+    });
+    new Fit({ position: "bottomright" }).addTo(this.map);
     this.map.attributionControl.setPrefix(false);
 
     // Panes, bottom to top: relief, green tint and warning regions (both
@@ -331,6 +350,7 @@ class MeteoSwissMap {
     const first = !this._hass;
     this._hass = hass;
     this.t = I18N[lang(hass)];
+    if (this._fitBtn) this._fitBtn.title = this.t.recenter;
     if (first) {
       this.refresh();
       this._timer = setInterval(() => this.refresh(), 10 * 60 * 1000);
@@ -455,6 +475,8 @@ class MeteoSwissMap {
 
   // Whole Switzerland, or zoomed on the home location (option area: home).
   _fitView() {
+    // Always measure the container first: HA may lay the card out after the map was built.
+    this.map.invalidateSize({ pan: false });
     const home = this.data?.home;
     if (this.options.area === "home" && home?.lat != null) {
       this.map.setView([home.lat, home.lon], Number(this.options.zoom) || 9, { reset: true });

@@ -223,7 +223,8 @@
       "display": {
         "title": "Display",
         "data": {
-          "icon_pack": "Pictogram pack"
+          "icon_pack": "Pictogram pack",
+          "sidebar_panel": "Show the map page in the sidebar"
         }
       },
       "forecast": {

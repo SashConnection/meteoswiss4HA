@@ -40,7 +40,9 @@ from .const import (
     CONF_AVALANCHE_REGION,
     CONF_POLLEN_STATION,
     CONF_ICON_PACK,
+    CONF_SIDEBAR_PANEL,
     DEFAULT_ICON_PACK,
+    DEFAULT_SIDEBAR_PANEL,
     ICON_PACKS,
     CONF_HOURLY_FORECAST,
     CONF_HOURLY_HOURS,
@@ -198,6 +200,7 @@ DISPLAY_SCHEMA = vol.Schema(
                 mode=SelectSelectorMode.LIST,
             )
         ),
+        vol.Required(CONF_SIDEBAR_PANEL, default=DEFAULT_SIDEBAR_PANEL): BooleanSelector(),
     }
 )
 
@@ -244,9 +247,14 @@ class MeteoSwissOptionsFlow(OptionsFlow):
     async def async_step_display(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Pictogram pack."""
+        """Pictogram pack and sidebar page."""
         if user_input is not None:
-            return self._save({CONF_ICON_PACK: user_input[CONF_ICON_PACK]})
+            return self._save(
+                {
+                    CONF_ICON_PACK: user_input[CONF_ICON_PACK],
+                    CONF_SIDEBAR_PANEL: user_input[CONF_SIDEBAR_PANEL],
+                }
+            )
         return self.async_show_form(
             step_id="display",
             data_schema=self.add_suggested_values_to_schema(
