@@ -133,13 +133,34 @@
   "options": {
     "step": {
       "init": {
-        "title": "Forecast options",
+        "title": "Options",
+        "menu_options": {
+          "display": "Display",
+          "forecast": "Forecasts",
+          "environment": "Pollen and hazards"
+        }
+      },
+      "display": {
+        "title": "Display",
+        "data": {
+          "icon_pack": "Pictogram pack"
+        }
+      },
+      "forecast": {
+        "title": "Forecasts",
         "description": "Hourly forecast files are large (about 33 MB each, of which about 8 MB are read for 48 hours). Reduce the horizon or increase the interval to save bandwidth.",
         "data": {
-          "icon_pack": "Pictogram pack",
           "hourly_forecast": "Hourly forecast",
           "hourly_hours": "Hourly forecast horizon",
           "hourly_interval": "Hourly forecast refresh interval"
+        }
+      },
+      "environment": {
+        "title": "Pollen and hazards",
+        "description": "By default the nearest pollen station and the avalanche region of your home are used.",
+        "data": {
+          "pollen_station": "Pollen station",
+          "avalanche_region": "Avalanche region (SLF)"
         }
       }
     }

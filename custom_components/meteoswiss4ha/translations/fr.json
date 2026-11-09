@@ -133,13 +133,34 @@
   "options": {
     "step": {
       "init": {
-        "title": "Options des prévisions",
+        "title": "Options",
+        "menu_options": {
+          "display": "Affichage",
+          "forecast": "Prévisions",
+          "environment": "Pollen et dangers"
+        }
+      },
+      "display": {
+        "title": "Affichage",
+        "data": {
+          "icon_pack": "Pack de pictogrammes"
+        }
+      },
+      "forecast": {
+        "title": "Prévisions",
         "description": "Les fichiers de prévisions horaires sont volumineux (environ 33 Mo chacun, dont environ 8 Mo lus pour 48 heures). Réduisez l’horizon ou augmentez l’intervalle pour économiser de la bande passante.",
         "data": {
-          "icon_pack": "Pack de pictogrammes",
           "hourly_forecast": "Prévisions horaires",
           "hourly_hours": "Horizon des prévisions horaires",
           "hourly_interval": "Intervalle de mise à jour des prévisions horaires"
+        }
+      },
+      "environment": {
+        "title": "Pollen et dangers",
+        "description": "Par défaut, la station pollen la plus proche et la région d’avalanche de votre domicile sont utilisées.",
+        "data": {
+          "pollen_station": "Station pollen",
+          "avalanche_region": "Région d’avalanche (SLF)"
         }
       }
     }

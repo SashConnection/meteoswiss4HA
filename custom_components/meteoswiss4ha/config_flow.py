@@ -27,6 +27,7 @@ from homeassistant.helpers.selector import (
     TextSelector,
 )
 
+from .hazards import HazardClient
 from .api import (
     POINT_TYPE_POSTAL_CODE,
     ForecastPoint,
@@ -36,6 +37,8 @@ from .api import (
     distance_km,
 )
 from .const import (
+    CONF_AVALANCHE_REGION,
+    CONF_POLLEN_STATION,
     CONF_ICON_PACK,
     DEFAULT_ICON_PACK,
     ICON_PACKS,
@@ -178,7 +181,15 @@ class MeteoSwissConfigFlow(ConfigFlow, domain=DOMAIN):
         return MeteoSwissOptionsFlow()
 
 
-OPTIONS_SCHEMA = vol.Schema(
+AUTO = "auto"
+AUTO_LABELS = {
+    "en": "Automatic (nearest)",
+    "fr": "Automatique (le plus proche)",
+    "de": "Automatisch (nächstgelegen)",
+    "it": "Automatico (il più vicino)",
+}
+
+DISPLAY_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ICON_PACK, default=DEFAULT_ICON_PACK): SelectSelector(
             SelectSelectorConfig(
@@ -187,6 +198,11 @@ OPTIONS_SCHEMA = vol.Schema(
                 mode=SelectSelectorMode.LIST,
             )
         ),
+    }
+)
+
+FORECAST_SCHEMA = vol.Schema(
+    {
         vol.Required(
             CONF_HOURLY_FORECAST, default=DEFAULT_HOURLY_FORECAST
         ): BooleanSelector(),
@@ -209,24 +225,102 @@ OPTIONS_SCHEMA = vol.Schema(
 
 
 class MeteoSwissOptionsFlow(OptionsFlow):
-    """Options: hourly forecast download settings."""
+    """Options, organised as a menu: display, forecast, pollen and hazards."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage the options."""
+        """Show the options menu."""
+        return self.async_show_menu(
+            step_id="init", menu_options=["display", "forecast", "environment"]
+        )
+
+    def _save(self, values: dict[str, Any]) -> ConfigFlowResult:
+        options = {**self.config_entry.options, **values}
+        # "auto" means: let the integration choose (nearest), so drop the key.
+        options = {k: v for k, v in options.items() if v != AUTO}
+        return self.async_create_entry(data=options)
+
+    async def async_step_display(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Pictogram pack."""
         if user_input is not None:
-            return self.async_create_entry(
-                data={
-                    CONF_ICON_PACK: user_input[CONF_ICON_PACK],
+            return self._save({CONF_ICON_PACK: user_input[CONF_ICON_PACK]})
+        return self.async_show_form(
+            step_id="display",
+            data_schema=self.add_suggested_values_to_schema(
+                DISPLAY_SCHEMA, self.config_entry.options
+            ),
+        )
+
+    async def async_step_forecast(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Hourly forecast download settings."""
+        if user_input is not None:
+            return self._save(
+                {
                     CONF_HOURLY_FORECAST: user_input[CONF_HOURLY_FORECAST],
                     CONF_HOURLY_HOURS: int(user_input[CONF_HOURLY_HOURS]),
                     CONF_HOURLY_INTERVAL: int(user_input[CONF_HOURLY_INTERVAL]),
                 }
             )
         return self.async_show_form(
-            step_id="init",
+            step_id="forecast",
             data_schema=self.add_suggested_values_to_schema(
-                OPTIONS_SCHEMA, self.config_entry.options
+                FORECAST_SCHEMA, self.config_entry.options
+            ),
+        )
+
+    async def async_step_environment(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Pollen station and avalanche region (default: automatic)."""
+        if user_input is not None:
+            return self._save(
+                {
+                    CONF_POLLEN_STATION: user_input[CONF_POLLEN_STATION],
+                    CONF_AVALANCHE_REGION: user_input[CONF_AVALANCHE_REGION],
+                }
+            )
+
+        session = async_get_clientsession(self.hass)
+        lang = (self.hass.config.language or "en").split("-")[0]
+        auto = SelectOptionDict(value=AUTO, label=AUTO_LABELS.get(lang, AUTO_LABELS["en"]))
+        pollen_options = [auto]
+        region_options = [auto]
+        try:
+            stations = await MeteoSwissClient(session).async_get_pollen_stations()
+            pollen_options += [
+                SelectOptionDict(value=s.abbr, label=f"{s.name} ({s.abbr})")
+                for s in sorted(stations, key=lambda s: s.name)
+            ]
+            regions = await HazardClient(session, "en").async_get_regions()
+            region_options += [
+                SelectOptionDict(value=rid, label=rid)
+                for rid in sorted(f["properties"]["id"] for f in regions["features"])
+            ]
+        except (MeteoSwissError, KeyError, TypeError):
+            _LOGGER.warning("Cannot load pollen stations or avalanche regions")
+
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_POLLEN_STATION, default=AUTO): SelectSelector(
+                    SelectSelectorConfig(
+                        options=pollen_options, mode=SelectSelectorMode.DROPDOWN
+                    )
+                ),
+                vol.Required(CONF_AVALANCHE_REGION, default=AUTO): SelectSelector(
+                    SelectSelectorConfig(
+                        options=region_options, mode=SelectSelectorMode.DROPDOWN
+                    )
+                ),
+            }
+        )
+        return self.async_show_form(
+            step_id="environment",
+            data_schema=self.add_suggested_values_to_schema(
+                schema, self.config_entry.options
             ),
         )

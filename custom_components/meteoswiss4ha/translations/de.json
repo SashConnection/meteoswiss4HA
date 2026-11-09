@@ -133,13 +133,34 @@
   "options": {
     "step": {
       "init": {
-        "title": "Prognose-Optionen",
+        "title": "Optionen",
+        "menu_options": {
+          "display": "Anzeige",
+          "forecast": "Prognosen",
+          "environment": "Pollen und Gefahren"
+        }
+      },
+      "display": {
+        "title": "Anzeige",
+        "data": {
+          "icon_pack": "Piktogramm-Paket"
+        }
+      },
+      "forecast": {
+        "title": "Prognosen",
         "description": "Stündliche Prognosedateien sind gross (je etwa 33 MB, davon etwa 8 MB für 48 Stunden gelesen). Verkürzen Sie den Horizont oder verlängern Sie das Intervall, um Bandbreite zu sparen.",
         "data": {
-          "icon_pack": "Piktogramm-Paket",
           "hourly_forecast": "Stündliche Prognose",
           "hourly_hours": "Horizont der stündlichen Prognose",
           "hourly_interval": "Aktualisierungsintervall der stündlichen Prognose"
+        }
+      },
+      "environment": {
+        "title": "Pollen und Gefahren",
+        "description": "Standardmässig werden die nächstgelegene Pollenstation und die Lawinenregion Ihres Zuhauses verwendet.",
+        "data": {
+          "pollen_station": "Pollenstation",
+          "avalanche_region": "Lawinenregion (SLF)"
         }
       }
     }
