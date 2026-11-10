@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.11
+
+- Ready for the HACS default catalogue: Swiss-only (`country: CH`), HACS validation without exceptions.
+
 ## 2026.11.10
 
 - Fog by region: reference stations from the plain to the summits (Neuchâtel → Chaumont → Chasseral, Bern → Bantiger → Napf, …) detect the sea of fog now and forecast it for 3 days, with its estimated top. New fog card, `fog` and `fog_top` sensors, triggers "fog forms" / "fog clears".
