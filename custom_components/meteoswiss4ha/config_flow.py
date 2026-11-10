@@ -30,6 +30,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .hazards import HazardClient
+from .lakes import LAKES, default_lakes
 from .api import (
     POINT_TYPE_POSTAL_CODE,
     ForecastPoint,
@@ -40,6 +41,9 @@ from .api import (
 )
 from .const import (
     CONF_AVALANCHE_REGION,
+    CONF_FOG,
+    CONF_LAKES,
+    DEFAULT_FOG,
     CONF_POLLEN_STATION,
     CONF_ICON_PACK,
     CONF_PERSONS,
@@ -240,7 +244,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Show the options menu."""
         return self.async_show_menu(
-            step_id="init", menu_options=["display", "forecast", "environment", "places"]
+            step_id="init", menu_options=["display", "forecast", "environment", "lakes", "places"]
         )
 
     def _save(self, values: dict[str, Any]) -> ConfigFlowResult:
@@ -272,6 +276,37 @@ class MeteoSwissOptionsFlow(OptionsFlow):
             step_id="places",
             data_schema=self.add_suggested_values_to_schema(schema, self.config_entry.options),
         )
+
+    async def async_step_lakes(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Lakes (temperature sensors) and fog by region."""
+        if user_input is not None:
+            return self._save(
+                {
+                    CONF_LAKES: list(user_input.get(CONF_LAKES, [])),
+                    CONF_FOG: user_input[CONF_FOG],
+                }
+            )
+        lang = (self.hass.config.language or "en").split("-")[0]
+        options = [
+            SelectOptionDict(value=lake.key, label=lake.names.get(lang, lake.names["en"]))
+            for lake in sorted(LAKES, key=lambda l: l.names.get(lang, l.names["en"]))
+        ]
+        current = self.config_entry.options.get(CONF_LAKES)
+        if current is None:
+            current = default_lakes(self.hass.config.latitude, self.hass.config.longitude)
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_LAKES, default=current): SelectSelector(
+                    SelectSelectorConfig(options=options, multiple=True)
+                ),
+                vol.Required(
+                    CONF_FOG, default=self.config_entry.options.get(CONF_FOG, DEFAULT_FOG)
+                ): bool,
+            }
+        )
+        return self.async_show_form(step_id="lakes", data_schema=schema)
 
     async def async_step_display(
         self, user_input: dict[str, Any] | None = None

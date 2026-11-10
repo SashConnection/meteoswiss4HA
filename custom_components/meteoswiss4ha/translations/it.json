@@ -207,6 +207,22 @@
           "high": "Pericolo forte",
           "very_high": "Pericolo molto forte"
         }
+      },
+      "fog": {
+        "name": "Nebbia",
+        "state": {
+          "clear": "Niente nebbia",
+          "fog": "Nebbia",
+          "stratus": "Strato",
+          "overcast": "Coperto (limite sconosciuto)",
+          "precipitation": "Precipitazioni"
+        }
+      },
+      "fog_top": {
+        "name": "Limite superiore della nebbia (stimato)"
+      },
+      "lake_temperature": {
+        "name": "Temperatura dell’acqua {lake}"
       }
     }
   },
@@ -218,7 +234,8 @@
           "display": "Visualizzazione",
           "forecast": "Previsioni",
           "environment": "Polline e pericoli",
-          "places": "Luoghi e persone sorvegliati"
+          "places": "Luoghi e persone sorvegliati",
+          "lakes": "Laghi e nebbia"
         }
       },
       "display": {
@@ -252,6 +269,14 @@
           "places": "Numeri postali o luoghi",
           "persons": "Persone da seguire"
         }
+      },
+      "lakes": {
+        "title": "Laghi e nebbia",
+        "description": "Laghi: un sensore di temperatura dell’acqua per lago (modelli Eawag Alplakes, con previsione a 4 giorni). Nebbia: nebbia e strato nella tua regione, stimati con stazioni di riferimento dalla pianura alle vette (p. es. Neuchâtel, Chaumont, Chasseral); la previsione legge ~90 MB ogni 6 ore.",
+        "data": {
+          "lakes": "Laghi",
+          "fog": "Nebbia e strato per regione"
+        }
       }
     }
   },
@@ -271,7 +296,9 @@
       "warning_ended": "Fine dell’allerta {subtype}",
       "warning_level": "L’allerta {subtype} raggiunge un grado",
       "hazard_level": "Il pericolo {subtype} raggiunge un grado",
-      "pollen_level": "Il polline raggiunge un livello"
+      "pollen_level": "Il polline raggiunge un livello",
+      "fog_started": "Si forma nebbia o strato",
+      "fog_ended": "La nebbia si dissolve"
     },
     "trigger_subtype": {
       "rain": "pioggia",
@@ -285,7 +312,8 @@
       "flood": "di piene",
       "drought": "di siccità",
       "avalanche": "di valanghe",
-      "pollen": "polline"
+      "pollen": "polline",
+      "fog": "nebbia"
     },
     "extra_fields": {
       "level": "Grado (o superiore)"

@@ -207,6 +207,22 @@
           "high": "Grond privel",
           "very_high": "Fitg grond privel"
         }
+      },
+      "fog": {
+        "name": "Tschajera",
+        "state": {
+          "clear": "Nagina tschajera",
+          "fog": "Tschajera",
+          "stratus": "Tschajera auta",
+          "overcast": "Nivlus (cunfin nunenconuschent)",
+          "precipitation": "Precipitaziun"
+        }
+      },
+      "fog_top": {
+        "name": "Cunfin sura da la tschajera (stimà)"
+      },
+      "lake_temperature": {
+        "name": "Temperatura da l’aua {lake}"
       }
     }
   },
@@ -218,7 +234,8 @@
           "display": "Preschentaziun",
           "forecast": "Prognosas",
           "environment": "Pollen e privels",
-          "places": "Lieus e persunas survegliads"
+          "places": "Lieus e persunas survegliads",
+          "lakes": "Lais e tschajera"
         }
       },
       "display": {
@@ -252,6 +269,14 @@
           "places": "Numers postals u lieus",
           "persons": "Persunas da suandar"
         }
+      },
+      "lakes": {
+        "title": "Lais e tschajera",
+        "description": "Lais: in sensor da la temperatura da l’aua per lai (models Eawag Alplakes, cun prognosa da 4 dis). Tschajera: tschajera e tschajera auta en tia regiun, stimadas cun staziuns da referenza da la planira fin a las piztas (p. ex. Neuchâtel, Chaumont, Chasseral); la prognosa legia ~90 MB mintga 6 uras.",
+        "data": {
+          "lakes": "Lais",
+          "fog": "Tschajera e tschajera auta tenor regiun"
+        }
       }
     }
   },
@@ -271,7 +296,9 @@
       "warning_ended": "Fin da l’avertiment {subtype}",
       "warning_level": "L’avertiment {subtype} cuntanscha in grad",
       "hazard_level": "Il privel {subtype} cuntanscha in grad",
-      "pollen_level": "Il pollen cuntanscha in nivel"
+      "pollen_level": "Il pollen cuntanscha in nivel",
+      "fog_started": "Tschajera u tschajera auta sa furma",
+      "fog_ended": "La tschajera sa dissolva"
     },
     "trigger_subtype": {
       "rain": "plievgia",
@@ -285,7 +312,8 @@
       "flood": "d’auazuns",
       "drought": "da sitgira",
       "avalanche": "da lavinas",
-      "pollen": "pollen"
+      "pollen": "pollen",
+      "fog": "tschajera"
     },
     "extra_fields": {
       "level": "Grad (u pli aut)"

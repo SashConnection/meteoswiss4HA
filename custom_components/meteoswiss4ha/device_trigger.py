@@ -21,6 +21,8 @@ from homeassistant.helpers.typing import ConfigType
 from .const import DOMAIN
 from .events import (
     EVENT,
+    FOG_ENDED,
+    FOG_STARTED,
     HAZARD_LEVEL,
     POLLEN_LEVEL,
     WARNING_ANNOUNCED,
@@ -36,11 +38,13 @@ CONF_LEVEL = "level"
 HAZARD_KINDS = ("forest_fire", "flood", "drought", "avalanche")
 WARNING_TYPES = (WARNING_ANNOUNCED, WARNING_STARTED, WARNING_ENDED, WARNING_LEVEL)
 LEVEL_TYPES = {WARNING_LEVEL: (2, 3, 4, 5), HAZARD_LEVEL: (2, 3, 4, 5), POLLEN_LEVEL: (1, 2, 3, 4)}
-SUBTYPES = (*WARNING_KINDS, *HAZARD_KINDS, "pollen")
+SUBTYPES = (*WARNING_KINDS, *HAZARD_KINDS, "pollen", "fog")
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
-        vol.Required(CONF_TYPE): vol.In((*WARNING_TYPES, HAZARD_LEVEL, POLLEN_LEVEL)),
+        vol.Required(CONF_TYPE): vol.In(
+            (*WARNING_TYPES, HAZARD_LEVEL, POLLEN_LEVEL, FOG_STARTED, FOG_ENDED)
+        ),
         vol.Required(CONF_SUBTYPE): vol.In(SUBTYPES),
         vol.Optional(CONF_LEVEL): vol.All(vol.Coerce(int), vol.Range(min=1, max=5)),
     }
@@ -66,6 +70,7 @@ async def async_get_triggers(hass: HomeAssistant, device_id: str) -> list[dict[s
     if _is_main_device(device):
         triggers += [{**base, CONF_TYPE: HAZARD_LEVEL, CONF_SUBTYPE: sub} for sub in HAZARD_KINDS]
         triggers.append({**base, CONF_TYPE: POLLEN_LEVEL, CONF_SUBTYPE: "pollen"})
+        triggers += [{**base, CONF_TYPE: t, CONF_SUBTYPE: "fog"} for t in (FOG_STARTED, FOG_ENDED)]
     return triggers
 
 

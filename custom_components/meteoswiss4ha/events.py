@@ -18,6 +18,8 @@ WARNING_ENDED = "warning_ended"  # no warning any more
 WARNING_LEVEL = "warning_level"  # the warning level reaches "level"
 HAZARD_LEVEL = "hazard_level"  # a natural hazard reaches "level"
 POLLEN_LEVEL = "pollen_level"  # the pollen level reaches "level"
+FOG_STARTED = "fog_started"  # fog or low stratus forms in the home region
+FOG_ENDED = "fog_ended"  # the fog / stratus clears
 
 
 class LevelEventMixin:

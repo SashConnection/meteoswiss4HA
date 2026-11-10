@@ -52,6 +52,8 @@ class Place:
     latitude: float | None = None
     longitude: float | None = None
     entity_id: str | None = None
+    # Local forecast point (point_id, point_type_id) of a watched postal code.
+    point: tuple[int, int] | None = None
 
 
 async def async_resolve_places(
@@ -73,7 +75,15 @@ async def async_resolve_places(
             _LOGGER.warning("No MeteoSwiss forecast point for %s", text)
             continue
         key = point.postal_code or text
-        places.append(Place(f"place_{key}", f"{point.name} ({key})", point.latitude, point.longitude))
+        places.append(
+            Place(
+                f"place_{key}",
+                f"{point.name} ({key})",
+                point.latitude,
+                point.longitude,
+                point=(point.point_id, point.point_type_id),
+            )
+        )
     return places
 
 

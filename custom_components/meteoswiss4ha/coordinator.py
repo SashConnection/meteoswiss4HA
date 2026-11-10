@@ -70,6 +70,9 @@ class MeteoSwissData:
     hazards: HazardCoordinator | None = None
     # Watched places and followed persons: (WarningsCoordinator, [Place]).
     places: Any = None
+    # Fog by region (fog.FogCoordinator) and lakes (lakes.LakeCoordinator).
+    fog: Any = None
+    lakes: Any = None
 
 
 class PollenCoordinator(DataUpdateCoordinator[PollenData]):
@@ -140,12 +143,15 @@ class CurrentCoordinator(DataUpdateCoordinator[CurrentConditions]):
         )
         self._client = client
         self.station = entry.data[CONF_STATION]
+        # Latest measurements of every station (fog detection, mountain card).
+        self.all_stations: dict[str, CurrentConditions] = {}
 
     async def _async_update_data(self) -> CurrentConditions:
         try:
             stations = await self._client.async_get_current()
         except MeteoSwissError as err:
             raise UpdateFailed(f"Error fetching current conditions: {err}") from err
+        self.all_stations = stations
         if self.station not in stations:
             raise UpdateFailed(f"Station {self.station} not found in current data")
         return stations[self.station]
@@ -187,6 +193,8 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
             minutes=int(entry.options.get(CONF_HOURLY_INTERVAL, DEFAULT_HOURLY_INTERVAL))
         )
         self._hourly_fetched_at: datetime | None = None
+        # Forecast points of the watched places (daily forecast, compare card).
+        self.place_points: tuple[tuple[int, int], ...] = ()
         # Altitude of the forecast point (m), read once from the point list.
         self.altitude: float | None = None
         self._altitude_checked = False
@@ -226,7 +234,7 @@ class ForecastCoordinator(DataUpdateCoordinator[LocalForecast]):
                 hourly_params=HOURLY_PARAMS if fetch_hourly else (),
                 hourly_hours=self._hourly_hours,
                 now=now,
-                extra_points=CITY_POINTS,
+                extra_points=(*CITY_POINTS, *self.place_points),
             )
         except MeteoSwissError as err:
             raise UpdateFailed(f"Error fetching forecast: {err}") from err

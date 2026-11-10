@@ -360,15 +360,17 @@ class MeteoSwissClient:
     ) -> dict[tuple[int, int], list[tuple[datetime, float | None]]]:
         """Stream one parameter file and return the values of the given points.
 
-        Files contain every forecast point (~33 MB for hourly parameters) and
-        are sorted by time first, so with ``until`` the download is stopped as
-        soon as the requested horizon has been read.
+        Files contain every forecast point (~30 MB for hourly parameters),
+        grouped by point and sorted by time within a point. With ``until`` the
+        download is stopped as soon as every requested point has passed the
+        horizon.
         """
         points = list(points)
         prefixes = {f"{p[0]};{p[1]};".encode(): p for p in points}
         series: dict[tuple[int, int], list[tuple[datetime, float | None]]] = {
             p: [] for p in points
         }
+        done: set[tuple[int, int]] = set()
         try:
             async with self._session.get(url, timeout=STREAM_TIMEOUT) as resp:
                 resp.raise_for_status()
@@ -383,9 +385,12 @@ class MeteoSwissClient:
                         continue
                     timestamp = parse_timestamp(parts[2])
                     if until is not None and timestamp > until:
-                        # Closing early aborts the rest of the download.
-                        resp.close()
-                        break
+                        done.add(point)
+                        if len(done) == len(prefixes):
+                            # Closing early aborts the rest of the download.
+                            resp.close()
+                            break
+                        continue
                     series[point].append((timestamp, parse_float(parts[3])))
         except (aiohttp.ClientError, TimeoutError) as err:
             raise MeteoSwissConnectionError(f"Error fetching {url}: {err}") from err

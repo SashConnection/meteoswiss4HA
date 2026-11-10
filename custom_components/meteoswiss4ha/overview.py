@@ -2,6 +2,10 @@
 
 GET /api/meteoswiss4ha/overview          cities forecast, pollen, avalanches
 GET /api/meteoswiss4ha/avalanche_regions  avalanche region polygons (GeoJSON)
+GET /api/meteoswiss4ha/fog                fog / low stratus by region
+GET /api/meteoswiss4ha/lakes              lakes (facts, temperature of the chosen ones)
+GET /api/meteoswiss4ha/lake/<key>         one lake: forecast, profile, 3D map layer
+GET /api/meteoswiss4ha/places             home and watched places (compare card)
 
 Both require a logged-in Home Assistant user.
 """
@@ -11,6 +15,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
+from datetime import timedelta
 from typing import Any
 
 from aiohttp import ClientError, ClientTimeout, web
@@ -47,7 +52,9 @@ from .hazards import (
     WARNING_KINDS,
     HazardClient,
     flood_to_wgs84,
+    warnings_at,
 )
+from .lakes import LAKES, LAKES_BY_KEY, AlplakesClient, lake_facts, value_at
 from .pollen import SPECIES, level_index, summarize
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,6 +64,7 @@ POLLEN_TTL = 60 * 60
 REGIONS_TTL = 24 * 60 * 60
 HAZARD_TTL = 30 * 60
 WARNINGS_TTL = 10 * 60
+LAKE_TTL = 60 * 60
 RADAR_TIMEOUT = ClientTimeout(total=20)
 
 
@@ -78,7 +86,12 @@ class _Cache:
             except MeteoSwissError as err:
                 _LOGGER.debug("Map data %s unavailable: %s", key, err)
                 return cached[1] if cached else None
-            self._values[key] = (time.monotonic(), value)
+            now = time.monotonic()
+            self._values[key] = (now, value)
+            # Forget entries unused for a day (e.g. lake map layers of past hours).
+            for old in [k for k, (t, _) in self._values.items() if now - t > 86400]:
+                del self._values[old]
+                self._locks.pop(old, None)
             return value
 
 
@@ -423,6 +436,165 @@ class OverviewView(_BaseView):
         return result
 
 
+class FogView(_BaseView):
+    """Fog and low stratus of every region (reference stations, forecast)."""
+
+    url = f"/api/{DOMAIN}/fog"
+    name = f"api:{DOMAIN}:fog"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the regions with their stations, state now and forecast."""
+        entry = self._entry(request)
+        fog = entry.runtime_data.fog if entry is not None else None
+        if fog is None or not fog.data:
+            return self.json_message("Fog is disabled or unavailable", 404)
+        return self.json(fog.data)
+
+
+_LAKE_LOCK = asyncio.Lock()
+
+
+async def _lake_call(factory):
+    """Alplakes limits the request rate: one request at a time, spaced."""
+    async with _LAKE_LOCK:
+        try:
+            return await factory()
+        finally:
+            await asyncio.sleep(0.4)
+
+
+class LakesView(_BaseView):
+    """All lakes (facts) and the chosen ones with their temperature now."""
+
+    url = f"/api/{DOMAIN}/lakes"
+    name = f"api:{DOMAIN}:lakes"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the lake list."""
+        entry = self._entry(request)
+        coordinator = entry.runtime_data.lakes if entry is not None else None
+        now = dt_util.utcnow()
+        lakes = []
+        for lake in LAKES:
+            item = lake_facts(lake)
+            series = (coordinator.data or {}).get(lake.key) if coordinator else None
+            if series:
+                item["temperature"] = value_at(series, "T", now)
+            lakes.append(item)
+        chosen = [lake.key for lake in coordinator.lakes] if coordinator else []
+        return self.json({"lakes": lakes, "chosen": chosen})
+
+
+class LakeView(_BaseView):
+    """One lake: facts, series (forecast), profile and the 3D map layer."""
+
+    url = f"/api/{DOMAIN}/lake/{{key}}"
+    name = f"api:{DOMAIN}:lake"
+
+    async def get(self, request: web.Request, key: str) -> web.Response:
+        """Return the lake data; ?map=0 skips the 3D layer, ?time= and ?depth= pick it."""
+        lake = LAKES_BY_KEY.get(key)
+        if lake is None:
+            return self.json_message("Unknown lake", 404)
+        client = AlplakesClient(async_get_clientsession(self.hass))
+        now = dt_util.utcnow()
+        try:
+            depth = max(0.0, min(float(request.query.get("depth", 1)), lake.max_depth))
+        except ValueError:
+            depth = 1.0
+        time = now
+        if "time" in request.query:
+            parsed = dt_util.parse_datetime(request.query["time"])
+            if parsed is not None:
+                time = parsed
+        series = await self.cache.get(
+            f"lake_{key}", LAKE_TTL, lambda: _lake_call(lambda: client.async_get_series(lake, now))
+        )
+        hour = now.replace(minute=0, second=0, microsecond=0)
+        profile = await self.cache.get(
+            f"lake_profile_{key}", LAKE_TTL, lambda: _lake_call(lambda: client.async_get_profile(lake, hour))
+        )
+        layer = None
+        if lake.model3d is not None and request.query.get("map") != "0":
+            slot = time.replace(minute=0, second=0, microsecond=0)
+            slot -= timedelta(hours=slot.hour % 3)
+            layer = await self.cache.get(
+                f"lake_layer_{key}_{slot:%Y%m%d%H}_{depth:g}",
+                LAKE_TTL * 3,
+                lambda: _lake_call(lambda: client.async_get_layer(lake, slot, depth)),
+            )
+        if series is None and profile is None:
+            return self.json_message("Lake data unavailable", 503)
+        return self.json(
+            {
+                **lake_facts(lake),
+                "depth": depth,
+                "series": series,
+                "profile": profile,
+                "layer": layer,
+                "source": "Eawag Alplakes (CC BY 4.0)",
+            }
+        )
+
+
+class PlacesView(_BaseView):
+    """Home and watched places side by side (compare card)."""
+
+    url = f"/api/{DOMAIN}/places"
+    name = f"api:{DOMAIN}:places"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return home and each watched place: days and warnings."""
+        entry = self._entry(request)
+        if entry is None:
+            return self.json_message("No MeteoSwiss entry loaded", 404)
+        data = entry.runtime_data
+        forecast = data.forecast.data
+        now = dt_util.utcnow()
+        current = data.current.data
+        home_warn = data.hazards.data.weather if data.hazards and data.hazards.data else None
+        places = [
+            {
+                "key": "home",
+                "name": entry.title,
+                "lat": self.hass.config.latitude,
+                "lon": self.hass.config.longitude,
+                "altitude": data.forecast.altitude,
+                "temperature": current.values.get("tre200s0") if current else None,
+                "days": _days(forecast.daily) if forecast else [],
+                "warnings": {k: w.level for k, w in (home_warn or {}).items()},
+            }
+        ]
+        if data.places is not None:
+            coordinator, items = data.places
+            geo = coordinator.data
+            for place in items:
+                if place.entity_id is not None:
+                    state = self.hass.states.get(place.entity_id)
+                    lat = state.attributes.get("latitude") if state else None
+                    lon = state.attributes.get("longitude") if state else None
+                else:
+                    lat, lon = place.latitude, place.longitude
+                steps = forecast.others.get(place.point) if forecast and place.point else None
+                warnings = (
+                    {k: w.level for k, w in warnings_at(geo, lat, lon, now).items()}
+                    if geo and lat is not None and lon is not None
+                    else {}
+                )
+                places.append(
+                    {
+                        "key": place.key,
+                        "name": place.name,
+                        "lat": lat,
+                        "lon": lon,
+                        "person": place.entity_id is not None,
+                        "days": _days(steps) if steps else [],
+                        "warnings": warnings,
+                    }
+                )
+        return self.json({"icons_url": f"{ICONS_URL}/{entry.options.get(CONF_ICON_PACK, DEFAULT_ICON_PACK)}", "places": places})
+
+
 def async_register_views(hass: HomeAssistant) -> None:
     """Register the map API views (once)."""
     cache = _Cache()
@@ -433,3 +605,7 @@ def async_register_views(hass: HomeAssistant) -> None:
     hass.http.register_view(PollenView(hass, cache))
     hass.http.register_view(RadarFramesView(hass, cache))
     hass.http.register_view(RadarFrameView(hass, cache))
+    hass.http.register_view(FogView(hass, cache))
+    hass.http.register_view(LakesView(hass, cache))
+    hass.http.register_view(LakeView(hass, cache))
+    hass.http.register_view(PlacesView(hass, cache))

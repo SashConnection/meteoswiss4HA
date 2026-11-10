@@ -207,6 +207,22 @@
           "high": "Fort danger",
           "very_high": "Très fort danger"
         }
+      },
+      "fog": {
+        "name": "Brouillard",
+        "state": {
+          "clear": "Pas de brouillard",
+          "fog": "Brouillard",
+          "stratus": "Stratus",
+          "overcast": "Couvert (sommet inconnu)",
+          "precipitation": "Précipitations"
+        }
+      },
+      "fog_top": {
+        "name": "Sommet du brouillard (estimé)"
+      },
+      "lake_temperature": {
+        "name": "Température de l’eau {lake}"
       }
     }
   },
@@ -218,7 +234,8 @@
           "display": "Affichage",
           "forecast": "Prévisions",
           "environment": "Pollen et dangers",
-          "places": "Lieux et personnes surveillés"
+          "places": "Lieux et personnes surveillés",
+          "lakes": "Lacs et brouillard"
         }
       },
       "display": {
@@ -252,6 +269,14 @@
           "places": "Numéros postaux ou lieux",
           "persons": "Personnes à suivre"
         }
+      },
+      "lakes": {
+        "title": "Lacs et brouillard",
+        "description": "Lacs : un capteur de température de l’eau par lac (modèles Eawag Alplakes, avec prévision sur 4 jours). Brouillard : brouillard et stratus dans ta région, estimés avec des stations repères de la plaine aux sommets (p. ex. Neuchâtel, Chaumont, Chasseral) ; la prévision lit ~90 Mo toutes les 6 heures.",
+        "data": {
+          "lakes": "Lacs",
+          "fog": "Brouillard et stratus par région"
+        }
       }
     }
   },
@@ -271,7 +296,9 @@
       "warning_ended": "Fin de l’alerte {subtype}",
       "warning_level": "L’alerte {subtype} atteint un degré",
       "hazard_level": "Le danger {subtype} atteint un degré",
-      "pollen_level": "Le pollen atteint un niveau"
+      "pollen_level": "Le pollen atteint un niveau",
+      "fog_started": "Le brouillard ou le stratus se forme",
+      "fog_ended": "Le brouillard se dissipe"
     },
     "trigger_subtype": {
       "rain": "pluie",
@@ -285,7 +312,8 @@
       "flood": "de crues",
       "drought": "de sécheresse",
       "avalanche": "d’avalanches",
-      "pollen": "pollen"
+      "pollen": "pollen",
+      "fog": "brouillard"
     },
     "extra_fields": {
       "level": "Degré (ou plus)"

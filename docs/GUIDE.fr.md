@@ -7,6 +7,8 @@
 **Toute la météo suisse dans Home Assistant, en une seule intégration.**
 Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à programmer — en **allemand, français, italien, romanche et anglais**.
 
+![Tout en un coup d’œil](images/highlights.png)
+
 ![MeteoSwiss Complete For HA](images/overview.png)
 
 ## Tout en un
@@ -19,7 +21,23 @@ Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à pro
 | 🔥 **Dangers naturels** | Incendies de forêt, crues, sécheresse (OFEV) et avalanches (SLF) |
 | 🌼 **Pollen** | 7 espèces, 15 stations de mesure en Suisse |
 | 🗺️ **Carte de la Suisse** | Tout cela sur une carte, ou zoomé sur votre région |
-| 📍 **Vos lieux** | Alertes pour d’autres lieux (p. ex. Berne, Cernier) et **là où vous êtes** (suit votre téléphone), avec des déclencheurs d’automatisation prêts à l’emploi |
+| 📍 **Vos lieux** | Alertes pour d’autres lieux (p. ex. Berne, Cernier) et **là où vous êtes** (suit votre téléphone), avec des déclencheurs d’automatisation prêts à l’emploi ; comparez-les côte à côte |
+| 🌫️ **Brouillard par région** | Mer de brouillard détectée avec des stations repères de la plaine aux sommets (Neuchâtel → Chaumont → Chasseral), sommet estimé et prévision sur 3 jours, déclencheurs « le brouillard se forme / se dissipe » |
+| 🏞️ **Lacs** | 27 lacs suisses : température de l’eau avec prévision sur 4 jours, oxygène, thermocline, glace, profil ; 13 lacs dessinés en couleur avec leurs courants (Eawag) |
+| 🏔️ **Montagne** | Isotherme 0 °C, limite de la neige, températures par altitude, mer de brouillard et danger d’avalanche — votre région, une grande région ou toute la Suisse |
+| 🧥 **Au quotidien** | *Faut-il sortir ?*, *Ma journée*, un ciel animé en direct et un écran mural avec mode nuit rouge sombre |
+
+## Les nouveaux panneaux en un coup d’œil
+
+| | |
+|---|---|
+| ![Ciel en direct](images/card-sky.png)<br>**Ciel en direct** — le ciel du moment dessiné et animé : soleil ou lune, nuages poussés par le vent, pluie, neige, brouillard, étoiles | ![Faut-il sortir ?](images/card-outing.png)<br>**Faut-il sortir ?** — un verdict clair, l’heure de la pluie, quoi mettre, rafales, alertes, pollen, brouillard, meilleur moment |
+| ![Ma journée](images/card-day.png)<br>**Ma journée** — nuit, matin, après-midi, soir, avec la courbe de température, le lever et le coucher du soleil | ![Comparer mes lieux](images/card-compare.png)<br>**Comparer mes lieux** — chez vous et vos lieux surveillés (p. ex. Berne) côte à côte, avec le meilleur endroit du jour |
+| ![Montagne](images/card-mountain.png)<br>**Montagne** — isotherme 0 °C, limite de la neige, températures par altitude, mer de brouillard, danger d’avalanche | ![Brouillard](images/card-fog.png)<br>**Brouillard par région** — stations repères de la plaine aux sommets (Neuchâtel, Chaumont, Chasseral…), sommet du brouillard, prévision sur 3 jours |
+| ![Lac de Neuchâtel](images/card-lake.png)<br>**Lacs** — 27 lacs : température de l’eau et prévision, oxygène, thermocline, glace, profil ; 13 lacs dessinés en couleur avec les courants | ![Écran mural](images/card-wall.png)<br>**Écran mural** — grande horloge, météo, prochaines heures, alertes<br><br>![Mode nuit](images/card-wall-night.png)<br>**… et son mode nuit** rouge sombre, qui n’éclaire pas la pièce |
+
+<sub>Lac et brouillard : données réelles du 10 novembre 2026 (Eawag Alplakes, stations MétéoSuisse). Les autres valeurs sont des exemples.</sub>
+
 
 ## Un monument pour chaque ville
 
@@ -39,13 +57,13 @@ Trois packs de pictogrammes, un par symbole météo MétéoSuisse ; le pack anim
 
 ![Packs de pictogrammes](images/packs.jpg)
 
-> Exemples : Neuchâtel et Berne ; certaines valeurs (prévisions, pollen) sont des exemples.
+> Exemples : Neuchâtel et Berne ; les panneaux lac et brouillard montrent des données réelles du 10 novembre 2026, certaines autres valeurs (prévisions, pollen) sont des exemples.
 
 ## Sommaire
 
 1. [Installation](#1-installation)
 2. [Réglages](#2-réglages)
-3. [Carte Prévisions avec les pictogrammes animés](#3-carte-prévisions)
+3. [Carte Prévisions avec les pictogrammes animés](#3-carte-prévisions) · [Panneaux du quotidien](#panneaux-du-quotidien) · [Montagne](#montagne) · [Brouillard par région](#brouillard-par-région) · [Lacs](#lacs)
 4. [Carte de la Suisse](#4-carte-de-la-suisse)
 5. [Une carte par danger, ou zoomée sur votre région](#5-une-carte-par-danger-ou-zoomée-sur-votre-région)
 6. [Sur téléphone](#6-sur-téléphone)
@@ -71,13 +89,15 @@ L'intégration crée une entité météo, des capteurs, et ajoute deux cartes po
 
 ## 2. Réglages
 
-**Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer**. Le menu propose trois pages :
+**Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer**. Le menu propose cinq pages :
 
 | Page | Réglages |
 |---|---|
 | **Affichage** | Pack de pictogrammes : **Animé** (par défaut), **Vif** ou **Classique**. Option **« Afficher la page carte dans la barre latérale »** (désactivée par défaut). |
 | **Prévisions** | Prévisions horaires oui/non, horizon (48 h par défaut) et fréquence de mise à jour. Les fichiers horaires de MétéoSuisse sont gros : réduisez l'horizon pour économiser de la bande passante. |
 | **Pollen et dangers** | Station pollen et région d'avalanches. « Automatique » prend la plus proche du domicile. |
+| **Lacs et brouillard** | Les lacs qui ont un capteur de température de l’eau (par défaut : le lac le plus proche du domicile, s’il est à moins de 15 km) et le **brouillard par région** (activé par défaut). |
+| **Lieux et personnes surveillés** | Numéros postaux ou lieux, et personnes à suivre (voir plus bas). |
 
 Après un changement, l'intégration se recharge toute seule.
 
@@ -170,7 +190,101 @@ language: auto        # ou de, fr, it, rm, en
 
 Chacun devient un appareil (p. ex. *MeteoSwiss Bern (3004)*) avec les 7 capteurs d’alertes.
 
-**Déclencheurs prêts à l’emploi** : Paramètres → Automatisations → Créer → Ajouter un déclencheur → **Appareil** → un appareil MeteoSwiss, puis p. ex. *Alerte orages annoncée*, *Alerte pluie en vigueur* / *Fin de l’alerte pluie*, *L’alerte vent atteint un degré* (2 à 5) ; sur l’appareil principal aussi les dangers (incendie, crues, sécheresse, avalanches) et le pollen. Aucun YAML nécessaire.
+**Déclencheurs prêts à l’emploi** : Paramètres → Automatisations → Créer → Ajouter un déclencheur → **Appareil** → un appareil MeteoSwiss, puis p. ex. *Alerte orages annoncée*, *Alerte pluie en vigueur* / *Fin de l’alerte pluie*, *L’alerte vent atteint un degré* (2 à 5) ; sur l’appareil principal aussi les dangers (incendie, crues, sécheresse, avalanches), le pollen, *Le brouillard ou le stratus se forme* et *Le brouillard se dissipe*. Aucun YAML nécessaire.
+
+### Panneaux du quotidien
+
+- **Ciel en direct** (`meteoswiss-sky-card`) : le ciel du moment, animé, derrière le lieu et la température — soleil ou lune sur sa course entre le lever et le coucher, nuages qui avancent avec le vent, pluie, neige, éclairs, bancs de brouillard, étoiles. `animate: false` pour une image fixe (aussi quand l’appareil demande moins d’animations).
+- **Faut-il sortir ?** (`meteoswiss-outing-card`) : un verdict (*Oui, vas-y !*, *avec un parapluie*, *plutôt plus tard*, *mieux vaut rester*) et les raisons : l’heure où la pluie commence, quoi mettre selon la température et le vent, rafales, alertes en vigueur, pollen, brouillard avec l’altitude du soleil, le meilleur créneau de 2 heures, le coucher du soleil. `hours: 12`.
+- **Ma journée** (`meteoswiss-day-card`) : nuit, matin, après-midi et soir avec pictogramme, températures et pluie, au-dessus de la courbe de température avec le lever et le coucher du soleil. Boutons Aujourd’hui / Demain (demain d’abord après 18 h).
+- **Comparer mes lieux** (`meteoswiss-compare-card`) : chez vous et chaque lieu surveillé, sur 1 à 5 jours, alertes en vigueur, et ★ le meilleur endroit du jour (le plus sec, puis le plus chaud). Ajoutez des lieux dans les options (*Lieux et personnes surveillés*).
+- **Écran mural** (`meteoswiss-wall-card`) : grande horloge, date, température, aujourd’hui et demain, alertes et prochaines heures. `night_mode: auto` passe tout en rouge sombre après le coucher du soleil (`on` / `off` pour forcer).
+
+```yaml
+type: custom:meteoswiss-outing-card
+hours: 12
+---
+type: custom:meteoswiss-wall-card
+night_mode: auto        # auto (soleil), on, off
+hours: 8
+```
+
+### Montagne
+
+<img src="images/card-mountain.png" alt="Montagne" width="380" align="right">
+
+Une montagne générique (sans noms) jusqu’à 4000 m avec :
+
+- l’**isotherme 0 °C** de la prévision locale, et sa fourchette aujourd’hui et demain ;
+- la **limite des chutes de neige** quand des précipitations sont prévues (≈ 300 m sous le 0 °C, *estimée*) ;
+- les **températures par altitude** : ● *mesurées* par une station proche de chez vous à cette altitude (p. ex. Chaumont, Chasseral, Moléson), ○ *estimées* entre votre température et le 0 °C là où il n’y a pas de station ;
+- la **mer de brouillard** de votre région (voir plus bas) ;
+- le **danger d’avalanche**, avec un menu : *ma région*, une grande région (*Jura, Préalpes, Alpes bernoises, Alpes valaisannes, Suisse centrale, Grisons nord, Engadine, Sud des Alpes*) ou *toute la Suisse* (degré le plus élevé).
+
+```yaml
+type: custom:meteoswiss-mountain-card
+avalanche_scope: home    # home, switzerland, jura, prealps, bernese, valais, central, grisons, engadine, south
+```
+
+<br clear="right">
+
+### Brouillard par région
+
+<img src="images/card-fog.png" alt="Brouillard" width="380" align="right">
+
+MétéoSuisse ne publie pas de mesure du « sommet du brouillard » : l’intégration le **lit dans les stations**. Chaque région a une échelle de stations de la plaine aux sommets. Une station est *dans le brouillard* quand elle n’a pas de soleil et que l’air est saturé ; elle est *au-dessus* quand elle a du soleil (de jour) ou de l’air sec (de nuit). Le sommet est entre les deux.
+
+| Région | Plaine | Collines et sommets |
+|---|---|---|
+| Trois-Lacs | Neuchâtel 485 m, Payerne 490 m | Chaumont 1136 m, La Frétaz 1205 m, Chasseral 1594 m |
+| Bassin lémanique | Genève 411 m, Changins 458 m, Pully 456 m | Bière 684 m, La Dôle 1670 m |
+| Plateau fribourgeois | Payerne 490 m, Grangeneuve 651 m | Plaffeien 1042 m, Moléson 1974 m |
+| Berne / Plateau central | Wynau 422 m, Berne 553 m | Bantiger 942 m, Napf 1404 m |
+| Zurich / Nord-est | Kloten 426 m, Tänikon 539 m, Zurich 604 m | Lägern 845 m, Uetliberg 854 m, Hörnli 1133 m, Säntis 2501 m |
+| Suisse centrale | Lucerne 454 m, Mosen 453 m, Egolzwil 522 m | Einsiedeln 911 m, Pilate 2105 m |
+| Bâle / Jura nord | Bâle 316 m, Delémont 439 m | Fahy 596 m, Rünenberg 611 m |
+| Tessin | Magadino 203 m, Lugano 273 m, Locarno 367 m | Monte Generoso 1600 m, Cimetta 1661 m |
+
+- **Maintenant** : toutes les 10 minutes, d’après les mesures (soleil, humidité, point de rosée, précipitations).
+- **Prévision** : heure par heure sur 3 jours, d’après la prévision locale des mêmes stations (symboles *stratus* et *brouillard*, nébulosité basse, durée d’ensoleillement), résumée par jour : *mercredi : stratus 6–14 h, sommet ~1000 m, soleil au-dessus*.
+- **Capteurs** : `sensor.<lieu>_fog` (pas de brouillard, brouillard, stratus, couvert, précipitations ; attributs : région, `top_min`, `top_max`, stations, prévision) et `sensor.<lieu>_fog_top` (sommet estimé, m).
+- **Déclencheurs** : *Le brouillard ou le stratus se forme* / *Le brouillard se dissipe*.
+
+```yaml
+type: custom:meteoswiss-fog-card
+region: three_lakes     # par défaut : votre région
+show_forecast: true
+show_map: true
+show_all: false         # liste de toutes les régions
+```
+
+La prévision lit trois fichiers horaires de MétéoSuisse toutes les 6 heures (~90 Mo) ; désactivez le brouillard dans *Lacs et brouillard* pour économiser la bande passante.
+
+<br clear="right">
+
+### Lacs
+
+<img src="images/card-lake.png" alt="Lac de Neuchâtel" width="380" align="right">
+
+Données des modèles de lacs **Eawag Alplakes** (CC BY 4.0), pour 27 lacs : Léman, Constance, Neuchâtel, Majeur, Quatre-Cantons, Zurich, Lugano, Thoune, Bienne, Zoug, Brienz, Walenstadt, Morat, Sempach, Hallwil, Gruyère, Joux, Greifen, Sarnen, Ägeri, Baldegg, Sils, Pfäffikon, Silvaplana, Lungern, Poschiavo, Saint-Moritz.
+
+- **Valeurs au choix** (`measures`) : température de l’eau à 1 m, variation sur 24 h, fourchette des prochaines 24 h (10–90 %), température au fond, saturation en oxygène, profondeur de la thermocline, glace, altitude, superficie, profondeur maximale, volume.
+- **Carte** pour les 13 lacs qui ont un modèle 3D (Léman, Neuchâtel, Bienne, Morat, Zurich, Zoug, Quatre-Cantons, Lugano, Joux, Hallwil, Greifen, Ägeri, Saint-Moritz) : le lac dessiné en couleur selon la température, les **courants** en flèches, les **localités du bord** avec la température de l’eau devant elles, l’endroit le plus chaud et le plus froid. Un curseur va d’hier à +4 jours ; le menu de profondeur montre 1 à 50 m.
+- **Prévision** à 1 m avec sa fourchette 10–90 %, et le **profil** de la surface au fond (température, oxygène, thermocline).
+- **Capteurs** : un capteur *Température de l’eau <lac>* par lac choisi dans *Lacs et brouillard*, avec la prévision et toutes les valeurs en attributs — p. ex. « préviens-moi quand le lac de Neuchâtel atteint 20 °C ».
+
+```yaml
+type: custom:meteoswiss-lake-card
+lake: neuchatel
+measures: [trend, range, bottom, oxygen, thermocline, ice, altitude, area, max_depth, volume]
+show_map: true
+show_forecast: true
+show_profile: true
+depth: 1
+```
+
+<br clear="right">
+
 
 ## 4. Carte de la Suisse
 
@@ -257,6 +371,8 @@ Sur un écran étroit, la légende devient une ligne compacte et les onglets uti
 | `sensor.<lieu>_rain_warning`, `_thunderstorm_warning`, `_wind_warning`, `_snow_warning`, `_slippery_roads_warning`, `_heat_warning`, `_frost_warning` | Alerte en cours chez vous (`low` = pas d'alerte). Attributs : texte, début, fin, et `upcoming` pour les alertes à venir. |
 | `sensor.<lieu>_flood_danger`, `_forest_fire_danger`, `_drought_danger`, `_avalanche_danger` | Degré de danger de votre région. |
 | `sensor.<lieu>_pollen_level`, `_birch_pollen`, … | Pollen : niveau général et concentration par espèce. |
+| `sensor.<lieu>_fog`, `_fog_top` | Brouillard / stratus dans votre région et sommet estimé (m). |
+| `sensor.<lieu>_water_temperature_<lac>` | Température de l’eau d’un lac (1 m), avec prévision, oxygène, thermocline, glace et données du lac en attributs. |
 
 Exemple : être averti dès qu'une alerte orage est annoncée.
 
@@ -289,5 +405,7 @@ Pour mettre à jour : HACS propose la nouvelle version → **Télécharger** →
 | « Le radar n'est pas disponible pour le moment » | Le serveur radar du projet ne répond pas ; il se rétablit tout seul, réessayez plus tard. |
 | Pas de prévisions par heure | Activez **Prévisions horaires** dans les réglages (page Prévisions). |
 | Une alerte ou un danger est « indisponible » | La source (MétéoSuisse/MeteoAlarm, OFEV, SLF) ne répond pas ; la valeur revient à la mise à jour suivante. |
+| Le panneau brouillard dit « indisponible » | Activez *Brouillard et stratus par région* dans *Lacs et brouillard*. |
+| Un panneau lac reste vide | Le serveur de l’Eawag limite le nombre de requêtes ; le panneau réessaie à la mise à jour suivante. |
 
-Sources : MétéoSuisse (Open Data, CC BY 4.0), alertes MétéoSuisse via MeteoAlarm, OFEV, SLF, fond de carte swisstopo. Ce projet n'est pas affilié à MétéoSuisse.
+Sources : MétéoSuisse (Open Data, CC BY 4.0), alertes MétéoSuisse via MeteoAlarm, OFEV, SLF, lacs Eawag Alplakes (CC BY 4.0 ; données des lacs arrondies), fond de carte swisstopo. Ce projet n'est pas affilié à MétéoSuisse.

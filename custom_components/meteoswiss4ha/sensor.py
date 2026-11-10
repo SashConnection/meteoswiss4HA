@@ -45,6 +45,7 @@ from .pollen import LEVELS, SPECIES, PollenSpecies
 from .entity import MeteoSwissEntity
 from .events import LevelEventMixin
 from .places import place_sensors
+from .sensor_env import env_sensors
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
 from .symbols import symbol_to_condition
 
@@ -181,6 +182,7 @@ async def async_setup_entry(
         )
     if (places := entry.runtime_data.places) is not None:
         entities.extend(place_sensors(places[0], entry, places[1]))
+    entities.extend(env_sensors(entry))
     async_add_entities(entities)
 
 

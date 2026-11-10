@@ -17,10 +17,13 @@ from homeassistant.helpers.typing import ConfigType
 
 from .api import MeteoSwissClient, MeteoSwissError, distance_km
 from .const import (
+    CONF_FOG,
+    CONF_LAKES,
     CONF_PERSONS,
     CONF_PLACES,
     CONF_POLLEN_STATION,
     CONF_SIDEBAR_PANEL,
+    DEFAULT_FOG,
     DEFAULT_SIDEBAR_PANEL,
     DOMAIN,
     FRONTEND_URL,
@@ -36,7 +39,9 @@ from .coordinator import (
     HazardCoordinator,
     PollenCoordinator,
 )
+from .fog import FogCoordinator
 from .hazards import HazardClient
+from .lakes import LAKES_BY_KEY, AlplakesClient, LakeCoordinator, default_lakes
 from .overview import async_register_views
 from .places import Place, WarningsCoordinator, async_resolve_places
 
@@ -101,6 +106,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
 
     current = CurrentCoordinator(hass, entry, client)
     forecast = ForecastCoordinator(hass, entry, client)
+    # Watched places first: their daily forecast is read with the home one.
+    watched = await async_resolve_places(client, entry.options.get(CONF_PLACES) or [])
+    forecast.place_points = tuple(p.point for p in watched if p.point is not None)
     await current.async_config_entry_first_refresh()
     await forecast.async_config_entry_first_refresh()
 
@@ -110,7 +118,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
         forecast=forecast,
         pollen=await _async_setup_pollen(hass, entry, client),
         hazards=await _async_setup_hazards(hass, entry),
-        places=await _async_setup_places(hass, entry, client),
+        places=await _async_setup_places(hass, entry, watched),
+        fog=await _async_setup_fog(hass, entry, client),
+        lakes=await _async_setup_lakes(hass, entry),
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -130,11 +140,39 @@ async def _async_setup_hazards(
     return hazards
 
 
-async def _async_setup_places(
+async def _async_setup_fog(
     hass: HomeAssistant, entry: MeteoSwissConfigEntry, client: MeteoSwissClient
+) -> FogCoordinator | None:
+    """Fog and low stratus by region (optional, never blocking)."""
+    if not entry.options.get(CONF_FOG, DEFAULT_FOG):
+        return None
+    fog = FogCoordinator(hass, entry, client)
+    await fog.async_refresh()
+    return fog
+
+
+async def _async_setup_lakes(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> LakeCoordinator | None:
+    """Lake temperatures of the chosen lakes (never blocking)."""
+    keys = entry.options.get(CONF_LAKES)
+    if keys is None:
+        keys = default_lakes(hass.config.latitude, hass.config.longitude)
+    lakes = [LAKES_BY_KEY[k] for k in keys if k in LAKES_BY_KEY]
+    if not lakes:
+        return None
+    coordinator = LakeCoordinator(
+        hass, entry, AlplakesClient(async_get_clientsession(hass)), lakes
+    )
+    await coordinator.async_refresh()
+    return coordinator
+
+
+async def _async_setup_places(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry, places: list[Place]
 ) -> tuple[WarningsCoordinator, list[Place]] | None:
     """Watched places and followed persons (never blocking)."""
-    places = await async_resolve_places(client, entry.options.get(CONF_PLACES) or [])
+    places = list(places)
     for entity_id in entry.options.get(CONF_PERSONS) or []:
         state = hass.states.get(entity_id)
         name = state.name if state is not None else entity_id

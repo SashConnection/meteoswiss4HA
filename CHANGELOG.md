@@ -3,6 +3,16 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.10
+
+- Fog by region: reference stations from the plain to the summits (Neuchâtel → Chaumont → Chasseral, Bern → Bantiger → Napf, …) detect the sea of fog now and forecast it for 3 days, with its estimated top. New fog card, `fog` and `fog_top` sensors, triggers "fog forms" / "fog clears".
+- Lakes (Eawag Alplakes): 27 lakes with water temperature, 4-day forecast, oxygen, thermocline, ice and depth profile; 13 lakes drawn in color by temperature with currents, lakeside towns, time slider and depth. New lake card and water temperature sensors.
+- Mountain card: 0 °C level, snow line, temperatures by altitude (measured and estimated), sea of fog, avalanche danger for your region, a large region or all of Switzerland.
+- Everyday cards: live animated sky, "Should I go out?", "My day", compare my places, wall screen with a dark red night mode.
+- New options page "Lakes and fog". Watched places now also get their daily forecast (compare card).
+- Hourly forecast files: reading several points at once no longer stops too early.
+- Documentation: everything at a glance on the HACS page and in the French guide.
+
 ## 2026.11.9
 
 - Monument pictograms: a line drawing of the best-known monument of each of the 31 towns of the map (and the summits), on the map labels and next to the place name in the cards.

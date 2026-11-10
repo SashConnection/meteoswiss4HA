@@ -14,6 +14,9 @@ import { monument } from "./meteoswiss-monuments.js";
 import "./meteoswiss-weather-card.js";
 import "./meteoswiss-pollen-card.js";
 import "./meteoswiss-app-cards.js";
+import "./meteoswiss-panels.js";
+import "./meteoswiss-mountain.js";
+import "./meteoswiss-lake.js";
 
 const BASE = new URL(".", import.meta.url).href;
 const WMTS = (layer, ext = "png") =>

@@ -7,6 +7,10 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 
 🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**
 
+![Everything at a glance](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/highlights.png)
+
+<sub>Lake and fog: real data of 10 November 2026 (Eawag Alplakes, MeteoSwiss stations). Other values are examples.</sub>
+
 ![MeteoSwiss Complete For HA](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.png)
 
 ## Everything in one
@@ -19,7 +23,11 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 | 🔥 **Natural hazards** | Forest fire, floods, drought (FOEN) and avalanches (SLF) |
 | 🌼 **Pollen** | 7 species, 15 measuring stations across Switzerland |
 | 🗺️ **Switzerland map** | All of the above on one map, or zoomed on your region |
-| 📍 **Your places** | Warnings for other places (e.g. Bern, Cernier) and **where you are** (follows your phone), with ready-made automation triggers |
+| 📍 **Your places** | Warnings for other places (e.g. Bern, Cernier) and **where you are** (follows your phone), with ready-made automation triggers; compare them side by side |
+| 🌫️ **Fog by region** | Sea of fog detected with reference stations from the plain to the summits (Neuchâtel → Chaumont → Chasseral), estimated top and 3-day forecast, triggers "fog forms / clears" |
+| 🏞️ **Lakes** | 27 Swiss lakes: water temperature with a 4-day forecast, oxygen, thermocline, ice, depth profile; 13 lakes drawn in color with their currents (Eawag) |
+| 🏔️ **Mountain** | 0 °C level, snow line, temperatures by altitude, sea of fog and avalanche danger — your region, a large region or all of Switzerland |
+| 🧥 **Every day** | *Should I go out?*, *My day*, a live animated sky and a wall screen with a dark red night mode |
 
 ## Ready-made cards
 
@@ -37,6 +45,22 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 <td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours: temperature with its uncertainty band, rain probability and amount</sub></td>
 <td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One continuous temperature curve and rain over the next days</sub>
 <br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map with hazard chips, animated radar</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon on its arc, drifting clouds, rain, snow, fog banks and stars — the weather of the moment, alive</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A clear verdict, when the rain starts, what to wear, gusts, warnings, pollen, fog, the best time</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Night, morning, afternoon, evening, with the temperature curve, sunrise and sunset</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and your watched places (e.g. Bern) side by side, with the best place today</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, temperatures by altitude (measured and estimated), sea of fog, avalanche danger of your region, a large region or all of Switzerland</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Reference stations from the plain to the summits (Neuchâtel, Chaumont, Chasseral…), top of the fog, 3-day forecast, map of Switzerland</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes: water temperature and forecast, oxygen, thermocline, ice, depth profile; 13 lakes drawn in color with currents and the lakeside towns</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock, weather, next hours and warnings for a wall tablet</sub><br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall-night.png" width="100%" alt="Night mode"><br><b>…and its night mode</b><br><sub>Dark red at night, so it does not light up the room</sub></td>
 </tr>
 </table>
 
@@ -75,7 +99,7 @@ Three pictogram packs, one per MeteoSwiss weather symbol. Pick one in the integr
 2. **Settings → Devices & services → Add integration → MeteoSwiss Complete For HA**: pick your station and postal code (the nearest are suggested).
 3. **Add a card** to your dashboard: search "MeteoSwiss".
 
-> Screenshots: Neuchâtel and Bern; some values (forecasts, pollen) are examples.
+> Screenshots: Neuchâtel and Bern; lake and fog cards show real data of 10 November 2026, some other values (forecasts, pollen) are examples.
 
 ---
 
@@ -85,7 +109,7 @@ Three pictogram packs, one per MeteoSwiss weather symbol. Pick one in the integr
 
 1. [Installation](#1-installation)
 2. [Settings](#2-settings)
-3. [Forecast card](#3-forecast-card)
+3. [Forecast card](#3-forecast-card) · [Everyday panels](#3d-everyday-panels) · [Mountain](#3e-mountain) · [Fog by region](#3f-fog-by-region) · [Lakes](#3g-lakes)
 4. [Switzerland map](#4-switzerland-map)
 5. [One map per hazard, or zoomed on your region](#5-one-map-per-hazard-or-zoomed-on-your-region)
 6. [On a phone](#6-on-a-phone)
@@ -113,13 +137,15 @@ The integration creates a weather entity and sensors, and adds two cards for you
 
 ## 2. Settings
 
-**Settings → Devices & services → MeteoSwiss Complete For HA → Configure**. The menu has three pages:
+**Settings → Devices & services → MeteoSwiss Complete For HA → Configure**. The menu has five pages:
 
 | Page | Settings |
 |---|---|
 | **Display** | Pictogram pack: **Animated** (default), **Vivid** or **Classic**. Option **"Show the map page in the sidebar"** (off by default). |
 | **Forecast** | Hourly forecast on/off, horizon (48 h by default) and refresh interval. MeteoSwiss hourly files are large: reduce the horizon to save bandwidth. |
 | **Pollen and hazards** | Pollen station and avalanche region. "Automatic" picks the one nearest to your home. |
+| **Lakes and fog** | The lakes that get a water temperature sensor (default: the lake nearest to your home, if within 15 km) and **fog by region** (on by default). |
+| **Watched places and persons** | Postal codes or places, and persons to follow (see [3c](#3c-warnings-for-your-places-and-where-you-are)). |
 
 The integration reloads by itself after a change.
 
@@ -229,9 +255,109 @@ Each one becomes a device (e.g. *MeteoSwiss Bern (3004)*) with the 7 weather war
 - *Thunderstorm warning announced* (an upcoming warning is published),
 - *Rain warning starts* / *ends*,
 - *Wind warning reaches a level* (2 to 5),
-- on the main device also: *Forest fire / Flood / Drought / Avalanche danger reaches a level*, *Pollen reaches a level*.
+- on the main device also: *Forest fire / Flood / Drought / Avalanche danger reaches a level*, *Pollen reaches a level*, *Fog or low stratus forms*, *The fog clears*.
 
 Example: notify your phone when a thunderstorm warning is announced where you are — no YAML needed.
+
+## 3d. Everyday panels
+
+| | |
+|---|---|
+| ![Live sky](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png) | ![Should I go out?](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png) |
+| ![My day](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png) | ![Compare my places](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png) |
+
+- **Live sky** (`meteoswiss-sky-card`): the sky of the moment drawn and animated behind the place and the temperature — sun or moon on its arc between sunrise and sunset, clouds drifting with the wind, rain, snow, lightning, fog banks, stars. `animate: false` for a still picture (also when the device asks for reduced motion).
+- **Should I go out?** (`meteoswiss-outing-card`): a verdict (*Yes, go!*, *with an umbrella*, *better later*, *better stay in*) and the reasons: when the rain starts, what to wear for the temperature and the wind, gusts, warnings in force, pollen, fog with the sunshine altitude, the best 2-hour window, sunset. `hours: 12`.
+- **My day** (`meteoswiss-day-card`): night, morning, afternoon and evening with their pictogram, temperatures and rain, above the temperature curve with sunrise and sunset. Today / Tomorrow buttons (tomorrow first after 18:00).
+- **Compare my places** (`meteoswiss-compare-card`): home and every watched place, 1 to 5 days, warnings in force, and ★ the best place today (driest, then warmest). Add places in the options (*Watched places and persons*).
+- **Wall screen** (`meteoswiss-wall-card`): big clock, date, temperature, today and tomorrow, warnings and the next hours. `night_mode: auto` turns everything dark red once the sun has set (`on` / `off` to force it).
+
+```yaml
+type: custom:meteoswiss-outing-card
+hours: 12
+---
+type: custom:meteoswiss-wall-card
+night_mode: auto        # auto (sun), on, off
+hours: 8
+show_seconds: false
+```
+
+## 3e. Mountain
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" alt="Mountain" width="380" align="right">
+
+A generic mountain (no names) up to 4,000 m with:
+
+- the **0 °C level** of the local forecast, and its range today and tomorrow;
+- the **snow line** when precipitation is expected (≈ 300 m below the 0 °C level, *estimated*);
+- **temperatures by altitude**: ● *measured* by a station near you at that altitude (e.g. Chaumont, Chasseral, Moléson), ○ *estimated* between your temperature and the 0 °C level where no station exists;
+- the **sea of fog** of your region (see below);
+- the **avalanche danger**, with a menu: *my region*, a large region (*Jura, Prealps, Bernese Alps, Valais Alps, Central Switzerland, Northern Grisons, Engadine, Southern Alps*) or *all of Switzerland* (highest level).
+
+```yaml
+type: custom:meteoswiss-mountain-card
+avalanche_scope: home    # home, switzerland, jura, prealps, bernese, valais, central, grisons, engadine, south
+max_altitude: 4000
+```
+
+<br clear="right">
+
+## 3f. Fog by region
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" alt="Fog by region" width="380" align="right">
+
+MeteoSwiss has no "fog top" measurement, so the integration **reads it from the stations**: each region has a ladder of stations from the plain to the summits. A station is *in the fog* when it gets no sun and the air is saturated; a station is *above* when it gets sun (by day) or dry air (by night). The top lies between the two.
+
+| Region | Plain | Hills and summits |
+|---|---|---|
+| Three Lakes | Neuchâtel 485 m, Payerne 490 m | Chaumont 1136 m, La Frétaz 1205 m, Chasseral 1594 m |
+| Lake Geneva | Geneva 411 m, Changins 458 m, Pully 456 m | Bière 684 m, La Dôle 1670 m |
+| Fribourg plateau | Payerne 490 m, Grangeneuve 651 m | Plaffeien 1042 m, Moléson 1974 m |
+| Bern / Central Plateau | Wynau 422 m, Bern 553 m | Bantiger 942 m, Napf 1404 m |
+| Zurich / North-east | Kloten 426 m, Tänikon 539 m, Zurich 604 m | Lägern 845 m, Uetliberg 854 m, Hörnli 1133 m, Säntis 2501 m |
+| Central Switzerland | Lucerne 454 m, Mosen 453 m, Egolzwil 522 m | Einsiedeln 911 m, Pilatus 2105 m |
+| Basel / North Jura | Basel 316 m, Delémont 439 m | Fahy 596 m, Rünenberg 611 m |
+| Ticino | Magadino 203 m, Lugano 273 m, Locarno 367 m | Monte Generoso 1600 m, Cimetta 1661 m |
+
+- **Now**: every 10 minutes from the measurements (sunshine, humidity, dew point, precipitation).
+- **Forecast**: hour by hour for 3 days from the local forecast of the same stations (symbols *stratus* and *fog*, low cloud cover, sunshine duration), summed up by day: *Wednesday: low stratus 6–14 h, top ~1,000 m, sunshine above*.
+- **Sensors**: `sensor.<location>_fog` (no fog, fog, low stratus, overcast, precipitation; attributes: region, `top_min`, `top_max`, stations, forecast) and `sensor.<location>_fog_top` (estimated top, m).
+- **Triggers**: *Fog or low stratus forms* / *The fog clears*.
+
+```yaml
+type: custom:meteoswiss-fog-card
+region: three_lakes     # default: your region
+show_forecast: true
+show_map: true
+show_all: false         # list of every region
+```
+
+The forecast reads three MeteoSwiss hourly files every 6 hours (~90 MB); turn fog off in *Lakes and fog* to save bandwidth.
+
+<br clear="right">
+
+## 3g. Lakes
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" alt="Lake of Neuchâtel" width="380" align="right">
+
+Data from the **Eawag Alplakes** lake models (CC BY 4.0), for 27 lakes: Geneva, Constance, Neuchâtel, Maggiore, Lucerne, Zurich, Lugano, Thun, Biel, Zug, Brienz, Walen, Murten, Sempach, Hallwil, Gruyère, Joux, Greifen, Sarnen, Ägeri, Baldegg, Sils, Pfäffikon, Silvaplana, Lungern, Poschiavo, St. Moritz.
+
+- **Values you choose** (`measures`): water temperature at 1 m, change over 24 h, next 24 h range (10–90 %), temperature at the bottom, oxygen saturation, thermocline depth, ice, altitude, area, maximum depth, volume.
+- **Map** for the 13 lakes with a 3D model (Geneva, Neuchâtel, Biel, Murten, Zurich, Zug, Lucerne, Lugano, Joux, Hallwil, Greifen, Ägeri, St. Moritz): the lake drawn in color by temperature, **currents** as arrows, the **lakeside towns** with the water temperature in front of them, the warmest and coldest spots. A slider goes from yesterday to +4 days; the depth menu shows 1 to 50 m.
+- **Forecast** at 1 m with its 10–90 % range, and the **profile** from the surface to the bottom (temperature, oxygen, thermocline).
+- **Sensors**: one `Water temperature <lake>` sensor per lake chosen in *Lakes and fog*, with the forecast and all values as attributes — e.g. "notify me when Lake Neuchâtel reaches 20 °C".
+
+```yaml
+type: custom:meteoswiss-lake-card
+lake: neuchatel
+measures: [trend, range, bottom, oxygen, thermocline, ice, altitude, area, max_depth, volume]
+show_map: true
+show_forecast: true
+show_profile: true
+depth: 1
+```
+
+<br clear="right">
 
 ## 4. Switzerland map
 
@@ -319,6 +445,8 @@ On a narrow screen the legend becomes one compact line and the tabs use icons. O
 | `sensor.<location>_flood_danger`, `_forest_fire_danger`, `_drought_danger` | FOEN danger level of your region. |
 | `sensor.<location>_avalanche_danger` | SLF avalanche danger of your region (or no bulletin off-season). |
 | `sensor.<location>_pollen_level`, `_birch_pollen`, `_grass_pollen`, … | Overall pollen level and concentration per species. |
+| `sensor.<location>_fog`, `_fog_top` | Fog / low stratus in your region and the estimated top (m). |
+| `sensor.<location>_water_temperature_<lake>` | Water temperature of a lake (1 m), with forecast, oxygen, thermocline, ice and lake facts as attributes. |
 
 Example: get notified as soon as a thunderstorm warning is announced.
 
@@ -358,10 +486,14 @@ To update: HACS offers the new version → **Download** → **restart Home Assis
 | "The radar is not available at the moment" | The project's radar server does not answer; it recovers by itself, try again later. |
 | No hourly forecast | Turn on the **hourly forecast** in the settings (Forecast page). |
 | A warning or hazard is "unavailable" | Its source (MeteoSwiss/MeteoAlarm, FOEN, SLF) does not answer; the value comes back at the next update. |
+| The fog card says "unavailable" | Turn on *Fog and low stratus by region* in *Lakes and fog*. |
+| A lake card stays empty | The Eawag server limits the number of requests; the card retries at the next refresh. |
 
 ## 10. Technical notes
 
 - **Bandwidth**: MeteoSwiss publishes one hourly forecast file per parameter for all ~5,800 points (~33 MB each). The integration streams them and stops once the requested horizon is reached (~8 MB per parameter for 48 h).
+- **Fog**: the forecast reads three whole hourly files (low clouds, sunshine, symbol: ~90 MB) every 6 hours; the measurements come with the current conditions (no extra download). The top altitude is an estimate between two stations.
+- **Lakes**: the Eawag Alplakes API is called once per hour per chosen lake, one request at a time; the cards' map layers are cached for 3 hours.
 - **Radar**: the radar images and the precipitation forecast are prepared by a server run by the project (`ha.jesaispas.ch`) from MeteoSwiss data; Home Assistant downloads them from there. If this server does not answer, the map says the radar is not available for the moment.
 - **Pictograms**: generated by `node scripts/generate_icons.mjs` (vivid and classic packs, `THEMES` / `SPEC`) and `scripts/animated_icons.mjs` (animated pack). The animations stop when the device asks for reduced motion.
 
@@ -370,6 +502,7 @@ To update: HACS offers the new version → **Download** → **restart Home Assis
 Data: **Source: MeteoSwiss** — Open Government Data under [CC BY 4.0](https://opendatadocs.meteoswiss.ch/general/terms-of-use). Symbol descriptions are the official MeteoSwiss texts.
 Weather warnings: MeteoSwiss, published through [MeteoAlarm](https://meteoalarm.org) (EUMETNET, CC BY 4.0); they are not part of the MeteoSwiss Open Data catalogue. MeteoAlarm uses 4 colors, so MeteoSwiss levels 4 and 5 both show as level 4.
 Natural hazards: FOEN (forest fire, floods, drought) and SLF (avalanches). Base map © swisstopo.
+Lakes: [Eawag Alplakes](https://www.alplakes.eawag.ch) (Simstrat, MITgcm and Delft3D models), CC BY 4.0. Lake facts (altitude, area, depth, volume) are rounded reference values.
 This project is not affiliated with or endorsed by MeteoSwiss. The pictograms are original artwork, not the official MeteoSwiss pictograms.
 
 Code and pictograms: MIT License.

@@ -207,6 +207,22 @@
           "high": "Grosse Gefahr",
           "very_high": "Sehr grosse Gefahr"
         }
+      },
+      "fog": {
+        "name": "Nebel",
+        "state": {
+          "clear": "Kein Nebel",
+          "fog": "Nebel",
+          "stratus": "Hochnebel",
+          "overcast": "Bedeckt (Obergrenze unbekannt)",
+          "precipitation": "Niederschlag"
+        }
+      },
+      "fog_top": {
+        "name": "Nebelobergrenze (geschätzt)"
+      },
+      "lake_temperature": {
+        "name": "Wassertemperatur {lake}"
       }
     }
   },
@@ -218,7 +234,8 @@
           "display": "Anzeige",
           "forecast": "Prognosen",
           "environment": "Pollen und Gefahren",
-          "places": "Beobachtete Orte und Personen"
+          "places": "Beobachtete Orte und Personen",
+          "lakes": "Seen und Nebel"
         }
       },
       "display": {
@@ -252,6 +269,14 @@
           "places": "Postleitzahlen oder Orte",
           "persons": "Zu verfolgende Personen"
         }
+      },
+      "lakes": {
+        "title": "Seen und Nebel",
+        "description": "Seen: ein Wassertemperatur-Sensor pro See (Modelle Eawag Alplakes, mit 4-Tage-Prognose). Nebel: Nebel und Hochnebel in deiner Region, geschätzt mit Referenzstationen von der Ebene bis zu den Gipfeln (z. B. Neuenburg, Chaumont, Chasseral); die Prognose liest ~90 MB alle 6 Stunden.",
+        "data": {
+          "lakes": "Seen",
+          "fog": "Nebel und Hochnebel nach Region"
+        }
       }
     }
   },
@@ -271,7 +296,9 @@
       "warning_ended": "{subtype}warnung endet",
       "warning_level": "{subtype}warnung erreicht eine Stufe",
       "hazard_level": "{subtype}gefahr erreicht eine Stufe",
-      "pollen_level": "Pollen erreicht eine Stufe"
+      "pollen_level": "Pollen erreicht eine Stufe",
+      "fog_started": "Nebel oder Hochnebel bildet sich",
+      "fog_ended": "Der Nebel löst sich auf"
     },
     "trigger_subtype": {
       "rain": "Regen",
@@ -285,7 +312,8 @@
       "flood": "Hochwasser",
       "drought": "Trockenheits",
       "avalanche": "Lawinen",
-      "pollen": "Pollen"
+      "pollen": "Pollen",
+      "fog": "Nebel"
     },
     "extra_fields": {
       "level": "Stufe (oder höher)"

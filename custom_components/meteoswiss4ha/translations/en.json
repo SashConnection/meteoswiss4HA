@@ -207,6 +207,22 @@
           "high": "High danger",
           "very_high": "Very high danger"
         }
+      },
+      "fog": {
+        "name": "Fog",
+        "state": {
+          "clear": "No fog",
+          "fog": "Fog",
+          "stratus": "Low stratus",
+          "overcast": "Overcast (top unknown)",
+          "precipitation": "Precipitation"
+        }
+      },
+      "fog_top": {
+        "name": "Fog top (estimated)"
+      },
+      "lake_temperature": {
+        "name": "{lake} water temperature"
       }
     }
   },
@@ -218,7 +234,8 @@
           "display": "Display",
           "forecast": "Forecasts",
           "environment": "Pollen and hazards",
-          "places": "Watched places and persons"
+          "places": "Watched places and persons",
+          "lakes": "Lakes and fog"
         }
       },
       "display": {
@@ -252,6 +269,14 @@
           "places": "Postal codes or places",
           "persons": "Persons to follow"
         }
+      },
+      "lakes": {
+        "title": "Lakes and fog",
+        "description": "Lakes: one water temperature sensor per lake (Eawag Alplakes models, with a 4-day forecast). Fog: fog and low stratus in your region, estimated with reference stations from the plain to the summits (e.g. Neuchâtel, Chaumont, Chasseral); the forecast reads ~90 MB every 6 hours.",
+        "data": {
+          "lakes": "Lakes",
+          "fog": "Fog and low stratus by region"
+        }
       }
     }
   },
@@ -271,7 +296,9 @@
       "warning_ended": "{subtype} warning ends",
       "warning_level": "{subtype} warning reaches a level",
       "hazard_level": "{subtype} danger reaches a level",
-      "pollen_level": "Pollen reaches a level"
+      "pollen_level": "Pollen reaches a level",
+      "fog_started": "Fog or low stratus forms",
+      "fog_ended": "The fog clears"
     },
     "trigger_subtype": {
       "rain": "Rain",
@@ -285,7 +312,8 @@
       "flood": "Flood",
       "drought": "Drought",
       "avalanche": "Avalanche",
-      "pollen": "Pollen"
+      "pollen": "Pollen",
+      "fog": "fog"
     },
     "extra_fields": {
       "level": "Level (or higher)"

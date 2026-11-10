@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.11.9"
+VERSION: Final = "2026.11.10"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -51,6 +51,15 @@ CONF_AVALANCHE_REGION: Final = "avalanche_region"
 # Watched places (postal codes) and followed persons / device trackers.
 CONF_PLACES: Final = "places"
 CONF_PERSONS: Final = "persons"
+# Fog and low stratus by region (reference stations), and lakes (Eawag Alplakes).
+CONF_FOG: Final = "fog"
+DEFAULT_FOG: Final = True
+CONF_LAKES: Final = "lakes"
+FOG_UPDATE_INTERVAL: Final = timedelta(minutes=10)
+# The fog forecast reads 3 whole hourly files (~90 MB): every 6 hours.
+FOG_FORECAST_INTERVAL: Final = timedelta(hours=6)
+LAKE_UPDATE_INTERVAL: Final = timedelta(hours=1)
+
 # Radar frame server (the Node-RED flow in nodered/, run by the project).
 RADAR_URL: Final = "https://ha.jesaispas.ch/endpoint/meteoswiss/radar"
 DEFAULT_ICON_PACK: Final = "animated"
