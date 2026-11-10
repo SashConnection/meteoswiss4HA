@@ -21,5 +21,3 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          # Topics and brand assets are set on GitHub, not in the repo.
-          ignore: brands topics
