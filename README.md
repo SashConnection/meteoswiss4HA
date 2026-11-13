@@ -119,6 +119,19 @@ Add them with **Edit dashboard → Add card → "MeteoSwiss"**; then everything 
 | 🎯 **Guess the maximum** | Bet on the maximum temperature, result in the evening, streak | — |
 | 🏷️ **Badge** | Pictogram and temperature at the top of a dashboard, "☂ Rain in 15 min" | Rain alert |
 
+### The sun: sunrise, sunset and day length
+
+**Sunrise and sunset** are computed for your home, to the minute, with nothing to download. You find them:
+
+- in the **"Sun and moon"** section of most cards, with the **day length** and the change since yesterday ("9 h 29, −3 min vs yesterday");
+- in the **ephemeris**, in large;
+- in **"My day"**: the night is shaded on the temperature curve, with the sunrise ☀ and sunset ☾ times;
+- in the **live sky**: the sun follows its real path between sunrise and sunset, dawn and dusk color the sky, then the moon and the stars take over;
+- in **"Should I go out?"** ("Sunset 16:58") and in the wall screen's **automatic night mode**, which turns dark red at sunset;
+- in the **tips of the day**: "Beautiful sunset" when the clouds promise colors.
+
+For your automations: the **Day length** sensor (with sunrise, sunset and the change since yesterday) and the **"Beautiful sunset expected"** trigger.
+
 ### The moon, drawn for the exact day
 
 The moon is not a stock icon: it is **drawn for the exact phase of the day**, the lit part at the right percentage, with craters and the dark side in night blue. It appears in the ephemeris, in the cards' "Sun and moon" section, in the live sky and on the postcard, with the **phase name in your language** and the **% illuminated**.

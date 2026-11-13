@@ -92,6 +92,19 @@ Ajoutez-les par **Modifier le tableau de bord → Ajouter une carte → « Meteo
 | 🎯 **Devine le maximum** | Pariez sur la température maximale, résultat le soir, série de réussites | — |
 | 🏷️ **Badge** | Pictogramme et température en haut du tableau de bord, « ☂ Pluie dans 15 min » | Alerte pluie |
 
+### Le soleil : lever, coucher et durée du jour
+
+Les heures de **lever et de coucher du soleil** sont calculées pour votre domicile, à la minute, sans rien télécharger. Vous les retrouvez :
+
+- dans la section **« Soleil et lune »** de la plupart des panneaux, avec la **durée du jour** et l’écart avec la veille (« 9 h 29, −3 min par rapport à hier ») ;
+- dans **l’éphéméride**, en grand ;
+- dans **« Ma journée »** : la nuit est ombrée sur la courbe de température, avec l’heure du lever ☀ et du coucher ☾ ;
+- dans le **ciel animé** : le soleil suit sa vraie course entre le lever et le coucher, l’aube et le crépuscule colorent le ciel, puis la lune et les étoiles prennent le relais ;
+- dans **« Faut-il sortir ? »** (« Coucher du soleil 16:58 ») et en **mode nuit automatique** de l’écran mural, qui passe au rouge sombre au coucher du soleil ;
+- dans les **conseils du jour** : « Coucher de soleil magnifique » quand les nuages s’annoncent colorés.
+
+Pour vos automatisations : le capteur **Durée du jour** (avec le lever, le coucher et l’écart avec hier) et le déclencheur **« Beau coucher de soleil prévu »**.
+
 ### La lune, dessinée pour le jour exact
 
 La lune n’est pas une icône toute faite : elle est **dessinée pour la phase exacte du jour**, avec la partie éclairée au bon pourcentage, quelques cratères et la face sombre en bleu nuit. Elle apparaît dans l’éphéméride, dans la section « Soleil et lune » des panneaux, dans le ciel animé et sur la carte postale, avec le **nom de la phase dans votre langue** et le **% éclairé**.
