@@ -92,6 +92,39 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 
 Add them with **Edit dashboard → Add card → search "MeteoSwiss"**. Every setting is in the card editor, in clear sections: **no YAML needed, ever**. The YAML examples in this guide are only for those who like it.
 
+## Everything you find in the cards
+
+Add them with **Edit dashboard → Add card → "MeteoSwiss"**; then everything is set with the mouse.
+
+| Card | What it shows | One-click settings |
+|---|---|---|
+| 🌤️ **Detailed weather** | Place and altitude, pictogram, condition, temperature, station and measuring time, hourly chart (uncertainty band, rain), 9 days (rain, probability, range) | Measurements and their order, chart, days, sun and moon |
+| 📅 **Forecast** | Current weather, next hours and days with the animated pictograms | Hours and/or days, how many, details, sun and moon |
+| 🕒 **Now** | Big pictogram, place, temperature, next hours | Chart, hours, sun and moon |
+| 📈 **Days** | One continuous temperature curve and rain over several days | Number of days, sun and moon |
+| ☁️ **Live sky** | The sky of the moment, animated: sun or moon (real phase), clouds, rain, snow, lightning, fog, stars | Animation, dashboard background, sun and moon |
+| 🚶 **Should I go out?** | Verdict, rain timing (radar), what to wear, gusts, warnings, pollen, fog and the summit in the sun, best time | Number of hours |
+| 🗓️ **My day** | Night, morning, afternoon, evening, temperature curve, sunrise and sunset | Sun and moon |
+| 📍 **Compare my places** | Home and your watched places side by side, best place today | Number of days |
+| 🖥️ **Wall screen** | Big clock, date, weather, today and tomorrow, warnings, next hours, dark red night mode | Night mode, seconds, hours, sun and moon |
+| 🏔️ **Mountain** | 0 °C level, snow line, temperatures by altitude, sea of fog, avalanche danger | Avalanche region, altitude |
+| 🌫️ **Fog** | Reference stations from the plain to the summits, fog top, 3-day forecast, map | Region, forecast, map, all regions |
+| 🏞️ **Lake** | Water temperature, forecast, oxygen, thermocline, ice, profile, color map with currents and towns | Lake, values, map, depth, charts |
+| 🌼 **Pollen** | A sketch of each plant colored by the level, for the stations you choose | Stations, species, layout |
+| 🗺️ **Switzerland map** | Weather, radar, radar forecast, warnings, forest fire, floods, drought, avalanches, pollen | Layers, area, zoom, legend, height |
+| 🧩 **Tiles** | Severe weather mini map with hazard chips, animated radar | Page opened on tap |
+| 💡 **Tips of the day** | The day in one sentence, rain in … min, solar, laundry, frost, watering, stars, sunset, rainbow, foehn, bise, airing, normal, yesterday, records, first frost and snow | Tiles and their order |
+| 🌙 **Ephemeris** | Date, saint of the day, week, sunrise and sunset, day length, moon drawn (%, name), moonrise and moonset, next full and new moon | — |
+| 💌 **Postcard** | Your town's monument, the weather and the moon, to share or download | Place |
+| 🎯 **Guess the maximum** | Bet on the maximum temperature, result in the evening, streak | — |
+| 🏷️ **Badge** | Pictogram and temperature at the top of a dashboard, "☂ Rain in 15 min" | Rain alert |
+
+### The moon, drawn for the exact day
+
+The moon is not a stock icon: it is **drawn for the exact phase of the day**, the lit part at the right percentage, with craters and the dark side in night blue. It appears in the ephemeris, in the cards' "Sun and moon" section, in the live sky and on the postcard, with the **phase name in your language** and the **% illuminated**.
+
+![The moon phases](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/moon-phases-en.png)
+
 ## A monument for every town
 
 Each town of the map has its own line pictogram of its best-known monument — the Zytglogge in Bern, the Jet d’eau in Geneva, the Kapellbrücke in Lucerne, the Matterhorn in Zermatt… They appear on the map labels and next to the place name in the cards (option `monument: false` to hide them).

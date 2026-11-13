@@ -65,6 +65,39 @@ Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à pro
 <sub>Lac et brouillard : données réelles du 10 novembre 2026 (Eawag Alplakes, stations MétéoSuisse). Les autres valeurs sont des exemples.</sub>
 
 
+## Tout ce que vous trouvez dans les panneaux
+
+Ajoutez-les par **Modifier le tableau de bord → Ajouter une carte → « MeteoSwiss »**, tout se règle ensuite à la souris.
+
+| Panneau | Ce qu’il montre | À régler d’un clic |
+|---|---|---|
+| 🌤️ **Météo détaillée** | Lieu et altitude, pictogramme, état du ciel, température, station et heure de mesure, graphique heure par heure (bande d’incertitude, pluie), 9 jours (pluie, probabilité, fourchette) | Mesures affichées et leur ordre, graphique, jours, soleil et lune |
+| 📅 **Prévisions** | Météo actuelle, prochaines heures et prochains jours avec les pictogrammes animés | Heures et/ou jours, nombre, détails, soleil et lune |
+| 🕒 **Maintenant** | Grand pictogramme, lieu, température, prochaines heures | Graphique, nombre d’heures, soleil et lune |
+| 📈 **Jours** | Une courbe de température continue et la pluie sur plusieurs jours | Nombre de jours, soleil et lune |
+| ☁️ **Ciel en direct** | Le ciel du moment animé : soleil ou lune (vraie phase), nuages, pluie, neige, éclairs, brouillard, étoiles | Animation, fond du tableau de bord, soleil et lune |
+| 🚶 **Faut-il sortir ?** | Verdict, heure de la pluie (radar), quoi mettre, rafales, alertes, pollen, brouillard et sommet au soleil, meilleur moment | Nombre d’heures |
+| 🗓️ **Ma journée** | Nuit, matin, après-midi, soir, courbe de température, lever et coucher du soleil | Soleil et lune |
+| 📍 **Comparer mes lieux** | Chez vous et vos lieux surveillés côte à côte, le meilleur endroit du jour | Nombre de jours |
+| 🖥️ **Écran mural** | Grande horloge, date, météo, aujourd’hui et demain, alertes, prochaines heures, mode nuit rouge sombre | Mode nuit, secondes, heures, soleil et lune |
+| 🏔️ **Montagne** | Isotherme 0 °C, limite de la neige, températures par altitude, mer de brouillard, danger d’avalanche | Région d’avalanches, altitude |
+| 🌫️ **Brouillard** | Stations repères de la plaine aux sommets, sommet du brouillard, prévision sur 3 jours, carte | Région, prévision, carte, toutes les régions |
+| 🏞️ **Lac** | Température de l’eau, prévision, oxygène, thermocline, glace, profil, carte en couleur avec courants et localités | Lac, valeurs, carte, profondeur, graphiques |
+| 🌼 **Pollen** | Esquisse de chaque plante colorée selon le niveau, pour les stations choisies | Stations, espèces, présentation |
+| 🗺️ **Carte de la Suisse** | Météo, radar, prévision radar, alertes, incendies, crues, sécheresse, avalanches, pollen | Couches, zone, zoom, légende, hauteur |
+| 🧩 **Tuiles** | Mini-carte des intempéries avec pastilles des dangers, radar animé | Page ouverte au toucher |
+| 💡 **Conseils du jour** | La journée en une phrase, pluie dans … min, solaire, linge, gel, arrosage, étoiles, coucher de soleil, arc-en-ciel, foehn, bise, aérer, normale, hier, records, premier gel et première neige | Les tuiles et leur ordre |
+| 🌙 **Éphéméride** | Date, saint du jour, semaine, lever et coucher du soleil, durée du jour, lune dessinée (%, nom), lever et coucher de la lune, prochaine pleine et nouvelle lune | — |
+| 💌 **Carte postale** | Le monument de votre ville, la météo et la lune, à partager ou télécharger | Lieu |
+| 🎯 **Devine le maximum** | Pariez sur la température maximale, résultat le soir, série de réussites | — |
+| 🏷️ **Badge** | Pictogramme et température en haut du tableau de bord, « ☂ Pluie dans 15 min » | Alerte pluie |
+
+### La lune, dessinée pour le jour exact
+
+La lune n’est pas une icône toute faite : elle est **dessinée pour la phase exacte du jour**, avec la partie éclairée au bon pourcentage, quelques cratères et la face sombre en bleu nuit. Elle apparaît dans l’éphéméride, dans la section « Soleil et lune » des panneaux, dans le ciel animé et sur la carte postale, avec le **nom de la phase dans votre langue** et le **% éclairé**.
+
+![Les phases de la lune](images/moon-phases.png)
+
 ## Un monument pour chaque ville
 
 Chaque ville de la carte a son pictogramme dessiné de son monument le plus connu : la Zytglogge à Berne, le Jet d’eau à Genève, la Kapellbrücke à Lucerne, le château et la Collégiale à Neuchâtel, le Cervin à Zermatt… Ils apparaissent sur les étiquettes de la carte et à côté du nom du lieu dans les panneaux (option `monument: false` pour les masquer).
