@@ -223,6 +223,133 @@
       },
       "lake_temperature": {
         "name": "Température de l’eau {lake}"
+      },
+      "moon_phase": {
+        "name": "Phase de lune",
+        "state": {
+          "new_moon": "Nouvelle lune",
+          "waxing_crescent": "Premier croissant",
+          "first_quarter": "Premier quartier",
+          "waxing_gibbous": "Gibbeuse croissante",
+          "full_moon": "Pleine lune",
+          "waning_gibbous": "Gibbeuse décroissante",
+          "last_quarter": "Dernier quartier",
+          "waning_crescent": "Dernier croissant"
+        }
+      },
+      "day_length": {
+        "name": "Durée du jour"
+      },
+      "ephemeris": {
+        "name": "Saint du jour"
+      },
+      "drying": {
+        "name": "Séchage du linge",
+        "state": {
+          "good": "Bon",
+          "fair": "Moyen",
+          "poor": "Mauvais"
+        }
+      },
+      "frost_tonight": {
+        "name": "Gel cette nuit",
+        "state": {
+          "none": "Pas de gel",
+          "possible": "Possible",
+          "likely": "Probable"
+        }
+      },
+      "stargazing": {
+        "name": "Étoiles cette nuit",
+        "state": {
+          "excellent": "Excellent",
+          "good": "Bon",
+          "poor": "Mauvais"
+        }
+      },
+      "sunset_quality": {
+        "name": "Coucher de soleil",
+        "state": {
+          "beautiful": "Magnifique",
+          "maybe": "Peut-être",
+          "no": "Terne"
+        }
+      },
+      "summary": {
+        "name": "La journée en une phrase"
+      },
+      "ambiance_color": {
+        "name": "Couleur d’ambiance"
+      },
+      "solar_today": {
+        "name": "Production solaire aujourd’hui"
+      },
+      "solar_tomorrow": {
+        "name": "Production solaire demain"
+      },
+      "foehn": {
+        "name": "Foehn",
+        "state": {
+          "none": "Pas de foehn",
+          "likely": "Probable",
+          "in_force": "Foehn",
+          "north_foehn": "Foehn du nord"
+        }
+      },
+      "bise": {
+        "name": "Bise",
+        "state": {
+          "none": "Pas de bise",
+          "moderate": "Modérée",
+          "strong": "Forte"
+        }
+      },
+      "rainbow": {
+        "name": "Arc-en-ciel",
+        "state": {
+          "yes": "Possible maintenant",
+          "no": "Non"
+        }
+      },
+      "airing": {
+        "name": "Aérer",
+        "state": {
+          "recommended": "Ouvrez les fenêtres",
+          "neutral": "Indifférent",
+          "not_recommended": "Gardez fermé"
+        }
+      },
+      "temperature_anomaly": {
+        "name": "Écart à la normale"
+      },
+      "yesterday": {
+        "name": "Maximum d’hier"
+      },
+      "year_max_temperature": {
+        "name": "Plus chaud de l’année"
+      },
+      "year_min_temperature": {
+        "name": "Plus froid de l’année"
+      },
+      "year_max_gust": {
+        "name": "Plus forte rafale de l’année"
+      },
+      "first_frost": {
+        "name": "Premier gel de la saison"
+      },
+      "first_snow": {
+        "name": "Première neige de la saison"
+      },
+      "watering": {
+        "name": "Arrosage du jardin",
+        "state": {
+          "not_needed": "Inutile",
+          "optional": "Facultatif",
+          "recommended": "Recommandé"
+        }
+      },
+      "rain_arrival": {
+        "name": "La pluie arrive dans"
       }
     }
   },
@@ -235,7 +362,8 @@
           "forecast": "Prévisions",
           "environment": "Pollen et dangers",
           "places": "Lieux et personnes surveillés",
-          "lakes": "Lacs et brouillard"
+          "lakes": "Lacs et brouillard",
+          "extras": "Alerte pluie, solaire et intérieur"
         }
       },
       "display": {
@@ -277,6 +405,20 @@
           "lakes": "Lacs",
           "fog": "Brouillard et stratus par région"
         }
+      },
+      "extras": {
+        "title": "Alerte pluie, panneaux solaires et capteurs intérieurs",
+        "description": "Alerte pluie : le radar dit quand la pluie arrive chez vous. Solaire : la puissance crête de vos panneaux (kWc), leur inclinaison (0 = à plat) et leur orientation (180 = sud, 90 = est, 270 = ouest) donnent une prévision de production ; laissez la puissance vide si vous n’avez pas de panneaux. Intérieur : un capteur de température et un d’humidité de la maison disent quand aérer.",
+        "data": {
+          "nowcast": "Alerte pluie d’après le radar",
+          "rain_alert_minutes": "Alerter quand la pluie est à moins de …",
+          "solar_kwp": "Panneaux solaires : puissance crête",
+          "solar_tilt": "Inclinaison des panneaux",
+          "solar_azimuth": "Orientation des panneaux",
+          "solar_sensor": "Votre capteur de production (facultatif)",
+          "indoor_temperature": "Capteur de température intérieure",
+          "indoor_humidity": "Capteur d’humidité intérieure"
+        }
       }
     }
   },
@@ -298,7 +440,14 @@
       "hazard_level": "Le danger {subtype} atteint un degré",
       "pollen_level": "Le pollen atteint un niveau",
       "fog_started": "Le brouillard ou le stratus se forme",
-      "fog_ended": "Le brouillard se dissipe"
+      "fog_ended": "Le brouillard se dissipe",
+      "rain_approaching": "La pluie arrive bientôt",
+      "first_frost": "Premier gel de la saison",
+      "first_snow": "Première neige de la saison",
+      "rainbow_possible": "Arc-en-ciel possible",
+      "beautiful_sunset": "Beau coucher de soleil prévu",
+      "foehn_started": "Le foehn souffle",
+      "bise_started": "La bise souffle"
     },
     "trigger_subtype": {
       "rain": "pluie",
@@ -313,7 +462,8 @@
       "drought": "de sécheresse",
       "avalanche": "d’avalanches",
       "pollen": "pollen",
-      "fog": "brouillard"
+      "fog": "brouillard",
+      "weather": "météo"
     },
     "extra_fields": {
       "level": "Degré (ou plus)"

@@ -18,6 +18,7 @@ from .coordinator import MeteoSwissConfigEntry
 from .entity import MeteoSwissEntity
 from .events import EVENT, FOG_ENDED, FOG_STARTED
 from .fog import REGION_STATES, FogCoordinator
+from .indicators import swimming
 from .lakes import Lake, LakeCoordinator, value_at
 
 COVERED_STATES = ("fog", "stratus")
@@ -93,6 +94,8 @@ class FogSensor(_FogBase):
                 for s in region["stations"]
             ],
             "forecast": region["days"],
+            "escape": region.get("escape"),
+            "escape_forecast": region.get("escape_forecast"),
             "forecast_time": self.coordinator.data.get("forecast_time"),
             "estimated": True,
             "source": "MeteoSwiss (stations and local forecast)",
@@ -184,6 +187,7 @@ class LakeTemperatureSensor(MeteoSwissEntity[LakeCoordinator], SensorEntity):
     ) -> None:
         """Initialize the sensor for one lake."""
         super().__init__(coordinator, entry)
+        self._entry = entry
         self._lake = lake
         self._attr_unique_id = f"{entry.entry_id}_lake_{lake.key}"
         self._attr_translation_placeholders = {
@@ -192,6 +196,12 @@ class LakeTemperatureSensor(MeteoSwissEntity[LakeCoordinator], SensorEntity):
 
     def _series(self) -> dict[str, Any] | None:
         return (self.coordinator.data or {}).get(self._lake.key)
+
+    def _swimming(self, water: float | None) -> str | None:
+        """Swimming: ideal / pleasant / fresh / cold (water, air and wind at home)."""
+        current = self._entry.runtime_data.current.data
+        values = current.values if current is not None else {}
+        return swimming(water, values.get("tre200s0"), None, values.get("fu3010z0"))
 
     @property
     def available(self) -> bool:
@@ -239,5 +249,6 @@ class LakeTemperatureSensor(MeteoSwissEntity[LakeCoordinator], SensorEntity):
             "max_depth": lake.max_depth,
             "volume": lake.volume,
             "forecast": forecast,
+            "swimming": self._swimming(value_at(series, "T", now)),
             "source": "Eawag Alplakes (Simstrat)",
         }

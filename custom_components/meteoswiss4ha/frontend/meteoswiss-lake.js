@@ -12,6 +12,7 @@
 //   depth: 1                   depth of the map (m)
 //   language: auto
 
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 import { LANGS, api, define, esc, hh, langOf, locOf, makeEditor, num, tempColor, weekday } from "./meteoswiss-common.js";
 
 const T = {
@@ -373,14 +374,19 @@ class MeteoSwissLakeCard extends HTMLElement {
   getCardSize() { return 10; }
   static getStubConfig() { return { lake: "neuchatel" }; }
   static getConfigElement() {
-    return makeEditor([["name"], ["lake"], ["measures"], ["show_map", "show_forecast", "show_profile"], ["depth"], ["language"]], (hass, lang) => ({
-      name: { selector: { text: {} } },
-      lake: { selector: { select: { mode: "dropdown", options: LAKE_KEYS.map(([k, n]) => ({ value: k, label: n })) } } },
-      measures: { selector: { select: { multiple: true, options: MEASURES.map((m) => ({ value: m, label: T[lang].measures[m] })) } } },
-      show_map: { selector: { boolean: {} } }, show_forecast: { selector: { boolean: {} } }, show_profile: { selector: { boolean: {} } },
-      depth: { selector: { select: { mode: "dropdown", options: DEPTHS.map((x) => ({ value: x, label: `${x} m` })) } } },
-      language: { selector: { select: { mode: "dropdown", options: LANGS } } },
-    }), LABELS);
+    return sectionEditor({ defaults: { show_map: true, show_profile: true, show_forecast: true, depth: 1 }, labels: LABELS, doc: { fr: "#lacs", en: "#3g-lakes" },
+      top: () => [F.text("name"), F.select("lake", LAKE_KEYS.map(([k, n]) => ({ value: k, label: n })))],
+      sections: [
+        { key: "values", icon: "mdi:format-list-numbered", title: ST("Werte", "Valeurs", "Valori", "Valurs", "Values"), keys: ["measures"],
+          fields: ({ lang }) => [{ name: "measures", selector: { select: { multiple: true, reorder: true, mode: "list", options: MEASURES.map((m) => ({ value: m, label: T[lang].measures[m] })) } } }],
+          summary: (c, { w }) => (c.measures?.length ? `${c.measures.length}` : `${w.all} (${MEASURES.length})`) },
+        { key: "map", icon: "mdi:map", title: ST("Karte", "Carte", "Carta", "Charta", "Map"), keys: ["show_map", "depth"],
+          fields: () => [F.bool("show_map"), F.select("depth", DEPTHS.map((x) => ({ value: x, label: `${x} m` })))],
+          summary: (c, { lang, w }) => (c.show_map ? `${T[lang].depth} ${c.depth} m · ${T[lang].currents}` : w.off) },
+        { key: "charts", icon: "mdi:chart-areaspline", title: ST("Prognose und Profil", "Prévision et profil", "Previsione e profilo", "Prognosa e profil", "Forecast and profile"), keys: ["show_forecast", "show_profile"],
+          fields: () => [F.bool("show_forecast"), F.bool("show_profile")],
+          summary: (c, { lang, w }) => [c.show_forecast ? T[lang].forecast : "", c.show_profile ? T[lang].profile : ""].filter(Boolean).join(" · ") || w.off },
+      ] });
   }
 }
 

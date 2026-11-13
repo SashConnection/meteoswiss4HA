@@ -75,6 +75,7 @@ const T = {
 };
 const LANG_NAMES = { de: "Deutsch", fr: "Français", it: "Italiano", rm: "Rumantsch", en: "English" };
 
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 const langOf = (hass, config) => {
   const wanted = config?.language && config.language !== "auto" ? config.language : (hass?.locale?.language || hass?.language || "en").split("-")[0];
   return T[wanted] ? wanted : "en";
@@ -229,7 +230,24 @@ class MeteoSwissPollenCard extends HTMLElement {
   }
 
   static getConfigElement() {
-    return document.createElement("meteoswiss-pollen-card-editor");
+    const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
+    return sectionEditor({
+      defaults: { layout: "table", value: "mean", show_names: true },
+      labels: L, doc: { fr: "#carte-pollen", en: "#pollen-card" },
+      load: (hass) => loadPollen(hass).then((d) => d.stations || []),
+      top: () => [F.text("title")],
+      sections: [
+        { key: "stations", icon: "mdi:map-marker-multiple", title: ST("Stationen", "Stations", "Stazioni", "Staziuns", "Stations"), keys: ["stations"],
+          fields: ({ extra }) => [{ name: "stations", selector: { select: { multiple: true, reorder: true, mode: "list", options: (extra || []).map((s) => ({ value: s.abbr, label: s.name })) } } }],
+          summary: (c, { extra, lang }) => (c.stations?.length ? c.stations.map((a) => (extra || []).find((s) => s.abbr === a)?.name || a).join(", ") : T[lang].f.stations.replace(/^[^(]*\(|\)$/g, "")) },
+        { key: "species", icon: "mdi:flower-pollen", title: ST("Arten", "Espèces", "Specie", "Spezias", "Species"), keys: ["species"],
+          fields: ({ lang }) => [{ name: "species", selector: { select: { multiple: true, reorder: true, mode: "list", options: SPECIES.map((k) => ({ value: k, label: T[lang].species[k] })) } } }],
+          summary: (c, { lang, w }) => (c.species?.length ? c.species.map((k) => T[lang].species[k]).join(", ") : `${w.all} (7)`) },
+        { key: "layout", icon: "mdi:table", title: ST("Darstellung", "Présentation", "Presentazione", "Preschentaziun", "Layout"), keys: ["layout", "value", "show_names"],
+          fields: ({ lang }) => [F.select("layout", ["table", "list"].map((v) => ({ value: v, label: T[lang].layouts[v] }))), F.select("value", ["mean", "latest"].map((v) => ({ value: v, label: T[lang].values[v] }))), F.bool("show_names")],
+          summary: (c, { lang }) => `${T[lang].layouts[c.layout].split(" (")[0]} · ${T[lang].values[c.value]}` },
+      ],
+    });
   }
 }
 

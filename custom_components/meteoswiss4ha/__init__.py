@@ -19,6 +19,9 @@ from .api import MeteoSwissClient, MeteoSwissError, distance_km
 from .const import (
     CONF_FOG,
     CONF_LAKES,
+    CONF_NOWCAST,
+    CONF_STATION,
+    DEFAULT_NOWCAST,
     CONF_PERSONS,
     CONF_PLACES,
     CONF_POLLEN_STATION,
@@ -40,6 +43,8 @@ from .coordinator import (
     PollenCoordinator,
 )
 from .fog import FogCoordinator
+from .history import HistoryCoordinator
+from .nowcast import NowcastCoordinator
 from .hazards import HazardClient
 from .lakes import LAKES_BY_KEY, AlplakesClient, LakeCoordinator, default_lakes
 from .overview import async_register_views
@@ -121,6 +126,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
         places=await _async_setup_places(hass, entry, watched),
         fog=await _async_setup_fog(hass, entry, client),
         lakes=await _async_setup_lakes(hass, entry),
+        history=await _async_setup_history(hass, entry),
+        nowcast=await _async_setup_nowcast(hass, entry),
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -149,6 +156,26 @@ async def _async_setup_fog(
     fog = FogCoordinator(hass, entry, client)
     await fog.async_refresh()
     return fog
+
+
+async def _async_setup_history(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> HistoryCoordinator:
+    """Daily history of the station: yesterday, records, normals (never blocking)."""
+    history = HistoryCoordinator(hass, entry, entry.data[CONF_STATION])
+    await history.async_refresh()
+    return history
+
+
+async def _async_setup_nowcast(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> NowcastCoordinator | None:
+    """Rain arriving soon, from the radar (optional, never blocking)."""
+    if not entry.options.get(CONF_NOWCAST, DEFAULT_NOWCAST):
+        return None
+    nowcast = NowcastCoordinator(hass, entry)
+    await nowcast.async_refresh()
+    return nowcast
 
 
 async def _async_setup_lakes(

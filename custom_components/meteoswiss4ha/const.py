@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.11.11"
+VERSION: Final = "2026.11.12b0"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -59,6 +59,22 @@ FOG_UPDATE_INTERVAL: Final = timedelta(minutes=10)
 # The fog forecast reads 3 whole hourly files (~90 MB): every 6 hours.
 FOG_FORECAST_INTERVAL: Final = timedelta(hours=6)
 LAKE_UPDATE_INTERVAL: Final = timedelta(hours=1)
+# Station history (daily values) and the 1991-2020 normals computed from it.
+HISTORY_UPDATE_INTERVAL: Final = timedelta(hours=3)
+NORMALS_UPDATE_INTERVAL: Final = timedelta(days=7)
+# Rain arriving soon (radar motion), every 5 minutes.
+CONF_NOWCAST: Final = "nowcast"
+DEFAULT_NOWCAST: Final = True
+CONF_RAIN_ALERT_MINUTES: Final = "rain_alert_minutes"
+DEFAULT_RAIN_ALERT_MINUTES: Final = 20
+NOWCAST_UPDATE_INTERVAL: Final = timedelta(minutes=5)
+# Solar panels (production forecast) and indoor sensors (airing).
+CONF_SOLAR_KWP: Final = "solar_kwp"
+CONF_SOLAR_TILT: Final = "solar_tilt"
+CONF_SOLAR_AZIMUTH: Final = "solar_azimuth"
+CONF_SOLAR_SENSOR: Final = "solar_sensor"
+CONF_INDOOR_TEMPERATURE: Final = "indoor_temperature"
+CONF_INDOOR_HUMIDITY: Final = "indoor_humidity"
 
 # Radar frame server (the Node-RED flow in nodered/, run by the project).
 RADAR_URL: Final = "https://ha.jesaispas.ch/endpoint/meteoswiss/radar"
@@ -102,6 +118,13 @@ HOURLY_WIND_BEARING: Final = "dkl010h0"
 HOURLY_TEMP_P10: Final = "treq10h0"
 HOURLY_TEMP_P90: Final = "treq90h0"
 HOURLY_FREEZING_LEVEL: Final = "zprfr0hs"
+# Sunshine (min/h), global radiation (W/m²), low / mid / high cloud cover (fraction):
+# solar production, laundry drying, stargazing, sunset quality.
+HOURLY_SUNSHINE: Final = "sre000h0"
+HOURLY_RADIATION: Final = "gre000h0"
+HOURLY_CLOUDS_LOW: Final = "nprolohs"
+HOURLY_CLOUDS_MID: Final = "npromths"
+HOURLY_CLOUDS_HIGH: Final = "nprohihs"
 HOURLY_PARAMS: Final = (
     HOURLY_SYMBOL,
     HOURLY_TEMPERATURE,
@@ -113,4 +136,9 @@ HOURLY_PARAMS: Final = (
     HOURLY_TEMP_P10,
     HOURLY_TEMP_P90,
     HOURLY_FREEZING_LEVEL,
+    HOURLY_SUNSHINE,
+    HOURLY_RADIATION,
+    HOURLY_CLOUDS_LOW,
+    HOURLY_CLOUDS_MID,
+    HOURLY_CLOUDS_HIGH,
 )

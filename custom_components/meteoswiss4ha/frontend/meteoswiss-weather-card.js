@@ -14,6 +14,8 @@
 // 10-90 % band, precipitation) and daily columns.
 
 import { monument } from "./meteoswiss-monuments.js";
+import { astroFor } from "./meteoswiss-astro.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 
 const DOMAIN = "meteoswiss4ha";
 
@@ -353,7 +355,7 @@ class MeteoSwissWeatherCard extends HTMLElement {
       parts.push(`<div class="src">${t.source} ${run.toLocaleDateString(loc, { day: "2-digit", month: "2-digit" })}, ${time(run)}</div>`);
     }
 
-    this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card>${parts.join("")}</ha-card>`;
+    this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card>${parts.join("")}${astroFor(this, this._config, this._hass, lang(this._hass, this._config?.language), loc)}</ha-card>`;
     this.shadowRoot.querySelector(".head")?.addEventListener("click", () =>
       this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: this._entity } })));
   }
@@ -368,7 +370,23 @@ class MeteoSwissWeatherCard extends HTMLElement {
   }
 
   static getConfigElement() {
-    return document.createElement("meteoswiss-weather-card-editor");
+    const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
+    return sectionEditor({
+      defaults: { show_header: true, show_chart: true, show_daily: true, hours: 24, days: 9, details: DEFAULT_DETAILS },
+      labels: L, astro: true, doc: { fr: "#carte-météo-détaillée", en: "#detailed-weather-card" },
+      top: () => [F.weather, F.text("name")],
+      sections: [
+        { key: "measures", icon: "mdi:format-list-checks", title: ST("Messwerte", "Mesures", "Misure", "Mesiraziuns", "Measurements"), keys: ["details", "show_header"],
+          fields: ({ lang }) => [F.bool("show_header"), { name: "details", selector: { select: { multiple: true, reorder: true, mode: "list", options: Object.keys(DETAILS).map((d) => ({ value: d, label: T[lang].d[d] })) } } }],
+          summary: (c, { lang }) => `${(c.details || []).length} · ${(c.details || []).slice(0, 3).map((d) => T[lang].d[d]).join(", ")}${(c.details || []).length > 3 ? "…" : ""}` },
+        { key: "chart", icon: "mdi:chart-line", title: ST("Stündliche Grafik", "Graphique heure par heure", "Grafico orario", "Grafica per ura", "Hourly chart"), keys: ["show_chart", "hours"],
+          fields: () => [F.bool("show_chart"), F.num("hours", 6, 48)],
+          summary: (c, { lang, w }) => (c.show_chart ? `${c.hours} h` : w.off) },
+        { key: "days", icon: "mdi:calendar-week", title: ST("Tage", "Jours", "Giorni", "Dis", "Days"), keys: ["show_daily", "days"],
+          fields: () => [F.bool("show_daily"), F.num("days", 1, 9)],
+          summary: (c, { lang, w }) => (c.show_daily ? `${c.days} ${String(T[lang].f.days).toLowerCase()}` : w.off) },
+      ],
+    });
   }
 }
 

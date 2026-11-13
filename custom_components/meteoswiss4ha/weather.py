@@ -37,8 +37,13 @@ from .const import (
     DAILY_TEMP_MAX,
     DAILY_TEMP_MIN,
     HOURLY_PRECIPITATION,
+    HOURLY_CLOUDS_HIGH,
+    HOURLY_CLOUDS_LOW,
+    HOURLY_CLOUDS_MID,
     HOURLY_FREEZING_LEVEL,
     HOURLY_PRECIPITATION_PROBABILITY,
+    HOURLY_RADIATION,
+    HOURLY_SUNSHINE,
     HOURLY_TEMP_P10,
     HOURLY_TEMP_P90,
     HOURLY_SYMBOL,
@@ -82,6 +87,13 @@ MEASUREMENTS = {
 
 def _int(value: float | None) -> int | None:
     return None if value is None else int(value)
+
+
+def _percent(value: float | None) -> int | None:
+    """Cloud cover: the files give a fraction (0-1); percent for the forecast."""
+    if value is None:
+        return None
+    return round(value * 100) if value <= 1 else round(value)
 
 
 class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
@@ -268,6 +280,13 @@ class MeteoSwissWeather(MeteoSwissEntity[ForecastCoordinator], WeatherEntity):
         forecast["temperature_p10"] = values.get(HOURLY_TEMP_P10)  # type: ignore[typeddict-unknown-key]
         forecast["temperature_p90"] = values.get(HOURLY_TEMP_P90)  # type: ignore[typeddict-unknown-key]
         forecast["freezing_level"] = values.get(HOURLY_FREEZING_LEVEL)  # type: ignore[typeddict-unknown-key]
+        # Sunshine (min), global radiation (W/m²) and cloud layers (%).
+        forecast["sunshine"] = values.get(HOURLY_SUNSHINE)  # type: ignore[typeddict-unknown-key]
+        forecast["global_radiation"] = values.get(HOURLY_RADIATION)  # type: ignore[typeddict-unknown-key]
+        layers = [_percent(values.get(p)) for p in (HOURLY_CLOUDS_LOW, HOURLY_CLOUDS_MID, HOURLY_CLOUDS_HIGH)]
+        forecast["cloud_low"], forecast["cloud_mid"], forecast["cloud_high"] = layers  # type: ignore[typeddict-unknown-key]
+        if any(v is not None for v in layers):
+            forecast["cloud_coverage"] = max(v or 0 for v in layers)
         return forecast
 
     async def async_forecast_daily(self) -> list[Forecast] | None:

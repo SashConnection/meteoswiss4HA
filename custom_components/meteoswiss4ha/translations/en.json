@@ -223,6 +223,133 @@
       },
       "lake_temperature": {
         "name": "{lake} water temperature"
+      },
+      "moon_phase": {
+        "name": "Moon phase",
+        "state": {
+          "new_moon": "New moon",
+          "waxing_crescent": "Waxing crescent",
+          "first_quarter": "First quarter",
+          "waxing_gibbous": "Waxing gibbous",
+          "full_moon": "Full moon",
+          "waning_gibbous": "Waning gibbous",
+          "last_quarter": "Last quarter",
+          "waning_crescent": "Waning crescent"
+        }
+      },
+      "day_length": {
+        "name": "Day length"
+      },
+      "ephemeris": {
+        "name": "Saint of the day"
+      },
+      "drying": {
+        "name": "Laundry drying",
+        "state": {
+          "good": "Good",
+          "fair": "Fair",
+          "poor": "Poor"
+        }
+      },
+      "frost_tonight": {
+        "name": "Frost tonight",
+        "state": {
+          "none": "No frost",
+          "possible": "Possible",
+          "likely": "Likely"
+        }
+      },
+      "stargazing": {
+        "name": "Stargazing tonight",
+        "state": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "poor": "Poor"
+        }
+      },
+      "sunset_quality": {
+        "name": "Sunset",
+        "state": {
+          "beautiful": "Beautiful",
+          "maybe": "Maybe",
+          "no": "Dull"
+        }
+      },
+      "summary": {
+        "name": "Today in a sentence"
+      },
+      "ambiance_color": {
+        "name": "Ambiance color"
+      },
+      "solar_today": {
+        "name": "Solar production today"
+      },
+      "solar_tomorrow": {
+        "name": "Solar production tomorrow"
+      },
+      "foehn": {
+        "name": "Foehn",
+        "state": {
+          "none": "No foehn",
+          "likely": "Likely",
+          "in_force": "Foehn",
+          "north_foehn": "North foehn"
+        }
+      },
+      "bise": {
+        "name": "Bise",
+        "state": {
+          "none": "No bise",
+          "moderate": "Moderate",
+          "strong": "Strong"
+        }
+      },
+      "rainbow": {
+        "name": "Rainbow",
+        "state": {
+          "yes": "Possible now",
+          "no": "No"
+        }
+      },
+      "airing": {
+        "name": "Airing",
+        "state": {
+          "recommended": "Open the windows",
+          "neutral": "Either way",
+          "not_recommended": "Keep closed"
+        }
+      },
+      "temperature_anomaly": {
+        "name": "Temperature vs normal"
+      },
+      "yesterday": {
+        "name": "Yesterday's maximum"
+      },
+      "year_max_temperature": {
+        "name": "Warmest of the year"
+      },
+      "year_min_temperature": {
+        "name": "Coldest of the year"
+      },
+      "year_max_gust": {
+        "name": "Strongest gust of the year"
+      },
+      "first_frost": {
+        "name": "First frost of the season"
+      },
+      "first_snow": {
+        "name": "First snow of the season"
+      },
+      "watering": {
+        "name": "Garden watering",
+        "state": {
+          "not_needed": "Not needed",
+          "optional": "Optional",
+          "recommended": "Recommended"
+        }
+      },
+      "rain_arrival": {
+        "name": "Rain arrives in"
       }
     }
   },
@@ -235,7 +362,8 @@
           "forecast": "Forecasts",
           "environment": "Pollen and hazards",
           "places": "Watched places and persons",
-          "lakes": "Lakes and fog"
+          "lakes": "Lakes and fog",
+          "extras": "Rain alert, solar and indoor"
         }
       },
       "display": {
@@ -277,6 +405,20 @@
           "lakes": "Lakes",
           "fog": "Fog and low stratus by region"
         }
+      },
+      "extras": {
+        "title": "Rain alert, solar panels and indoor sensors",
+        "description": "Rain alert: the radar tells when rain reaches your home. Solar: your panels' peak power (kWp), tilt (0 = flat) and orientation (180 = south, 90 = east, 270 = west) give a production forecast; leave the power empty if you have no panels. Indoor: a temperature and a humidity sensor of your home tell when to air.",
+        "data": {
+          "nowcast": "Rain alert from the radar",
+          "rain_alert_minutes": "Alert when rain is less than … away",
+          "solar_kwp": "Solar panels: peak power",
+          "solar_tilt": "Panel tilt",
+          "solar_azimuth": "Panel orientation",
+          "solar_sensor": "Your production sensor (optional)",
+          "indoor_temperature": "Indoor temperature sensor",
+          "indoor_humidity": "Indoor humidity sensor"
+        }
       }
     }
   },
@@ -298,7 +440,14 @@
       "hazard_level": "{subtype} danger reaches a level",
       "pollen_level": "Pollen reaches a level",
       "fog_started": "Fog or low stratus forms",
-      "fog_ended": "The fog clears"
+      "fog_ended": "The fog clears",
+      "rain_approaching": "Rain arrives soon",
+      "first_frost": "First frost of the season",
+      "first_snow": "First snow of the season",
+      "rainbow_possible": "Rainbow possible",
+      "beautiful_sunset": "Beautiful sunset expected",
+      "foehn_started": "Foehn blows",
+      "bise_started": "Bise blows"
     },
     "trigger_subtype": {
       "rain": "Rain",
@@ -313,7 +462,8 @@
       "drought": "Drought",
       "avalanche": "Avalanche",
       "pollen": "Pollen",
-      "fog": "fog"
+      "fog": "fog",
+      "weather": "weather"
     },
     "extra_fields": {
       "level": "Level (or higher)"

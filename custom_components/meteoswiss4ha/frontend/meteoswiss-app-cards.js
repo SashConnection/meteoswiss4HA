@@ -12,6 +12,8 @@
 // All: entity (optional), language (auto, de, fr, it, rm, en). Dark design.
 
 import { monument } from "./meteoswiss-monuments.js";
+import { astroFor } from "./meteoswiss-astro.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 
 const DOMAIN = "meteoswiss4ha";
 const DANGER = ["#9e9e9e", "#ccff66", "#ffff00", "#ff9900", "#ff0000", "#8b0000"];
@@ -30,6 +32,7 @@ const T = {
   en: { lastHour: "Last hour", warnings: "Severe weather", radar: "Radar", hazards: "Natural hazards", now: "Now", noEntity: "No MeteoSwiss weather entity found.",
         prob: "Rain probability", amount: "Rain amount", allDays: "Forecast", f: { entity: "Weather entity", name: "Title", hours: "Hours", days: "Days", language: "Language", tap_path: "Page opened on tap (e.g. /meteoswiss)", show_chart: "Hourly chart" } },
 };
+const LABELS = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
 const LANGS = [{ value: "auto", label: "Auto" }, { value: "de", label: "Deutsch" }, { value: "fr", label: "Français" }, { value: "it", label: "Italiano" }, { value: "rm", label: "Rumantsch" }, { value: "en", label: "English" }];
 
 const langOf = (hass, cfg) => {
@@ -159,14 +162,19 @@ class MeteoSwissNowCard extends ForecastMixin {
       .big { position: absolute; right: 6px; top: 6px; width: 200px; height: 200px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
       .chart { margin: 0 12px 14px; }
     </style><ha-card><div class="hero"><div class="place">${this._config.monument === false ? "" : monument(a.location || this._config.name)}${esc(this._config.name || a.location || a.friendly_name)}</div>
-      <div class="cond">${esc(cond)}</div><div class="temp">${temp}</div>${icon}</div>${chart}</ha-card>`;
+      <div class="cond">${esc(cond)}</div><div class="temp">${temp}</div>${icon}</div>${chart}${astroFor(this, this._config, this._hass, langOf(this._hass, this._config), loc, "#fff")}</ha-card>`;
     root.querySelector(".hero").addEventListener("click", () =>
       this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: this._entity } })));
   }
 
   getCardSize() { return 7; }
   static getStubConfig(hass) { return { entity: findEntity(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["name"], ["show_chart", "hours"], ["language"]]); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { hours: 24, show_chart: true }, labels: LABELS, astro: true, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+      top: () => [F.weather, F.text("name")],
+      sections: [{ key: "chart", icon: "mdi:chart-line", title: ST("Stündliche Grafik", "Graphique heure par heure", "Grafico orario", "Grafica per ura", "Hourly chart"), keys: ["show_chart", "hours"],
+        fields: () => [F.bool("show_chart"), F.num("hours", 6, 48)], summary: (c, { lang, w }) => (c.show_chart ? `${c.hours} h` : w.off) }] });
+  }
 }
 
 // ------------------------------------------------------------ days card
@@ -266,12 +274,17 @@ class MeteoSwissDaysCard extends ForecastMixin {
       svg { display: block; width: 100%; height: 140px; }
     </style><ha-card><div class="title">${this._config.monument === false ? "" : monument(a.location || this._config.name)}${esc(this._config.name || a.location || a.friendly_name)}</div>
       <div class="wrap"><div class="inner"><div class="head">${head}</div>
-      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${p.join("")}</svg></div></div></ha-card>`;
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${p.join("")}</svg></div></div>${astroFor(this, this._config, this._hass, langOf(this._hass, this._config), loc, "#fff")}</ha-card>`;
   }
 
   getCardSize() { return 5; }
   static getStubConfig(hass) { return { entity: findEntity(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["name"], ["days"], ["language"]]); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { days: 6 }, labels: LABELS, astro: true, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+      top: () => [F.weather, F.text("name")],
+      sections: [{ key: "days", icon: "mdi:calendar-week", title: ST("Tage", "Jours", "Giorni", "Dis", "Days"), keys: ["days"],
+        fields: () => [F.num("days", 2, 9)], summary: (c, { lang }) => `${c.days} ${String(T[lang].f.days).toLowerCase()}` }] });
+  }
 }
 
 // ----------------------------------------------------------- tiles card
@@ -405,7 +418,11 @@ class MeteoSwissTilesCard extends HTMLElement {
 
   getCardSize() { return 4; }
   static getStubConfig() { return { tap_path: "/meteoswiss" }; }
-  static getConfigElement() { return makeEditor([["tap_path"], ["language"]]); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { tap_path: "/meteoswiss" }, labels: LABELS, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+      sections: [{ key: "actions", icon: "mdi:gesture-tap", title: ST("Aktionen", "Actions", "Azioni", "Acziuns", "Actions"), keys: ["tap_path"],
+        fields: () => [F.text("tap_path")], summary: (c) => c.tap_path || "–" }] });
+  }
 }
 
 // --------------------------------------------------------------- editors

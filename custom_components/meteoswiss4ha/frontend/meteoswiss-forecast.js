@@ -12,6 +12,8 @@
 // weather entity exposes its base URL in the "icons_url" attribute).
 
 import { monument } from "./meteoswiss-monuments.js";
+import { astroFor } from "./meteoswiss-astro.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 
 const DOMAIN = "meteoswiss4ha";
 
@@ -186,7 +188,7 @@ class MeteoSwissForecastCard extends HTMLElement {
       parts.push(`<div class="sec"><div class="strip days">${items.join("")}</div></div>`);
     }
 
-    this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card>${parts.join("")}</ha-card>`;
+    this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card>${parts.join("")}${astroFor(this, this._config, this._hass, lang(this._hass, this._config?.language), loc)}</ha-card>`;
     this.shadowRoot.querySelector(".cur")?.addEventListener("click", () =>
       this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: this._entity } })));
   }
@@ -201,7 +203,20 @@ class MeteoSwissForecastCard extends HTMLElement {
   }
 
   static getConfigElement() {
-    return document.createElement("meteoswiss-forecast-card-editor");
+    const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
+    return sectionEditor({
+      defaults: { forecast: "both", days: 7, hours: 12, show_current: true, show_details: true },
+      labels: L, astro: true, doc: { fr: "#3-carte-prévisions", en: "#3-forecast-card" },
+      top: () => [F.weather, F.text("name")],
+      sections: [
+        { key: "display", icon: "mdi:view-dashboard-outline", title: ST("Prognose", "Prévisions", "Previsioni", "Prognosas", "Forecast"), keys: ["forecast", "days", "hours"],
+          fields: ({ lang }) => [F.select("forecast", ["both", "daily", "hourly", "none"].map((v) => ({ value: v, label: T[lang].modes[v] }))), F.grid(F.num("days", 1, 9), F.num("hours", 1, 48))],
+          summary: (c, { lang }) => [T[lang].modes[c.forecast], c.forecast !== "hourly" && c.forecast !== "none" ? `${c.days} ${String(T[lang].f.days).toLowerCase()}` : "", c.forecast !== "daily" && c.forecast !== "none" ? `${c.hours} h` : ""].filter(Boolean).join(" · ") },
+        { key: "current", icon: "mdi:thermometer", title: ST("Aktuelles Wetter", "Météo actuelle", "Meteo attuale", "Aura actuala", "Current weather"), keys: ["show_current", "show_details"],
+          fields: () => [F.bool("show_current"), F.bool("show_details")],
+          summary: (c, { lang, w }) => (c.show_current ? [T[lang].f.show_current, c.show_details ? T[lang].f.show_details.split(" (")[0] : ""].filter(Boolean).join(" · ") : w.off) },
+      ],
+    });
   }
 }
 

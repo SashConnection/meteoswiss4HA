@@ -223,6 +223,133 @@
       },
       "lake_temperature": {
         "name": "Temperatura da l’aua {lake}"
+      },
+      "moon_phase": {
+        "name": "Fasa da la glina",
+        "state": {
+          "new_moon": "Glina nova",
+          "waxing_crescent": "Glina creschenta",
+          "first_quarter": "Emprim quart",
+          "waxing_gibbous": "Glina creschenta gibosa",
+          "full_moon": "Glina plaina",
+          "waning_gibbous": "Glina sminuenta gibosa",
+          "last_quarter": "Ultim quart",
+          "waning_crescent": "Glina sminuenta"
+        }
+      },
+      "day_length": {
+        "name": "Durada dal di"
+      },
+      "ephemeris": {
+        "name": "Sogn dal di"
+      },
+      "drying": {
+        "name": "Sitgar la rauba",
+        "state": {
+          "good": "Bun",
+          "fair": "Mesaun",
+          "poor": "Nausch"
+        }
+      },
+      "frost_tonight": {
+        "name": "Gelischun questa notg",
+        "state": {
+          "none": "Nagina gelischun",
+          "possible": "Pussaivel",
+          "likely": "Probabel"
+        }
+      },
+      "stargazing": {
+        "name": "Stailas questa notg",
+        "state": {
+          "excellent": "Excellent",
+          "good": "Bun",
+          "poor": "Nausch"
+        }
+      },
+      "sunset_quality": {
+        "name": "Rendida dal sulegl",
+        "state": {
+          "beautiful": "Stupent",
+          "maybe": "Forsa",
+          "no": "Fustg"
+        }
+      },
+      "summary": {
+        "name": "Il di en ina frasa"
+      },
+      "ambiance_color": {
+        "name": "Colur d’ambient"
+      },
+      "solar_today": {
+        "name": "Producziun solara oz"
+      },
+      "solar_tomorrow": {
+        "name": "Producziun solara damaun"
+      },
+      "foehn": {
+        "name": "Föhn",
+        "state": {
+          "none": "Nagin föhn",
+          "likely": "Probabel",
+          "in_force": "Föhn",
+          "north_foehn": "Föhn dal nord"
+        }
+      },
+      "bise": {
+        "name": "Bisa",
+        "state": {
+          "none": "Nagina bisa",
+          "moderate": "Moderada",
+          "strong": "Ferma"
+        }
+      },
+      "rainbow": {
+        "name": "Artg da la plievgia",
+        "state": {
+          "yes": "Pussaivel ussa",
+          "no": "Na"
+        }
+      },
+      "airing": {
+        "name": "Aerar",
+        "state": {
+          "recommended": "Avra las fanestras",
+          "neutral": "Egal",
+          "not_recommended": "Tegna serrà"
+        }
+      },
+      "temperature_anomaly": {
+        "name": "Differenza da la norma"
+      },
+      "yesterday": {
+        "name": "Maximum dad ier"
+      },
+      "year_max_temperature": {
+        "name": "Il pli chaud da l’onn"
+      },
+      "year_min_temperature": {
+        "name": "Il pli fraid da l’onn"
+      },
+      "year_max_gust": {
+        "name": "Il buf il pli ferm da l’onn"
+      },
+      "first_frost": {
+        "name": "Emprima gelischun da la stagiun"
+      },
+      "first_snow": {
+        "name": "Emprima naiv da la stagiun"
+      },
+      "watering": {
+        "name": "Bagnar l’iert",
+        "state": {
+          "not_needed": "Betg necessari",
+          "optional": "Facultativ",
+          "recommended": "Recumandà"
+        }
+      },
+      "rain_arrival": {
+        "name": "La plievgia arriva en"
       }
     }
   },
@@ -235,7 +362,8 @@
           "forecast": "Prognosas",
           "environment": "Pollen e privels",
           "places": "Lieus e persunas survegliads",
-          "lakes": "Lais e tschajera"
+          "lakes": "Lais e tschajera",
+          "extras": "Alarm da plievgia, solar ed intern"
         }
       },
       "display": {
@@ -277,6 +405,20 @@
           "lakes": "Lais",
           "fog": "Tschajera e tschajera auta tenor regiun"
         }
+      },
+      "extras": {
+        "title": "Alarm da plievgia, panels solars e sensors interns",
+        "description": "Alarm da plievgia: il radar di cura che la plievgia arriva tar tai. Solar: la prestaziun maximala (kWp), l’inclinaziun (0 = plat) e l’orientaziun (180 = sid, 90 = ost, 270 = vest) dattan ina prognosa da producziun; lascha vida la prestaziun sche ti n’has nagins panels. Intern: in sensor da temperatura ed in d’umiditad en chasa din cura aerar.",
+        "data": {
+          "nowcast": "Alarm da plievgia dal radar",
+          "rain_alert_minutes": "Alarmar cura che la plievgia è pli datiers che …",
+          "solar_kwp": "Panels solars: prestaziun maximala",
+          "solar_tilt": "Inclinaziun dals panels",
+          "solar_azimuth": "Orientaziun dals panels",
+          "solar_sensor": "Tes sensor da producziun (facultativ)",
+          "indoor_temperature": "Sensor da temperatura interna",
+          "indoor_humidity": "Sensor d’umiditad interna"
+        }
       }
     }
   },
@@ -298,7 +440,14 @@
       "hazard_level": "Il privel {subtype} cuntanscha in grad",
       "pollen_level": "Il pollen cuntanscha in nivel",
       "fog_started": "Tschajera u tschajera auta sa furma",
-      "fog_ended": "La tschajera sa dissolva"
+      "fog_ended": "La tschajera sa dissolva",
+      "rain_approaching": "La plievgia arriva prest",
+      "first_frost": "Emprima gelischun da la stagiun",
+      "first_snow": "Emprima naiv da la stagiun",
+      "rainbow_possible": "Artg da la plievgia pussaivel",
+      "beautiful_sunset": "Bella rendida dal sulegl prevesida",
+      "foehn_started": "Il föhn suffla",
+      "bise_started": "La bisa suffla"
     },
     "trigger_subtype": {
       "rain": "plievgia",
@@ -313,7 +462,8 @@
       "drought": "da sitgira",
       "avalanche": "da lavinas",
       "pollen": "pollen",
-      "fog": "tschajera"
+      "fog": "tschajera",
+      "weather": "aura"
     },
     "extra_fields": {
       "level": "Grad (u pli aut)"

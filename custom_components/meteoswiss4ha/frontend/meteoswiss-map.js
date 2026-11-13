@@ -11,12 +11,14 @@
 import * as L from "./leaflet/leaflet-src.esm.js";
 import "./meteoswiss-forecast.js";
 import { monument } from "./meteoswiss-monuments.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 import "./meteoswiss-weather-card.js";
 import "./meteoswiss-pollen-card.js";
 import "./meteoswiss-app-cards.js";
 import "./meteoswiss-panels.js";
 import "./meteoswiss-mountain.js";
 import "./meteoswiss-lake.js";
+import "./meteoswiss-extras.js";
 
 const BASE = new URL(".", import.meta.url).href;
 const WMTS = (layer, ext = "png") =>
@@ -969,7 +971,26 @@ class MeteoSwissMapCard extends HTMLElement {
     return { layer: "weather", height: 420 };
   }
   static getConfigElement() {
-    return document.createElement("meteoswiss-map-card-editor");
+    const L = Object.fromEntries(Object.entries(EDITOR).map(([l, e]) => [l, e]));
+    const layerOptions = (lang) => LAYERS.map((v) => ({ value: v, label: I18N[lang].heading[v] }));
+    return sectionEditor({
+      defaults: { area: "switzerland", legend: true, height: 420 },
+      labels: L, doc: { fr: "#4-carte-de-la-suisse", en: "#4-switzerland-map" },
+      clean: (c) => { if (Array.isArray(c.layers) && !c.layers.length) delete c.layers; if (c.area !== "home") delete c.zoom; return c; },
+      top: ({ lang }) => [F.select("layer", layerOptions(lang))],
+      sections: [
+        { key: "layers", icon: "mdi:layers-outline", title: ST("Ebenen", "Couches", "Livelli", "Nivels", "Layers"), keys: ["layers"],
+          fields: ({ lang }) => [{ name: "layers", selector: { select: { multiple: true, mode: "list", options: layerOptions(lang) } } }],
+          summary: (c, { lang, w }) => (c.layers?.length ? c.layers.map((l) => I18N[lang].heading[l]).join(", ") : w.all) },
+        { key: "view", icon: "mdi:magnify-scan", title: ST("Ansicht", "Vue", "Vista", "Vista", "View"), keys: ["area", "zoom"],
+          fields: ({ lang, config }) => [F.select("area", ["switzerland", "home"].map((v) => ({ value: v, label: EDITOR[lang].areas[v] }))),
+            ...(config.area === "home" ? [F.num("zoom", 7, 12, 0.5, "slider")] : [])],
+          summary: (c, { lang }) => EDITOR[lang].areas[c.area] + (c.area === "home" && c.zoom ? ` · zoom ${c.zoom}` : "") },
+        { key: "display", icon: "mdi:ruler", title: ST("Anzeige", "Affichage", "Visualizzazione", "Visualisaziun", "Display"), keys: ["legend", "height"],
+          fields: () => [F.bool("legend"), F.num("height", 200, 1200, 10)],
+          summary: (c, { lang, w }) => `${c.legend ? EDITOR[lang].legend : w.off} · ${c.height} px` },
+      ],
+    });
   }
 }
 

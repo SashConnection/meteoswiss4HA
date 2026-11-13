@@ -223,6 +223,133 @@
       },
       "lake_temperature": {
         "name": "Temperatura dell’acqua {lake}"
+      },
+      "moon_phase": {
+        "name": "Fase lunare",
+        "state": {
+          "new_moon": "Luna nuova",
+          "waxing_crescent": "Luna crescente",
+          "first_quarter": "Primo quarto",
+          "waxing_gibbous": "Gibbosa crescente",
+          "full_moon": "Luna piena",
+          "waning_gibbous": "Gibbosa calante",
+          "last_quarter": "Ultimo quarto",
+          "waning_crescent": "Luna calante"
+        }
+      },
+      "day_length": {
+        "name": "Durata del giorno"
+      },
+      "ephemeris": {
+        "name": "Santo del giorno"
+      },
+      "drying": {
+        "name": "Asciugatura del bucato",
+        "state": {
+          "good": "Buona",
+          "fair": "Discreta",
+          "poor": "Scarsa"
+        }
+      },
+      "frost_tonight": {
+        "name": "Gelo stanotte",
+        "state": {
+          "none": "Niente gelo",
+          "possible": "Possibile",
+          "likely": "Probabile"
+        }
+      },
+      "stargazing": {
+        "name": "Stelle stanotte",
+        "state": {
+          "excellent": "Eccellente",
+          "good": "Buono",
+          "poor": "Scarso"
+        }
+      },
+      "sunset_quality": {
+        "name": "Tramonto",
+        "state": {
+          "beautiful": "Splendido",
+          "maybe": "Forse",
+          "no": "Spento"
+        }
+      },
+      "summary": {
+        "name": "La giornata in una frase"
+      },
+      "ambiance_color": {
+        "name": "Colore d’atmosfera"
+      },
+      "solar_today": {
+        "name": "Produzione solare oggi"
+      },
+      "solar_tomorrow": {
+        "name": "Produzione solare domani"
+      },
+      "foehn": {
+        "name": "Favonio",
+        "state": {
+          "none": "Niente favonio",
+          "likely": "Probabile",
+          "in_force": "Favonio",
+          "north_foehn": "Favonio da nord"
+        }
+      },
+      "bise": {
+        "name": "Bise",
+        "state": {
+          "none": "Niente bise",
+          "moderate": "Moderata",
+          "strong": "Forte"
+        }
+      },
+      "rainbow": {
+        "name": "Arcobaleno",
+        "state": {
+          "yes": "Possibile ora",
+          "no": "No"
+        }
+      },
+      "airing": {
+        "name": "Arieggiare",
+        "state": {
+          "recommended": "Apri le finestre",
+          "neutral": "Indifferente",
+          "not_recommended": "Tieni chiuso"
+        }
+      },
+      "temperature_anomaly": {
+        "name": "Scarto dalla norma"
+      },
+      "yesterday": {
+        "name": "Massima di ieri"
+      },
+      "year_max_temperature": {
+        "name": "Più caldo dell’anno"
+      },
+      "year_min_temperature": {
+        "name": "Più freddo dell’anno"
+      },
+      "year_max_gust": {
+        "name": "Raffica più forte dell’anno"
+      },
+      "first_frost": {
+        "name": "Primo gelo della stagione"
+      },
+      "first_snow": {
+        "name": "Prima neve della stagione"
+      },
+      "watering": {
+        "name": "Annaffiare il giardino",
+        "state": {
+          "not_needed": "Inutile",
+          "optional": "Facoltativo",
+          "recommended": "Consigliato"
+        }
+      },
+      "rain_arrival": {
+        "name": "La pioggia arriva tra"
       }
     }
   },
@@ -235,7 +362,8 @@
           "forecast": "Previsioni",
           "environment": "Polline e pericoli",
           "places": "Luoghi e persone sorvegliati",
-          "lakes": "Laghi e nebbia"
+          "lakes": "Laghi e nebbia",
+          "extras": "Allerta pioggia, solare e interni"
         }
       },
       "display": {
@@ -277,6 +405,20 @@
           "lakes": "Laghi",
           "fog": "Nebbia e strato per regione"
         }
+      },
+      "extras": {
+        "title": "Allerta pioggia, pannelli solari e sensori interni",
+        "description": "Allerta pioggia: il radar dice quando la pioggia arriva da te. Solare: potenza di picco (kWp), inclinazione (0 = piano) e orientamento (180 = sud, 90 = est, 270 = ovest) danno una previsione di produzione; lascia vuota la potenza se non hai pannelli. Interni: un sensore di temperatura e uno di umidità della casa dicono quando arieggiare.",
+        "data": {
+          "nowcast": "Allerta pioggia dal radar",
+          "rain_alert_minutes": "Avvisa quando la pioggia è a meno di …",
+          "solar_kwp": "Pannelli solari: potenza di picco",
+          "solar_tilt": "Inclinazione dei pannelli",
+          "solar_azimuth": "Orientamento dei pannelli",
+          "solar_sensor": "Il tuo sensore di produzione (facoltativo)",
+          "indoor_temperature": "Sensore di temperatura interna",
+          "indoor_humidity": "Sensore di umidità interna"
+        }
       }
     }
   },
@@ -298,7 +440,14 @@
       "hazard_level": "Il pericolo {subtype} raggiunge un grado",
       "pollen_level": "Il polline raggiunge un livello",
       "fog_started": "Si forma nebbia o strato",
-      "fog_ended": "La nebbia si dissolve"
+      "fog_ended": "La nebbia si dissolve",
+      "rain_approaching": "La pioggia arriva presto",
+      "first_frost": "Primo gelo della stagione",
+      "first_snow": "Prima neve della stagione",
+      "rainbow_possible": "Arcobaleno possibile",
+      "beautiful_sunset": "Bel tramonto previsto",
+      "foehn_started": "Soffia il favonio",
+      "bise_started": "Soffia la bise"
     },
     "trigger_subtype": {
       "rain": "pioggia",
@@ -313,7 +462,8 @@
       "drought": "di siccità",
       "avalanche": "di valanghe",
       "pollen": "polline",
-      "fog": "nebbia"
+      "fog": "nebbia",
+      "weather": "meteo"
     },
     "extra_fields": {
       "level": "Grado (o superiore)"

@@ -73,6 +73,9 @@ class MeteoSwissData:
     # Fog by region (fog.FogCoordinator) and lakes (lakes.LakeCoordinator).
     fog: Any = None
     lakes: Any = None
+    # Station history (history.HistoryCoordinator) and rain nowcast (nowcast.NowcastCoordinator).
+    history: Any = None
+    nowcast: Any = None
 
 
 class PollenCoordinator(DataUpdateCoordinator[PollenData]):

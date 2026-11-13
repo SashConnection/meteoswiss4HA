@@ -3,6 +3,18 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.12b0 (pre-release)
+
+- **No YAML, ever**: every card has a new editor with clear sections (summary of what is on, ↺ reset, link to the guide); the language moves to "Advanced" and follows Home Assistant.
+- **Sun, moon and ephemeris** in the cards of your choice: sunrise, sunset, day length, moon phase drawn for the exact day (%, name), moon times, next full and new moon, saint of the day (5 languages). New Ephemeris card; Moon phase, Day length and Saint of the day sensors.
+- **Rain in 20 minutes**: the radar tells when the rain reaches home; sensor and "Rain arrives soon" trigger (minutes in advance in the options).
+- **Tips of the day** card and sensors: the day in one sentence, laundry drying, frost tonight, garden watering, stars, sunset, rainbow, foehn, bise, airing (indoor sensors), solar production today and tomorrow (your panels).
+- **Station history**: yesterday, the 1991-2020 normal, records of the year, first frost and first snow of the season (with triggers).
+- **Escape the fog**: the nearest summit in the sun (now or later today) in the fog sensor and the "Should I go out?" card.
+- Lakes: swimming comfort. Hourly forecast: sunshine, global radiation and cloud layers.
+- Fun: weather postcard to share, "guess the maximum" game, header badge, ambiance color for smart lights, live sky as dashboard background.
+- New options page "Rain alert, solar and indoor".
+
 ## 2026.11.11
 
 - Ready for the HACS default catalogue: Swiss-only (`country: CH`), HACS validation without exceptions.

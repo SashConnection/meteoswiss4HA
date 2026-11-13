@@ -1,0 +1,278 @@
+{
+  ".github/workflows/validate.yml": {
+    "mtime": 1794348489.930063,
+    "seen": 1794388521.1194768,
+    "ast_hash": "3b2cddeecf83d28922b9d6cb6a8d2823",
+    "semantic_hash": "3b2cddeecf83d28922b9d6cb6a8d2823"
+  },
+  "custom_components/meteoswiss4ha/__init__.py": {
+    "mtime": 1794337517.6293795,
+    "seen": 1794388521.1194768,
+    "ast_hash": "9dd27f8a90b2939d9cbf7a3de413eca0",
+    "semantic_hash": "9dd27f8a90b2939d9cbf7a3de413eca0"
+  },
+  "custom_components/meteoswiss4ha/api.py": {
+    "mtime": 1794337495.190848,
+    "seen": 1794388521.1194768,
+    "ast_hash": "d5c7def06f83df70e00f39e6347611f6",
+    "semantic_hash": "d5c7def06f83df70e00f39e6347611f6"
+  },
+  "custom_components/meteoswiss4ha/cities.py": {
+    "mtime": 1794217541.635763,
+    "seen": 1794388521.1194768,
+    "ast_hash": "4f5d1536b2db6af54a8b301b6d9a711a",
+    "semantic_hash": "4f5d1536b2db6af54a8b301b6d9a711a"
+  },
+  "custom_components/meteoswiss4ha/config_flow.py": {
+    "mtime": 1794337933.9643312,
+    "seen": 1794388521.1194768,
+    "ast_hash": "17efe6ef21d6adb603054cf378895a6b",
+    "semantic_hash": "17efe6ef21d6adb603054cf378895a6b"
+  },
+  "custom_components/meteoswiss4ha/const.py": {
+    "mtime": 1794348645.8233132,
+    "seen": 1794388521.1194768,
+    "ast_hash": "1a17461322d20d0087193115605c6205",
+    "semantic_hash": "1a17461322d20d0087193115605c6205"
+  },
+  "custom_components/meteoswiss4ha/coordinator.py": {
+    "mtime": 1794337517.6418953,
+    "seen": 1794388521.1194768,
+    "ast_hash": "9b44b7b6d65274e0548e02f86f6dbd2e",
+    "semantic_hash": "9b44b7b6d65274e0548e02f86f6dbd2e"
+  },
+  "custom_components/meteoswiss4ha/device_trigger.py": {
+    "mtime": 1794337878.9449472,
+    "seen": 1794388521.1194768,
+    "ast_hash": "1ca662f9ee3031e99f74dea7960a3e6d",
+    "semantic_hash": "1ca662f9ee3031e99f74dea7960a3e6d"
+  },
+  "custom_components/meteoswiss4ha/entity.py": {
+    "mtime": 1794213375.758458,
+    "seen": 1794388521.1194768,
+    "ast_hash": "0d20b0f0d7cbeca5be7958a707a8621f",
+    "semantic_hash": "0d20b0f0d7cbeca5be7958a707a8621f"
+  },
+  "custom_components/meteoswiss4ha/events.py": {
+    "mtime": 1794337878.943826,
+    "seen": 1794388521.1194768,
+    "ast_hash": "04bef219c2441944f35aad0e364f524f",
+    "semantic_hash": "04bef219c2441944f35aad0e364f524f"
+  },
+  "custom_components/meteoswiss4ha/fog.py": {
+    "mtime": 1794337716.033805,
+    "seen": 1794388521.1194768,
+    "ast_hash": "324ef69d29d7937f5496e3687ad0f34e",
+    "semantic_hash": "324ef69d29d7937f5496e3687ad0f34e"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-app-cards.js": {
+    "mtime": 1794260465.145277,
+    "seen": 1794388521.1194768,
+    "ast_hash": "5b40fbf09533c7c71f43f79432e2bd87",
+    "semantic_hash": "5b40fbf09533c7c71f43f79432e2bd87"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-common.js": {
+    "mtime": 1794338046.2602906,
+    "seen": 1794388521.1194768,
+    "ast_hash": "74703eefcaae7ff9db941fee48aae071",
+    "semantic_hash": "74703eefcaae7ff9db941fee48aae071"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-forecast.js": {
+    "mtime": 1794260465.1462784,
+    "seen": 1794388521.1194768,
+    "ast_hash": "88b07479bad208b32c7814e6c1d44b0b",
+    "semantic_hash": "88b07479bad208b32c7814e6c1d44b0b"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-lake.js": {
+    "mtime": 1794338693.0004873,
+    "seen": 1794388521.1194768,
+    "ast_hash": "f4a41b70413b4fd7037d20ff33674ed6",
+    "semantic_hash": "f4a41b70413b4fd7037d20ff33674ed6"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-map.js": {
+    "mtime": 1794338524.5857599,
+    "seen": 1794388521.1194768,
+    "ast_hash": "6eaf5627d43ff94e007f84c51242e2d3",
+    "semantic_hash": "6eaf5627d43ff94e007f84c51242e2d3"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-monuments.js": {
+    "mtime": 1794260516.3290899,
+    "seen": 1794388521.1194768,
+    "ast_hash": "029f2794d874da53a95b1901a3a12f24",
+    "semantic_hash": "029f2794d874da53a95b1901a3a12f24"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-mountain.js": {
+    "mtime": 1794339020.8467593,
+    "seen": 1794388521.1194768,
+    "ast_hash": "27392c477c7c2f90d6465f62fa1aa669",
+    "semantic_hash": "27392c477c7c2f90d6465f62fa1aa669"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-panels.js": {
+    "mtime": 1794338982.698318,
+    "seen": 1794388521.1194768,
+    "ast_hash": "6a434247a65d9a20768e00d8a9d7185a",
+    "semantic_hash": "6a434247a65d9a20768e00d8a9d7185a"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-pollen-card.js": {
+    "mtime": 1794256680.5766633,
+    "seen": 1794388521.1194768,
+    "ast_hash": "91cd7a7af59fba24c3fecfd3e1283897",
+    "semantic_hash": "91cd7a7af59fba24c3fecfd3e1283897"
+  },
+  "custom_components/meteoswiss4ha/frontend/meteoswiss-weather-card.js": {
+    "mtime": 1794260465.1462784,
+    "seen": 1794388521.1194768,
+    "ast_hash": "7903264a559c10843cf871b15b1bd282",
+    "semantic_hash": "7903264a559c10843cf871b15b1bd282"
+  },
+  "custom_components/meteoswiss4ha/frontend/switzerland.json": {
+    "mtime": 1794217513.7852738,
+    "seen": 1794388521.1194768,
+    "ast_hash": "9deb92053624e4d8aca0142700e894b5",
+    "semantic_hash": "9deb92053624e4d8aca0142700e894b5"
+  },
+  "custom_components/meteoswiss4ha/hazards.py": {
+    "mtime": 1794238095.610114,
+    "seen": 1794388521.1194768,
+    "ast_hash": "477f5348600b4bcd5ea0f5aa4e3a8295",
+    "semantic_hash": "477f5348600b4bcd5ea0f5aa4e3a8295"
+  },
+  "custom_components/meteoswiss4ha/lakes.py": {
+    "mtime": 1794337798.6637616,
+    "seen": 1794388521.1194768,
+    "ast_hash": "75762be5f9abbdd8a46a9f3a709b6bb0",
+    "semantic_hash": "75762be5f9abbdd8a46a9f3a709b6bb0"
+  },
+  "custom_components/meteoswiss4ha/manifest.json": {
+    "mtime": 1794348645.7656844,
+    "seen": 1794388521.1194768,
+    "ast_hash": "97a6fd2dac93fbfafb6a0d766333217d",
+    "semantic_hash": "97a6fd2dac93fbfafb6a0d766333217d"
+  },
+  "custom_components/meteoswiss4ha/overview.py": {
+    "mtime": 1794486228.3443623,
+    "seen": 1794486246.6539497,
+    "ast_hash": "309b284020e05ae6fbbe1f9a752e319d",
+    "semantic_hash": ""
+  },
+  "custom_components/meteoswiss4ha/places.py": {
+    "mtime": 1794337517.62837,
+    "seen": 1794388521.1194768,
+    "ast_hash": "5581b04d0bda4f387cd841910067cc43",
+    "semantic_hash": "5581b04d0bda4f387cd841910067cc43"
+  },
+  "custom_components/meteoswiss4ha/pollen.py": {
+    "mtime": 1794215158.8411868,
+    "seen": 1794388521.1194768,
+    "ast_hash": "efada4d5ce9724caf56d26f69b9f7a2f",
+    "semantic_hash": "efada4d5ce9724caf56d26f69b9f7a2f"
+  },
+  "custom_components/meteoswiss4ha/sensor.py": {
+    "mtime": 1794337878.9428272,
+    "seen": 1794388521.1194768,
+    "ast_hash": "b695a0f3eccc9ce62095bfc61bab598e",
+    "semantic_hash": "b695a0f3eccc9ce62095bfc61bab598e"
+  },
+  "custom_components/meteoswiss4ha/sensor_env.py": {
+    "mtime": 1794337865.82388,
+    "seen": 1794388521.1194768,
+    "ast_hash": "c44d248dbab519ce5c4cc8779fa6173f",
+    "semantic_hash": "c44d248dbab519ce5c4cc8779fa6173f"
+  },
+  "custom_components/meteoswiss4ha/symbol_descriptions.py": {
+    "mtime": 1794213375.877768,
+    "seen": 1794388521.1194768,
+    "ast_hash": "c0d44839092a9a198799beaeb1b8de78",
+    "semantic_hash": "c0d44839092a9a198799beaeb1b8de78"
+  },
+  "custom_components/meteoswiss4ha/symbols.py": {
+    "mtime": 1794213375.8787684,
+    "seen": 1794388521.1194768,
+    "ast_hash": "f6ed73d7f982efc3f74efb51e4abf339",
+    "semantic_hash": "f6ed73d7f982efc3f74efb51e4abf339"
+  },
+  "custom_components/meteoswiss4ha/translations/de.json": {
+    "mtime": 1794337962.0501125,
+    "seen": 1794388521.1194768,
+    "ast_hash": "ad7e9aa228e66c7abad978969fb01e92",
+    "semantic_hash": "ad7e9aa228e66c7abad978969fb01e92"
+  },
+  "custom_components/meteoswiss4ha/translations/en.json": {
+    "mtime": 1794337962.036019,
+    "seen": 1794388521.1194768,
+    "ast_hash": "0dbce39e51b4ebc8fe06e2974f78b825",
+    "semantic_hash": "0dbce39e51b4ebc8fe06e2974f78b825"
+  },
+  "custom_components/meteoswiss4ha/translations/fr.json": {
+    "mtime": 1794337962.0385425,
+    "seen": 1794388521.1194768,
+    "ast_hash": "1f15b98e351c97b6e1f55f72e0336904",
+    "semantic_hash": "1f15b98e351c97b6e1f55f72e0336904"
+  },
+  "custom_components/meteoswiss4ha/translations/it.json": {
+    "mtime": 1794337962.0626254,
+    "seen": 1794388521.1194768,
+    "ast_hash": "1983e8ecb4cd2cac8ae24ea5cb8d8334",
+    "semantic_hash": "1983e8ecb4cd2cac8ae24ea5cb8d8334"
+  },
+  "custom_components/meteoswiss4ha/translations/rm.json": {
+    "mtime": 1794337962.074729,
+    "seen": 1794388521.1194768,
+    "ast_hash": "bf54a9a7be6e9bdcfb013ac72e640488",
+    "semantic_hash": "bf54a9a7be6e9bdcfb013ac72e640488"
+  },
+  "custom_components/meteoswiss4ha/weather.py": {
+    "mtime": 1794255699.91073,
+    "seen": 1794388521.1194768,
+    "ast_hash": "85a6292bb3059154b417b69e72c61d6f",
+    "semantic_hash": "85a6292bb3059154b417b69e72c61d6f"
+  },
+  "hacs.json": {
+    "mtime": 1794348489.9294136,
+    "seen": 1794388521.1194768,
+    "ast_hash": "52f4728859cdff98096851740fb62f11",
+    "semantic_hash": "52f4728859cdff98096851740fb62f11"
+  },
+  "nodered/build-flow.cjs": {
+    "mtime": 1794230098.401976,
+    "seen": 1794388521.1194768,
+    "ast_hash": "b519f89b4bb9151edb773e86550a8d14",
+    "semantic_hash": "b519f89b4bb9151edb773e86550a8d14"
+  },
+  "nodered/meteoswiss-radar-flow.json": {
+    "mtime": 1794230099.1593187,
+    "seen": 1794388521.1194768,
+    "ast_hash": "38c7c65801051982fb350ee2d98dcbdb",
+    "semantic_hash": "38c7c65801051982fb350ee2d98dcbdb"
+  },
+  "scripts/animated_icons.mjs": {
+    "mtime": 1794213944.1325483,
+    "seen": 1794388521.1194768,
+    "ast_hash": "5aa3fc8fb80c8e195cc5b881e026af00",
+    "semantic_hash": "5aa3fc8fb80c8e195cc5b881e026af00"
+  },
+  "scripts/generate_icons.mjs": {
+    "mtime": 1794213859.3363862,
+    "seen": 1794388521.1194768,
+    "ast_hash": "2bc069a9d1022343965b3fd2ec020f23",
+    "semantic_hash": "2bc069a9d1022343965b3fd2ec020f23"
+  },
+  "CHANGELOG.md": {
+    "mtime": 1794348645.915862,
+    "seen": 1794388521.1194768,
+    "ast_hash": "cf43e63e196f17af32fdb3db463369a2",
+    "semantic_hash": "cf43e63e196f17af32fdb3db463369a2"
+  },
+  "README.md": {
+    "mtime": 1794339173.9821653,
+    "seen": 1794388521.1194768,
+    "ast_hash": "fc1dba3fa8bbc5d491f36f98738b65a2",
+    "semantic_hash": "fc1dba3fa8bbc5d491f36f98738b65a2"
+  },
+  "docs/GUIDE.fr.md": {
+    "mtime": 1794339225.0622373,
+    "seen": 1794388521.1194768,
+    "ast_hash": "2eb7ad39b207bd5c2ca191b517010647",
+    "semantic_hash": "2eb7ad39b207bd5c2ca191b517010647"
+  }
+}

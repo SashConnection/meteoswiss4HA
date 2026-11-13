@@ -15,6 +15,7 @@
 import {
   DANGER, LANGS, ForecastCard, api, define, esc, findWeather, hh, langOf, locOf, makeEditor, num, relatedSensors, weekday,
 } from "./meteoswiss-common.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 
 const T = {
   de: {
@@ -242,12 +243,14 @@ class MeteoSwissMountainCard extends ForecastCard {
   getCardSize() { return 6; }
   static getStubConfig(hass) { return { entity: findWeather(hass), avalanche_scope: "home" }; }
   static getConfigElement() {
-    return makeEditor([["entity"], ["avalanche_scope", "max_altitude"], ["language"]], (hass, lang) => ({
-      entity: { selector: { entity: { domain: "weather", integration: "meteoswiss4ha" } } },
-      avalanche_scope: { selector: { select: { mode: "dropdown", options: SCOPE_KEYS.map((k) => ({ value: k, label: T[lang].scope[k] })) } } },
-      max_altitude: { selector: { number: { min: 2000, max: 5000, step: 500, mode: "box" } } },
-      language: { selector: { select: { mode: "dropdown", options: LANGS } } },
-    }), LABELS);
+    return sectionEditor({ defaults: { avalanche_scope: "home", max_altitude: 4000 }, labels: LABELS, doc: { fr: "#montagne", en: "#3e-mountain" },
+      top: () => [F.weather],
+      sections: [
+        { key: "avalanche", icon: "mdi:snowflake-alert", title: ST("Lawinengefahr", "Danger d’avalanche", "Pericolo valanghe", "Privel da lavinas", "Avalanche danger"), keys: ["avalanche_scope"],
+          fields: ({ lang }) => [F.select("avalanche_scope", SCOPE_KEYS.map((k) => ({ value: k, label: T[lang].scope[k] })))], summary: (c, { lang }) => T[lang].scope[c.avalanche_scope] },
+        { key: "altitude", icon: "mdi:image-filter-hdr", title: ST("Höhe", "Altitude", "Altitudine", "Altezza", "Altitude"), keys: ["max_altitude"],
+          fields: () => [F.num("max_altitude", 2000, 5000, 500)], summary: (c) => `0 – ${c.max_altitude} m` },
+      ] });
   }
 }
 
@@ -376,13 +379,17 @@ class MeteoSwissFogCard extends HTMLElement {
   static getStubConfig() { return { show_map: true, show_forecast: true }; }
   static getConfigElement() {
     const REGIONS = ["three_lakes", "leman", "fribourg", "bern", "zurich", "central", "basel", "ticino"];
-    const NAMES = { three_lakes: "Trois-Lacs / Drei-Seen-Land", leman: "Léman", fribourg: "Fribourg", bern: "Bern", zurich: "Zürich", central: "Zentralschweiz", basel: "Basel / Jura", ticino: "Ticino" };
-    return makeEditor([["name"], ["region"], ["show_forecast", "show_map"], ["show_all"], ["language"]], () => ({
-      name: { selector: { text: {} } },
-      region: { selector: { select: { mode: "dropdown", options: REGIONS.map((r) => ({ value: r, label: NAMES[r] })) } } },
-      show_forecast: { selector: { boolean: {} } }, show_map: { selector: { boolean: {} } }, show_all: { selector: { boolean: {} } },
-      language: { selector: { select: { mode: "dropdown", options: LANGS } } },
-    }), LABELS);
+    return sectionEditor({ defaults: { show_map: true, show_forecast: true, show_all: false }, labels: LABELS, doc: { fr: "#brouillard-par-région", en: "#3f-fog-by-region" },
+      load: (hass) => api(hass, "fog", 5 * 60000).catch(() => null),
+      top: () => [F.text("name")],
+      sections: [
+        { key: "region", icon: "mdi:map-marker-radius", title: ST("Region", "Région", "Regione", "Regiun", "Region"), keys: ["region"],
+          fields: ({ lang, extra }) => [F.select("region", REGIONS.map((r) => ({ value: r, label: extra?.regions?.find((x) => x.key === r)?.names[lang] || r })))],
+          summary: (c, { lang, extra, w }) => (c.region ? extra?.regions?.find((x) => x.key === c.region)?.names[lang] || c.region : `${extra?.regions?.find((x) => x.key === extra.home_region)?.names[lang] || ""} (${w.default})`) },
+        { key: "display", icon: "mdi:eye-outline", title: ST("Anzeige", "Affichage", "Visualizzazione", "Visualisaziun", "Display"), keys: ["show_forecast", "show_map", "show_all"],
+          fields: () => [F.bool("show_forecast"), F.bool("show_map"), F.bool("show_all")],
+          summary: (c, { lang }) => ["show_forecast", "show_map", "show_all"].filter((k) => c[k]).map((k) => T[lang].f[k]).join(" · ") },
+      ] });
   }
 }
 

@@ -399,7 +399,44 @@ def build(
                 "days": summarize_days(hours),
             }
         )
+    add_escapes(regions)
     return {"updated": now.isoformat(), "regions": regions}
+
+
+def add_escapes(regions: list[dict[str, Any]], max_km: float = 70) -> None:
+    """Escape the fog: the nearest station in the sun above the fog of each region.
+
+    "escape" (now): a sunny station above the top, nearest to the plain of the
+    region. "escape_forecast": the first coming hour when one of the region's
+    own upper stations gets sunshine (from the forecast grid).
+    """
+    sunny = {s["abbr"]: s for r in regions for s in r["stations"] if s["state"] == SUN}
+    for region in regions:
+        now = region["now"]
+        region["escape"] = None
+        region["escape_forecast"] = None
+        if now["state"] not in ("fog", "stratus", "overcast"):
+            continue
+        plain = region["stations"][0]
+        top = now["top_min"] or plain["altitude"]
+        best = None
+        for st in sunny.values():
+            if st["altitude"] <= top:
+                continue
+            dist = distance_km(plain["lat"], plain["lon"], st["lat"], st["lon"])
+            if dist <= max_km and (best is None or dist < best[0]):
+                best = (dist, st)
+        if best:
+            region["escape"] = {"name": best[1]["name"], "altitude": best[1]["altitude"], "distance_km": round(best[0])}
+        hours = region["hours"]
+        for st in region["stations"][1:]:
+            grid = region["grid"].get(st["abbr"], "")
+            for i, code in enumerate(grid[:24]):
+                if code == "s" and i < len(hours):
+                    cand = (hours[i]["time"], st)
+                    if region["escape_forecast"] is None or cand[0] < region["escape_forecast"]["time"]:
+                        region["escape_forecast"] = {"time": cand[0], "name": st["name"], "altitude": st["altitude"]}
+                    break
 
 
 # One letter per station state in the hourly grid (compact JSON).

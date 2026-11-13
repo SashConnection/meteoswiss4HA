@@ -223,6 +223,133 @@
       },
       "lake_temperature": {
         "name": "Wassertemperatur {lake}"
+      },
+      "moon_phase": {
+        "name": "Mondphase",
+        "state": {
+          "new_moon": "Neumond",
+          "waxing_crescent": "Zunehmende Sichel",
+          "first_quarter": "Erstes Viertel",
+          "waxing_gibbous": "Zunehmender Mond",
+          "full_moon": "Vollmond",
+          "waning_gibbous": "Abnehmender Mond",
+          "last_quarter": "Letztes Viertel",
+          "waning_crescent": "Abnehmende Sichel"
+        }
+      },
+      "day_length": {
+        "name": "Tageslänge"
+      },
+      "ephemeris": {
+        "name": "Heilige des Tages"
+      },
+      "drying": {
+        "name": "Wäsche trocknen",
+        "state": {
+          "good": "Gut",
+          "fair": "Mittel",
+          "poor": "Schlecht"
+        }
+      },
+      "frost_tonight": {
+        "name": "Frost heute Nacht",
+        "state": {
+          "none": "Kein Frost",
+          "possible": "Möglich",
+          "likely": "Wahrscheinlich"
+        }
+      },
+      "stargazing": {
+        "name": "Sterne heute Nacht",
+        "state": {
+          "excellent": "Ausgezeichnet",
+          "good": "Gut",
+          "poor": "Schlecht"
+        }
+      },
+      "sunset_quality": {
+        "name": "Sonnenuntergang",
+        "state": {
+          "beautiful": "Prächtig",
+          "maybe": "Vielleicht",
+          "no": "Fahl"
+        }
+      },
+      "summary": {
+        "name": "Der Tag in einem Satz"
+      },
+      "ambiance_color": {
+        "name": "Stimmungsfarbe"
+      },
+      "solar_today": {
+        "name": "Solarertrag heute"
+      },
+      "solar_tomorrow": {
+        "name": "Solarertrag morgen"
+      },
+      "foehn": {
+        "name": "Föhn",
+        "state": {
+          "none": "Kein Föhn",
+          "likely": "Wahrscheinlich",
+          "in_force": "Föhn",
+          "north_foehn": "Nordföhn"
+        }
+      },
+      "bise": {
+        "name": "Bise",
+        "state": {
+          "none": "Keine Bise",
+          "moderate": "Mässig",
+          "strong": "Stark"
+        }
+      },
+      "rainbow": {
+        "name": "Regenbogen",
+        "state": {
+          "yes": "Jetzt möglich",
+          "no": "Nein"
+        }
+      },
+      "airing": {
+        "name": "Lüften",
+        "state": {
+          "recommended": "Fenster öffnen",
+          "neutral": "Egal",
+          "not_recommended": "Geschlossen lassen"
+        }
+      },
+      "temperature_anomaly": {
+        "name": "Abweichung von der Norm"
+      },
+      "yesterday": {
+        "name": "Maximum gestern"
+      },
+      "year_max_temperature": {
+        "name": "Wärmster Wert des Jahres"
+      },
+      "year_min_temperature": {
+        "name": "Kältester Wert des Jahres"
+      },
+      "year_max_gust": {
+        "name": "Stärkste Böe des Jahres"
+      },
+      "first_frost": {
+        "name": "Erster Frost der Saison"
+      },
+      "first_snow": {
+        "name": "Erster Schnee der Saison"
+      },
+      "watering": {
+        "name": "Garten giessen",
+        "state": {
+          "not_needed": "Nicht nötig",
+          "optional": "Freiwillig",
+          "recommended": "Empfohlen"
+        }
+      },
+      "rain_arrival": {
+        "name": "Regen kommt in"
       }
     }
   },
@@ -235,7 +362,8 @@
           "forecast": "Prognosen",
           "environment": "Pollen und Gefahren",
           "places": "Beobachtete Orte und Personen",
-          "lakes": "Seen und Nebel"
+          "lakes": "Seen und Nebel",
+          "extras": "Regenalarm, Solar und Innenräume"
         }
       },
       "display": {
@@ -277,6 +405,20 @@
           "lakes": "Seen",
           "fog": "Nebel und Hochnebel nach Region"
         }
+      },
+      "extras": {
+        "title": "Regenalarm, Solaranlage und Innensensoren",
+        "description": "Regenalarm: Das Radar sagt, wann der Regen bei dir ankommt. Solar: Spitzenleistung (kWp), Neigung (0 = flach) und Ausrichtung (180 = Süd, 90 = Ost, 270 = West) ergeben eine Ertragsprognose; Leistung leer lassen, wenn keine Anlage vorhanden ist. Innen: ein Temperatur- und ein Feuchtesensor im Haus sagen, wann man lüften soll.",
+        "data": {
+          "nowcast": "Regenalarm vom Radar",
+          "rain_alert_minutes": "Alarm, wenn der Regen weniger als … entfernt ist",
+          "solar_kwp": "Solaranlage: Spitzenleistung",
+          "solar_tilt": "Neigung der Module",
+          "solar_azimuth": "Ausrichtung der Module",
+          "solar_sensor": "Dein Produktionssensor (optional)",
+          "indoor_temperature": "Innentemperatur-Sensor",
+          "indoor_humidity": "Innenfeuchte-Sensor"
+        }
       }
     }
   },
@@ -298,7 +440,14 @@
       "hazard_level": "{subtype}gefahr erreicht eine Stufe",
       "pollen_level": "Pollen erreicht eine Stufe",
       "fog_started": "Nebel oder Hochnebel bildet sich",
-      "fog_ended": "Der Nebel löst sich auf"
+      "fog_ended": "Der Nebel löst sich auf",
+      "rain_approaching": "Regen kommt bald",
+      "first_frost": "Erster Frost der Saison",
+      "first_snow": "Erster Schnee der Saison",
+      "rainbow_possible": "Regenbogen möglich",
+      "beautiful_sunset": "Schöner Sonnenuntergang erwartet",
+      "foehn_started": "Föhn bläst",
+      "bise_started": "Bise bläst"
     },
     "trigger_subtype": {
       "rain": "Regen",
@@ -313,7 +462,8 @@
       "drought": "Trockenheits",
       "avalanche": "Lawinen",
       "pollen": "Pollen",
-      "fog": "Nebel"
+      "fog": "Nebel",
+      "weather": "Wetter"
     },
     "extra_fields": {
       "level": "Stufe (oder höher)"

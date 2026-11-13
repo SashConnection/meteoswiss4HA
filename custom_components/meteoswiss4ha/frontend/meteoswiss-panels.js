@@ -17,10 +17,12 @@ import {
   DANGER, LANGS, WARNING_KINDS, WARN_ICONS, ForecastCard, api, dayCode, define, esc, findWeather, hh, hhmm,
   isSunnyCode, isWetCode, langOf, locOf, makeEditor, num, relatedSensors, sunElevation, weekday,
 } from "./meteoswiss-common.js";
+import { astroFor, moon as moonInfo } from "./meteoswiss-astro.js";
+import { F, sectionEditor, sectionTitle as ST } from "./meteoswiss-editor.js";
 
 const T = {
   de: {
-    outing: "Rausgehen?", yes: "Ja, los!", umbrella: "Ja, mit Schirm", later: "Lieber später", no: "Besser drinnen bleiben",
+    outing: "Rausgehen?", rainIn: "Regen in {m} Min. (Radar)", escape: "Sonne in {name} ({alt} m, {km} km)", escapeFrom: "Sonne ab {t} in {name} ({alt} m)", yes: "Ja, los!", umbrella: "Ja, mit Schirm", later: "Lieber später", no: "Besser drinnen bleiben",
     dryUntil: "Trocken bis {t}", dryAll: "Trocken in den nächsten Stunden", rainFrom: "Regen wahrscheinlich ab {t} ({p} %)", rainNow: "Es regnet ({mm} mm/h)",
     best: "Bester Zeitpunkt: {a}–{b}", gusts: "Böen bis {v} km/h", warning: "Warnung {kind}: Stufe {n}", pollen: "Pollen: {level}",
     fog: "Hochnebel, Sonne über ~{m} m", fogNo: "Nebel", ice: "Glättegefahr", sun: "Viel Sonne: Sonnenbrille", sunset: "Sonnenuntergang {t}",
@@ -30,11 +32,11 @@ const T = {
     myDay: "Mein Tag", parts: ["Nacht", "Morgen", "Nachmittag", "Abend"], today: "Heute", tomorrow: "Morgen", sunrise: "Sonnenaufgang", sunsetW: "Sonnenuntergang",
     compare: "Meine Orte vergleichen", bestToday: "Heute am besten", noPlaces: "Füge Orte oder Personen in den Optionen der Integration hinzu (Beobachtete Orte).",
     home: "Zuhause", now: "Jetzt", noEntity: "Keine MeteoSwiss-Wetterentität gefunden.", rainMm: "Regen",
-    f: { entity: "Wetter-Entität", name: "Titel", hours: "Stunden", language: "Sprache", animate: "Animiert", night_mode: "Nachtmodus", days: "Tage", show_seconds: "Sekunden" },
+    f: { entity: "Wetter-Entität", name: "Titel", hours: "Stunden", language: "Sprache", animate: "Animiert", background: "Als Hintergrund des Dashboards", night_mode: "Nachtmodus", days: "Tage", show_seconds: "Sekunden" },
     night: { auto: "Automatisch (Sonne)", on: "Immer", off: "Nie" },
   },
   fr: {
-    outing: "Faut-il sortir ?", yes: "Oui, vas-y !", umbrella: "Oui, avec un parapluie", later: "Plutôt plus tard", no: "Mieux vaut rester",
+    outing: "Faut-il sortir ?", rainIn: "Pluie dans {m} min (radar)", escape: "Soleil à {name} ({alt} m, {km} km)", escapeFrom: "Soleil dès {t} à {name} ({alt} m)", yes: "Oui, vas-y !", umbrella: "Oui, avec un parapluie", later: "Plutôt plus tard", no: "Mieux vaut rester",
     dryUntil: "Sec jusqu’à {t}", dryAll: "Sec ces prochaines heures", rainFrom: "Pluie probable dès {t} ({p} %)", rainNow: "Il pleut ({mm} mm/h)",
     best: "Meilleur moment : {a}–{b}", gusts: "Rafales jusqu’à {v} km/h", warning: "Alerte {kind} : degré {n}", pollen: "Pollen : {level}",
     fog: "Grisaille, soleil au-dessus de ~{m} m", fogNo: "Brouillard", ice: "Risque de verglas", sun: "Beaucoup de soleil : lunettes", sunset: "Coucher du soleil {t}",
@@ -44,11 +46,11 @@ const T = {
     myDay: "Ma journée", parts: ["Nuit", "Matin", "Après-midi", "Soir"], today: "Aujourd’hui", tomorrow: "Demain", sunrise: "Lever du soleil", sunsetW: "Coucher du soleil",
     compare: "Comparer mes lieux", bestToday: "Le meilleur aujourd’hui", noPlaces: "Ajoute des lieux ou des personnes dans les options de l’intégration (Lieux et personnes surveillés).",
     home: "Maison", now: "Maint.", noEntity: "Aucune entité météo MeteoSwiss trouvée.", rainMm: "Pluie",
-    f: { entity: "Entité météo", name: "Titre", hours: "Heures", language: "Langue", animate: "Animé", night_mode: "Mode nuit", days: "Jours", show_seconds: "Secondes" },
+    f: { entity: "Entité météo", name: "Titre", hours: "Heures", language: "Langue", animate: "Animé", background: "En fond du tableau de bord", night_mode: "Mode nuit", days: "Jours", show_seconds: "Secondes" },
     night: { auto: "Automatique (soleil)", on: "Toujours", off: "Jamais" },
   },
   it: {
-    outing: "Uscire?", yes: "Sì, vai!", umbrella: "Sì, con l’ombrello", later: "Meglio più tardi", no: "Meglio restare a casa",
+    outing: "Uscire?", rainIn: "Pioggia tra {m} min (radar)", escape: "Sole a {name} ({alt} m, {km} km)", escapeFrom: "Sole dalle {t} a {name} ({alt} m)", yes: "Sì, vai!", umbrella: "Sì, con l’ombrello", later: "Meglio più tardi", no: "Meglio restare a casa",
     dryUntil: "Asciutto fino alle {t}", dryAll: "Asciutto nelle prossime ore", rainFrom: "Pioggia probabile dalle {t} ({p} %)", rainNow: "Piove ({mm} mm/h)",
     best: "Momento migliore: {a}–{b}", gusts: "Raffiche fino a {v} km/h", warning: "Allerta {kind}: grado {n}", pollen: "Polline: {level}",
     fog: "Grigio, sole sopra ~{m} m", fogNo: "Nebbia", ice: "Rischio di ghiaccio", sun: "Molto sole: occhiali da sole", sunset: "Tramonto {t}",
@@ -58,11 +60,11 @@ const T = {
     myDay: "La mia giornata", parts: ["Notte", "Mattino", "Pomeriggio", "Sera"], today: "Oggi", tomorrow: "Domani", sunrise: "Alba", sunsetW: "Tramonto",
     compare: "Confronta i miei luoghi", bestToday: "Il migliore oggi", noPlaces: "Aggiungi luoghi o persone nelle opzioni dell’integrazione (Luoghi e persone sorvegliati).",
     home: "Casa", now: "Ora", noEntity: "Nessuna entità meteo MeteoSwiss trovata.", rainMm: "Pioggia",
-    f: { entity: "Entità meteo", name: "Titolo", hours: "Ore", language: "Lingua", animate: "Animato", night_mode: "Modalità notte", days: "Giorni", show_seconds: "Secondi" },
+    f: { entity: "Entità meteo", name: "Titolo", hours: "Ore", language: "Lingua", animate: "Animato", background: "Come sfondo della dashboard", night_mode: "Modalità notte", days: "Giorni", show_seconds: "Secondi" },
     night: { auto: "Automatico (sole)", on: "Sempre", off: "Mai" },
   },
   rm: {
-    outing: "Ir ora?", yes: "Gea, va!", umbrella: "Gea, cun il parastgel", later: "Pli tard", no: "Meglier restar en chasa",
+    outing: "Ir ora?", rainIn: "Plievgia en {m} min (radar)", escape: "Sulegl a {name} ({alt} m, {km} km)", escapeFrom: "Sulegl a partir da las {t} a {name} ({alt} m)", yes: "Gea, va!", umbrella: "Gea, cun il parastgel", later: "Pli tard", no: "Meglier restar en chasa",
     dryUntil: "Sitg fin {t}", dryAll: "Sitg las proximas uras", rainFrom: "Plievgia probabla a partir da {t} ({p} %)", rainNow: "I plova ({mm} mm/h)",
     best: "Il meglier mument: {a}–{b}", gusts: "Buffs fin {v} km/h", warning: "Avertiment {kind}: grad {n}", pollen: "Pollen: {level}",
     fog: "Grisch, sulegl sur ~{m} m", fogNo: "Tschajera", ice: "Privel da glatsch", sun: "Bler sulegl: egliers da sulegl", sunset: "Il sulegl va da rendiu {t}",
@@ -72,11 +74,11 @@ const T = {
     myDay: "Mes di", parts: ["Notg", "Damaun", "Suentermezdi", "Saira"], today: "Oz", tomorrow: "Damaun", sunrise: "Levada dal sulegl", sunsetW: "Rendida dal sulegl",
     compare: "Cumparegliar mes lieus", bestToday: "Il meglier oz", noPlaces: "Agiuntescha lieus u persunas en las opziuns da l’integraziun (Lieus e persunas observads).",
     home: "Chasa", now: "Ussa", noEntity: "Nagina entitad d’aura MeteoSwiss chattada.", rainMm: "Plievgia",
-    f: { entity: "Entitad d’aura", name: "Titel", hours: "Uras", language: "Lingua", animate: "Animà", night_mode: "Modus da notg", days: "Dis", show_seconds: "Secundas" },
+    f: { entity: "Entitad d’aura", name: "Titel", hours: "Uras", language: "Lingua", animate: "Animà", background: "Sco fund dal dashboard", night_mode: "Modus da notg", days: "Dis", show_seconds: "Secundas" },
     night: { auto: "Automatic (sulegl)", on: "Adina", off: "Mai" },
   },
   en: {
-    outing: "Go out?", yes: "Yes, go!", umbrella: "Yes, with an umbrella", later: "Better later", no: "Better stay in",
+    outing: "Go out?", rainIn: "Rain in {m} min (radar)", escape: "Sunshine at {name} ({alt} m, {km} km)", escapeFrom: "Sunshine from {t} at {name} ({alt} m)", yes: "Yes, go!", umbrella: "Yes, with an umbrella", later: "Better later", no: "Better stay in",
     dryUntil: "Dry until {t}", dryAll: "Dry for the next hours", rainFrom: "Rain likely from {t} ({p} %)", rainNow: "Raining ({mm} mm/h)",
     best: "Best time: {a}–{b}", gusts: "Gusts up to {v} km/h", warning: "{kind} warning: level {n}", pollen: "Pollen: {level}",
     fog: "Grey, sunshine above ~{m} m", fogNo: "Fog", ice: "Risk of ice", sun: "Plenty of sun: sunglasses", sunset: "Sunset {t}",
@@ -86,7 +88,7 @@ const T = {
     myDay: "My day", parts: ["Night", "Morning", "Afternoon", "Evening"], today: "Today", tomorrow: "Tomorrow", sunrise: "Sunrise", sunsetW: "Sunset",
     compare: "Compare my places", bestToday: "Best today", noPlaces: "Add places or persons in the integration options (Watched places and persons).",
     home: "Home", now: "Now", noEntity: "No MeteoSwiss weather entity found.", rainMm: "Rain",
-    f: { entity: "Weather entity", name: "Title", hours: "Hours", language: "Language", animate: "Animated", night_mode: "Night mode", days: "Days", show_seconds: "Seconds" },
+    f: { entity: "Weather entity", name: "Title", hours: "Hours", language: "Language", animate: "Animated", background: "As dashboard background", night_mode: "Night mode", days: "Days", show_seconds: "Seconds" },
     night: { auto: "Automatic (sun)", on: "Always", off: "Never" },
   },
 };
@@ -148,10 +150,16 @@ class MeteoSwissSkyCard extends ForecastCard {
     const cond = this._hass.formatEntityState ? this._hass.formatEntityState(st) : st.state;
     const loc = locOf(this._hass, this._config);
     const times = sunTimes(this._hass);
-    if (!root.querySelector("canvas")) {
+    const bg = !!this._config.background;
+    if (!root.querySelector("canvas") || this._bg !== bg) {
+      this._bg = bg;
       root.innerHTML = `<style>${CARD_DARK}
-        ha-card { position: relative; height: 230px; background: #0d1520; cursor: pointer; }
+        ha-card { background: #0d1520; cursor: pointer; }
+        .sky { position: relative; height: 230px; }
         canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        ${bg ? `ha-card { background: transparent; box-shadow: none; border: 0; cursor: default; }
+        .sky { position: static; height: 0; } .o { display: none; }
+        canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }` : ""}
         .o { position: relative; padding: 18px 20px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; text-shadow: 0 1px 6px rgba(0,0,0,.55); }
         .place { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .place svg.monument { width: 30px; height: 30px; flex: 0 0 30px; }
@@ -160,10 +168,12 @@ class MeteoSwissSkyCard extends ForecastCard {
         .foot { margin-top: auto; display: flex; gap: 14px; font-size: 14px; opacity: .92; flex-wrap: wrap; }
         .foot span { display: inline-flex; align-items: center; gap: 4px; }
         .foot ha-icon { --mdc-icon-size: 18px; }
-      </style><ha-card><canvas></canvas><div class="o"></div></ha-card>`;
+      </style><ha-card><div class="sky"><canvas></canvas><div class="o"></div></div><div class="ast"></div></ha-card>`;
       root.querySelector("ha-card").addEventListener("click", () =>
         this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: this._entity } })));
     }
+    const ast = root.querySelector(".ast");
+    if (ast) ast.innerHTML = bg ? "" : astroFor(this, this._config, this._hass, langOf(this._hass, this._config), loc, "#fff");
     root.querySelector(".o").innerHTML = `
       <div class="place">${this._config.monument === false ? "" : monument(a.location || this._config.name)}${esc(this._config.name || a.location || a.friendly_name)}</div>
       <div class="temp">${a.temperature != null ? Math.round(a.temperature) + "°" : ""}</div>
@@ -246,7 +256,7 @@ class MeteoSwissSkyCard extends ForecastCard {
       c.fillStyle = glow; c.beginPath(); c.arc(sx, sy, r * 3.5, 0, 7); c.fill();
       c.fillStyle = `rgba(255,244,214,${alpha})`; c.beginPath(); c.arc(sx, sy, r * 0.75, 0, 7); c.fill();
     } else {
-      const phase = ((Date.now() / 864e5 - 10957.76) % 29.53) / 29.53; // 0 new, .5 full
+      const mi = moonInfo(new Date()), phase = mi.waxing ? mi.illumination / 2 : 1 - mi.illumination / 2; // 0 new, .5 full
       const mx = W * 0.78, my = H * 0.25, r = 16;
       c.fillStyle = `rgba(245,243,230,${1 - s.cover * 0.7})`;
       c.beginPath(); c.arc(mx, my, r, 0, 7); c.fill();
@@ -294,7 +304,13 @@ class MeteoSwissSkyCard extends ForecastCard {
 
   getCardSize() { return 4; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["name"], ["animate"], ["language"]], FIELDS, LABELS); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { animate: true, background: false }, labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+      top: () => [F.weather, F.text("name")],
+      sections: [{ key: "display", icon: "mdi:weather-partly-snowy-rainy", title: ST("Himmel", "Ciel", "Cielo", "Tschiel", "Sky"), keys: ["animate", "background"],
+        fields: () => [F.bool("animate"), F.bool("background")],
+        summary: (c, { lang, w }) => [c.animate ? T[lang].f.animate : w.off, c.background ? T[lang].f.background : ""].filter(Boolean).join(" · ") }] });
+  }
 }
 
 // ============================================================= outing card
@@ -303,6 +319,10 @@ class MeteoSwissSkyCard extends ForecastCard {
 export function outingAdvice(t, hours, sensors, temp, loc) {
   const lines = [];
   const next = hours.slice(0, 12);
+  // Radar: rain arriving in the next hour.
+  const rain = sensors.rain_arrival?.attributes;
+  const rainSoon = rain?.state === "approaching" && rain.minutes != null;
+  if (rainSoon) lines.push(["mdi:weather-pouring", fmt(t.rainIn, { m: rain.minutes })]);
   const wet = (h) => (h.precipitation_probability ?? 0) >= 50 || (h.precipitation ?? 0) >= 0.3;
   const firstWet = next.findIndex(wet);
   let verdict = "yes";
@@ -313,7 +333,8 @@ export function outingAdvice(t, hours, sensors, temp, loc) {
     lines.push(["mdi:umbrella-outline", fmt(t.rainFrom, { t: hh(next[firstWet].datetime, loc), p: Math.round(next[firstWet].precipitation_probability ?? 0) })]);
     lines.push(["mdi:weather-cloudy-clock", fmt(t.dryUntil, { t: hh(next[firstWet].datetime, loc) })]);
     if (firstWet < 3) verdict = "umbrella";
-  } else if (next.length) lines.push(["mdi:weather-partly-cloudy", t.dryAll]);
+  } else if (next.length && !rainSoon) lines.push(["mdi:weather-partly-cloudy", t.dryAll]);
+  if (rainSoon && rain.minutes <= 30 && verdict === "yes") verdict = "umbrella";
   // Clothes from the temperature now (wind chill when windy).
   if (temp != null) {
     const wind = next[0]?.wind_speed ?? 0;
@@ -338,6 +359,10 @@ export function outingAdvice(t, hours, sensors, temp, loc) {
   if (fog && (fog.state === "fog" || fog.state === "stratus")) {
     const top = sensors.fog_top?.state;
     lines.push(["mdi:weather-fog", top && !isNaN(top) ? fmt(t.fog, { m: Math.round(top) }) : t.fogNo]);
+    // Escape the fog: a summit in the sun nearby, now or later today.
+    const esc_ = fog.attributes.escape, later = fog.attributes.escape_forecast;
+    if (esc_) lines.push(["mdi:image-filter-hdr", fmt(t.escape, { name: esc_.name, alt: Math.round(esc_.altitude), km: esc_.distance_km })]);
+    else if (later) lines.push(["mdi:image-filter-hdr", fmt(t.escapeFrom, { t: hh(later.time, loc), name: later.name, alt: Math.round(later.altitude) })]);
   }
   if (next.slice(0, 6).filter((h) => isSunnyCode(h.meteoswiss_symbol) && !(dayCode(h.meteoswiss_symbol) > 100)).length >= 4) lines.push(["mdi:sunglasses", t.sun]);
   // Best 2-hour window in the next 12 hours (driest, then warmest).
@@ -396,7 +421,12 @@ class MeteoSwissOutingCard extends ForecastCard {
   }
   getCardSize() { return 5; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["name"], ["hours"], ["language"]], FIELDS, LABELS); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { hours: 12 }, labels: LABELS, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+      top: () => [F.weather, F.text("name")],
+      sections: [{ key: "hours", icon: "mdi:clock-outline", title: ST("Zeitraum", "Période", "Periodo", "Perioda", "Period"), keys: ["hours"],
+        fields: () => [F.num("hours", 3, 24)], summary: (c, { lang }) => `${c.hours} h` }] });
+  }
 }
 
 // ================================================================ day card
@@ -471,12 +501,14 @@ class MeteoSwissDayCard extends ForecastCard {
       <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${night}${rain}
         ${[6, 12, 18].map((hr) => `<line x1="${(hr / 24) * W}" x2="${(hr / 24) * W}" y1="0" y2="${H}" stroke="rgba(255,255,255,.18)"/>`).join("")}
         <path d="${path}" fill="none" stroke="#ff5a4a" stroke-width="3" vector-effect="non-scaling-stroke"/>
-        ${nowX != null ? `<line x1="${nowX}" x2="${nowX}" y1="0" y2="${H}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>` : ""}</svg></ha-card>`;
+        ${nowX != null ? `<line x1="${nowX}" x2="${nowX}" y1="0" y2="${H}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>` : ""}</svg>${astroFor(this, this._config, this._hass, lang, loc, "#fff")}</ha-card>`;
     root.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => { this._day = Number(b.dataset.d); this._render(); }));
   }
   getCardSize() { return 4; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["name"], ["language"]], FIELDS, LABELS); }
+  static getConfigElement() {
+    return sectionEditor({ labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" }, top: () => [F.weather, F.text("name")], sections: [] });
+  }
 }
 
 // ============================================================ compare card
@@ -534,7 +566,11 @@ class MeteoSwissCompareCard extends HTMLElement {
   }
   getCardSize() { return 4; }
   static getStubConfig() { return {}; }
-  static getConfigElement() { return makeEditor([["name"], ["days"], ["language"]], FIELDS, LABELS); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { days: 3 }, labels: LABELS, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" }, top: () => [F.text("name")],
+      sections: [{ key: "days", icon: "mdi:calendar-week", title: ST("Tage", "Jours", "Giorni", "Dis", "Days"), keys: ["days"],
+        fields: () => [F.num("days", 1, 5)], summary: (c, { lang }) => `${c.days} ${String(T[lang].f.days).toLowerCase()}` }] });
+  }
 }
 
 // =============================================================== wall card
@@ -599,12 +635,22 @@ class MeteoSwissWallCard extends ForecastCard {
         ${tomorrow ? `<span>${t.tomorrow} ${img(tomorrow.meteoswiss_symbol, 28)} <b>${num(tomorrow.templow, loc)}° / ${num(tomorrow.temperature, loc)}°</b></span>` : ""}</div>
       ${warnings.length ? `<div class="warn">${warnings.map(([k, l]) => `<span style="background:${night ? "#5a1a1a" : DANGER[l]};${night ? "color:#d55" : ""}"><ha-icon icon="${WARN_ICONS[k]}"></ha-icon>${esc(t.kinds[k])} ${l}</span>`).join("")}</div>` : ""}
       ${hours.length ? `<div class="hours">${hours.map((h) => `<div class="h">${hh(h.datetime, loc)}${img(h.meteoswiss_symbol, 40)}<b>${num(h.temperature, loc)}°</b>${(h.precipitation_probability ?? 0) >= 30 ? `☂ ${Math.round(h.precipitation_probability)}%` : "&nbsp;"}</div>`).join("")}</div>` : ""}
+      ${astroFor(this, this._config, this._hass, lang, loc, fg).replace("padding: 6px 16px 12px", "padding: 12px 0 0")}
     </ha-card>`;
     this._tick();
   }
   getCardSize() { return 6; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return makeEditor([["entity"], ["night_mode", "hours"], ["show_seconds"], ["language"]], FIELDS, LABELS); }
+  static getConfigElement() {
+    return sectionEditor({ defaults: { night_mode: "auto", hours: 8, show_seconds: false }, labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+      top: () => [F.weather],
+      sections: [
+        { key: "night", icon: "mdi:weather-night", title: ST("Nachtmodus", "Mode nuit", "Modalità notte", "Modus da notg", "Night mode"), keys: ["night_mode"],
+          fields: ({ lang }) => [F.select("night_mode", ["auto", "on", "off"].map((v) => ({ value: v, label: T[lang].night[v] })))], summary: (c, { lang }) => T[lang].night[c.night_mode] },
+        { key: "clock", icon: "mdi:clock-digital", title: ST("Uhr und Stunden", "Horloge et heures", "Orologio e ore", "Ura e uras", "Clock and hours"), keys: ["show_seconds", "hours"],
+          fields: () => [F.bool("show_seconds"), F.num("hours", 3, 12)], summary: (c, { lang }) => `${c.hours} h${c.show_seconds ? ` · ${T[lang].f.show_seconds}` : ""}` },
+      ] });
+  }
 }
 
 define("meteoswiss-sky-card", MeteoSwissSkyCard, "MeteoSwiss live sky", "Animated sky (sun, moon, clouds, rain, snow, fog) behind the weather now.");

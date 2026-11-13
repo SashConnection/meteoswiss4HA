@@ -42,8 +42,18 @@ from .api import (
 from .const import (
     CONF_AVALANCHE_REGION,
     CONF_FOG,
+    CONF_INDOOR_HUMIDITY,
+    CONF_INDOOR_TEMPERATURE,
     CONF_LAKES,
+    CONF_NOWCAST,
+    CONF_RAIN_ALERT_MINUTES,
+    CONF_SOLAR_AZIMUTH,
+    CONF_SOLAR_KWP,
+    CONF_SOLAR_SENSOR,
+    CONF_SOLAR_TILT,
     DEFAULT_FOG,
+    DEFAULT_NOWCAST,
+    DEFAULT_RAIN_ALERT_MINUTES,
     CONF_POLLEN_STATION,
     CONF_ICON_PACK,
     CONF_PERSONS,
@@ -244,7 +254,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Show the options menu."""
         return self.async_show_menu(
-            step_id="init", menu_options=["display", "forecast", "environment", "lakes", "places"]
+            step_id="init", menu_options=["display", "forecast", "environment", "lakes", "extras", "places"]
         )
 
     def _save(self, values: dict[str, Any]) -> ConfigFlowResult:
@@ -307,6 +317,51 @@ class MeteoSwissOptionsFlow(OptionsFlow):
             }
         )
         return self.async_show_form(step_id="lakes", data_schema=schema)
+
+    async def async_step_extras(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Rain alert (radar), solar panels and indoor sensors."""
+        if user_input is not None:
+            values = {
+                CONF_NOWCAST: user_input[CONF_NOWCAST],
+                CONF_RAIN_ALERT_MINUTES: int(user_input[CONF_RAIN_ALERT_MINUTES]),
+                CONF_SOLAR_TILT: float(user_input.get(CONF_SOLAR_TILT, 30)),
+                CONF_SOLAR_AZIMUTH: float(user_input.get(CONF_SOLAR_AZIMUTH, 180)),
+            }
+            # Optional values: removed when emptied.
+            for key in (CONF_SOLAR_KWP, CONF_SOLAR_SENSOR, CONF_INDOOR_TEMPERATURE, CONF_INDOOR_HUMIDITY):
+                values[key] = user_input.get(key) or None
+            options = {**self.config_entry.options, **values}
+            return self.async_create_entry(data={k: v for k, v in options.items() if v is not None})
+        o = self.config_entry.options
+        number = lambda lo, hi, step, unit=None: NumberSelector(  # noqa: E731
+            NumberSelectorConfig(min=lo, max=hi, step=step, mode=NumberSelectorMode.BOX, unit_of_measurement=unit)
+        )
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_NOWCAST, default=o.get(CONF_NOWCAST, DEFAULT_NOWCAST)): bool,
+                vol.Required(
+                    CONF_RAIN_ALERT_MINUTES, default=o.get(CONF_RAIN_ALERT_MINUTES, DEFAULT_RAIN_ALERT_MINUTES)
+                ): number(5, 60, 5, "min"),
+                vol.Optional(CONF_SOLAR_KWP): number(0, 100, 0.1, "kWp"),
+                vol.Required(CONF_SOLAR_TILT, default=o.get(CONF_SOLAR_TILT, 30)): number(0, 90, 1, "°"),
+                vol.Required(CONF_SOLAR_AZIMUTH, default=o.get(CONF_SOLAR_AZIMUTH, 180)): number(0, 359, 1, "°"),
+                vol.Optional(CONF_SOLAR_SENSOR): EntitySelector(EntitySelectorConfig(domain="sensor")),
+                vol.Optional(CONF_INDOOR_TEMPERATURE): EntitySelector(
+                    EntitySelectorConfig(domain="sensor", device_class="temperature")
+                ),
+                vol.Optional(CONF_INDOOR_HUMIDITY): EntitySelector(
+                    EntitySelectorConfig(domain="sensor", device_class="humidity")
+                ),
+            }
+        )
+        return self.async_show_form(
+            step_id="extras",
+            data_schema=self.add_suggested_values_to_schema(
+                schema, {k: o[k] for k in (CONF_SOLAR_KWP, CONF_SOLAR_SENSOR, CONF_INDOOR_TEMPERATURE, CONF_INDOOR_HUMIDITY) if k in o}
+            ),
+        )
 
     async def async_step_display(
         self, user_input: dict[str, Any] | None = None

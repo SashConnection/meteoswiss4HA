@@ -46,6 +46,7 @@ from .const import (
     ICONS_URL,
     RADAR_URL,
 )
+from .coordinator import MeteoSwissConfigEntry
 from .hazards import (
     DROUGHT_LAYER,
     FOREST_FIRE_LAYER,
@@ -121,7 +122,7 @@ class _BaseView(HomeAssistantView):
         self.hass = hass
         self.cache = cache
 
-    def _entry(self, request: web.Request):
+    def _entry(self, request: web.Request) -> MeteoSwissConfigEntry | None:
         entries = [
             e
             for e in self.hass.config_entries.async_entries(DOMAIN)
