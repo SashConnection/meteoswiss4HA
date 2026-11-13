@@ -13,3 +13,6 @@ htmlcov/
 Thumbs.db
 .preview/
 .claude/
+
+# Local code analysis (graphify)
+graphify-out/
