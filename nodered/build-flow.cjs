@@ -3,26 +3,39 @@
 const fs = require("fs");
 const path = require("path");
 
-const missing = `// Radar frames of the last 3 hours (one every 5 minutes) not yet converted.
-// File names are predictable: rzc<YY><day of year><HHMM>vl.001.h5 (UTC).
+const items = `// Radar frames of the last 3 hours: read the list of published files (STAC item
+// of the day, and of yesterday when the window crosses midnight UTC). File names
+// end with a letter code that MeteoSwiss changes now and then (vl, tl, fl...),
+// so they are taken from the list instead of being guessed.
 const KEEP = 36;            // frames kept (3 hours)
 const DELAY_MIN = 7;        // publication delay
 flow.set("radarLastRun", new Date().toISOString());
+const last = Math.floor((Date.now() - DELAY_MIN * 60000) / 300000) * 300000;
+const first = last - (KEEP - 1) * 300000;
+const days = [...new Set([last, first].map((t) => new Date(t).toISOString().slice(0, 10).split("-").join("")))];
+return [days.map((d) => ({
+    url: "https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-radar-precip/items/" + d + "-ch",
+    last, keep: KEEP,
+}))];`;
+
+const missing = `// Frames of the window not yet converted, from the published files of one day.
+// rzc<YY><day of year><HHMM><code>.001.h5 (UTC); "vl" is preferred when a time
+// has several versions.
 const frames = flow.get("radarFrames") || {};
-const now = Date.now() - DELAY_MIN * 60000;
-const last = Math.floor(now / 300000) * 300000;
-const pad = (n, l = 2) => String(n).padStart(l, "0");
+const assets = (msg.payload && msg.payload.assets) || {};
+const byTime = {};
+for (const name of Object.keys(assets)) {
+    const m = /^rzc(\\d{2})(\\d{3})(\\d{2})(\\d{2})([a-z]{2})\\.001\\.h5$/.exec(name);
+    if (!m) continue;
+    const t = Date.UTC(2000 + Number(m[1]), 0, 1) + (Number(m[2]) - 1) * 86400000 + Number(m[3]) * 3600000 + Number(m[4]) * 60000;
+    const iso = new Date(t).toISOString().slice(0, 16) + ":00Z";
+    if (!byTime[iso] || m[5] === "vl") byTime[iso] = assets[name].href;
+}
 const wanted = [];
-for (let i = 0; i < KEEP; i++) {
-    const t = new Date(last - i * 300000);
-    const iso = t.toISOString().slice(0, 16) + ":00Z";
-    wanted.push(iso);
-    if (frames[iso]) continue;
-    const start = Date.UTC(t.getUTCFullYear(), 0, 0);
-    const doy = Math.floor((t - start) / 86400000);
-    const day = t.getUTCFullYear() + pad(t.getUTCMonth() + 1) + pad(t.getUTCDate());
-    const name = "rzc" + pad(t.getUTCFullYear() % 100) + pad(doy, 3) + pad(t.getUTCHours()) + pad(t.getUTCMinutes()) + "vl.001.h5";
-    node.send({ url: "https://data.geo.admin.ch/ch.meteoschweiz.ogd-radar-precip/" + day + "-ch/" + name, time: iso });
+for (let i = 0; i < msg.keep; i++) wanted.push(new Date(msg.last - i * 300000).toISOString().slice(0, 16) + ":00Z");
+for (const iso of wanted) {
+    if (frames[iso] || !byTime[iso]) continue;
+    node.send({ url: byTime[iso], time: iso });
 }
 // Forget frames older than the window.
 for (const k of Object.keys(frames)) if (!wanted.includes(k)) delete frames[k];
@@ -274,7 +287,9 @@ const libs = [{ var: "hdf5", module: "jsfive" }, { var: "pngjs", module: "pngjs"
 const tab = "f1a7c0de5ad40001";
 const nodes = [
   { id: tab, type: "tab", label: "MeteoSwiss radar", info: "Converts the MeteoSwiss precipitation radar (Open Data, RZC) into transparent PNG frames for the MeteoSwiss Complete For HA map.\n\nEndpoints:\n- GET /meteoswiss/radar/frames\n- GET /meteoswiss/radar/frame?time=...\n- GET /meteoswiss/radar/status (diagnostics)" },
-  { id: "f1a7c0de5ad40002", z: tab, type: "inject", name: "every 5 min", repeat: "300", once: true, onceDelay: "10", topic: "", payload: "", payloadType: "date", props: [{ p: "payload" }], x: 140, y: 80, wires: [["f1a7c0de5ad40003"]] },
+  { id: "f1a7c0de5ad40002", z: tab, type: "inject", name: "every 5 min", repeat: "300", once: true, onceDelay: "10", topic: "", payload: "", payloadType: "date", props: [{ p: "payload" }], x: 140, y: 80, wires: [["f1a7c0de5ad40019"]] },
+  { id: "f1a7c0de5ad40019", z: tab, type: "function", name: "published files", func: items, outputs: 1, libs: [], x: 310, y: 40, wires: [["f1a7c0de5ad4001a"]] },
+  { id: "f1a7c0de5ad4001a", z: tab, type: "http request", name: "STAC radar item", method: "GET", ret: "obj", paytoqs: "ignore", url: "", tls: "", persist: false, proxy: "", insecureHTTPParser: false, authType: "", senderr: false, headers: [], x: 500, y: 40, wires: [["f1a7c0de5ad40003"]] },
   { id: "f1a7c0de5ad40003", z: tab, type: "function", name: "missing frames", func: missing, outputs: 1, libs: [], x: 330, y: 80, wires: [["f1a7c0de5ad40004"]] },
   { id: "f1a7c0de5ad40004", z: tab, type: "http request", name: "download HDF5", method: "GET", ret: "bin", paytoqs: "ignore", url: "", tls: "", persist: false, proxy: "", insecureHTTPParser: false, authType: "", senderr: false, headers: [], x: 530, y: 80, wires: [["f1a7c0de5ad40005"]] },
   { id: "f1a7c0de5ad40005", z: tab, type: "function", name: "render PNG", func: render, outputs: 1, libs, x: 720, y: 80, wires: [[]] },
