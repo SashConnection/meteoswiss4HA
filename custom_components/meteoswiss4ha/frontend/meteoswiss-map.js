@@ -18,6 +18,8 @@ import "./meteoswiss-panels.js";
 import "./meteoswiss-mountain.js";
 import "./meteoswiss-lake.js";
 
+// Text from remote feeds (FOEN, SLF, MeteoSwiss) is always escaped before it goes into HTML.
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const BASE = new URL(".", import.meta.url).href;
 const WMTS = (layer, ext = "png") =>
   `https://wmts.geo.admin.ch/1.0.0/${layer}/default/current/3857/{z}/{x}/{y}.${ext}`;
@@ -572,7 +574,7 @@ class MeteoSwissMap {
       if (!d || d.symbol == null) continue;
       const html = `<div class="pill ${place.kind || "city"}">
         <img src="${this.data.icons_url}/${d.symbol}.svg" alt="">
-        <span class="n">${this.options.monuments === false ? "" : monument(place.name)}${place.name}</span>
+        <span class="n">${this.options.monuments === false ? "" : monument(place.name)}${esc(place.name)}</span>
         <span class="t"><span>${round(d.tmin)}</span><span>${round(d.tmax)}</span></span></div>`;
       draw.push(L.marker([place.lat, place.lon], {
         icon: L.divIcon({ html, className: "", iconSize: null, iconAnchor: [22, 22] }),
@@ -586,14 +588,14 @@ class MeteoSwissMap {
     const home = this.data.home;
     if (home?.lat != null) {
       draw.push(L.marker([home.lat, home.lon], {
-        icon: L.divIcon({ html: `<span class="place home">${home.name || this.t.home}</span>`, className: "", iconSize: null, iconAnchor: [6, 9] }),
+        icon: L.divIcon({ html: `<span class="place home">${esc(home.name || this.t.home)}</span>`, className: "", iconSize: null, iconAnchor: [6, 9] }),
         keyboard: false, interactive: false, zIndexOffset: 1000,
       }));
     }
     const cities = this.data.cities.filter((c) => c.kind === "city").sort((a, b) => a.min_zoom - b.min_zoom);
     for (const c of this._placeLabels(cities, (p, pt) => [pt.x - 4, pt.y - 10, pt.x + 14 + p.name.length * 8, pt.y + 10])) {
       draw.push(L.marker([c.lat, c.lon], {
-        icon: L.divIcon({ html: `<span class="place">${c.name}</span>`, className: "", iconSize: null, iconAnchor: [4, 9] }),
+        icon: L.divIcon({ html: `<span class="place">${esc(c.name)}</span>`, className: "", iconSize: null, iconAnchor: [4, 9] }),
         keyboard: false, interactive: false,
       }));
     }
@@ -601,12 +603,12 @@ class MeteoSwissMap {
 
   _hazard(kind, geo, draw) {
     let level = (f) => f.properties.level || 0;
-    let tooltip = (f) => `<b>${f.properties.name || ""}</b><br>${f.properties.text || this.t.danger[level(f)]}`;
+    let tooltip = (f) => `<b>${esc(f.properties.name)}</b><br>${esc(f.properties.text || this.t.danger[level(f)])}`;
     let validFrom = [];
     if (kind === "avalanche") {
       const levels = this.data.avalanche || {};
       level = (f) => levels[f.properties.id]?.level || 0;
-      tooltip = (f) => `<b>${levels[f.properties.id]?.name || f.properties.id}</b><br>${this.t.danger[level(f)]}`;
+      tooltip = (f) => `<b>${esc(levels[f.properties.id]?.name || f.properties.id)}</b><br>${esc(this.t.danger[level(f)])}`;
       if (!Object.keys(levels).length) {
         this.note.hidden = false;
         this.note.textContent = this.t.noBulletin;
@@ -687,7 +689,6 @@ class MeteoSwissMap {
       weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }) : "");
     const now = Date.now();
-    const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
     if (!geo) {
       this.note.hidden = false;
       this.note.textContent = this.t.error;
@@ -873,7 +874,7 @@ class MeteoSwissMap {
         .map(([k, v]) => `${this.t.species[k] || k}: ${this.t.pollenLevels[v]}`);
       draw.push(L.circleMarker([s.lat, s.lon], {
         radius: 13, color: "#263238", weight: 1.5, fillColor: POLLEN_COLORS[lvl], fillOpacity: 1,
-      }).bindTooltip(`<b>${s.name}</b><br>${this.t.pollenLevels[lvl]}${lines.length ? "<br>" + lines.join("<br>") : ""}`));
+      }).bindTooltip(`<b>${esc(s.name)}</b><br>${this.t.pollenLevels[lvl]}${lines.length ? "<br>" + lines.join("<br>") : ""}`));
     }
     this._placeNames(draw);
     const rows = this.t.pollenLevels.map((label, i) =>

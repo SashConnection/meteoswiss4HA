@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.12
+
+- Security: the Switzerland map escapes the text coming from remote feeds (hazard regions and texts from FOEN, avalanche region names from SLF, pollen station names, place names) before showing it in tooltips and labels.
+
 ## 2026.11.11
 
 - Ready for the HACS default catalogue: Swiss-only (`country: CH`), HACS validation without exceptions.
