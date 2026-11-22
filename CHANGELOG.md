@@ -3,6 +3,10 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.12
+
+- Security: the Switzerland map escapes the text coming from remote feeds (hazard regions and texts from FOEN, avalanche region names from SLF, pollen station names, place names) before showing it in tooltips and labels. (Released from 2026.11.11, without the pre-release features.)
+
 ## 2026.11.12b0 (pre-release)
 
 - **No YAML, ever**: every card has a new editor with clear sections (summary of what is on, ↺ reset, link to the guide); the language moves to "Advanced" and follows Home Assistant.
