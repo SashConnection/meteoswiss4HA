@@ -63,7 +63,9 @@ Official MeteoSwiss data, ready-made cards and automations, nothing to program �
 
 # Step by step
 
-## 1. Install
+<a id="1-install"></a>
+<details>
+<summary><b>1. Install</b></summary>
 
 You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 
@@ -72,7 +74,11 @@ You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 3. Search **MeteoSwiss Complete For HA** in HACS, open it and click **Download**.
 4. **Restart Home Assistant**: *Settings → System → ⏻ (top right) → Restart Home Assistant*.
 
-## 2. Add your home
+</details>
+
+<a id="2-add-your-home"></a>
+<details>
+<summary><b>2. Add your home</b></summary>
 
 1. **Settings → Devices & services → Add integration** (button at the bottom right).
 2. Search **MeteoSwiss Complete For HA**.
@@ -82,9 +88,11 @@ You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 
 On the integration page you then see your place (e.g. *Neuchâtel (2000)*) with its number of entities. Click it to see them all.
 
+</details>
+
 ## 3. Add a card to a dashboard
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/editor.png" width="300" align="right" alt="Card editor">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/editor-en.png" width="300" align="right" alt="Card editor">
 
 1. Open your dashboard, click the **✏️ pencil** (top right) to edit it.
 2. **+ Add card**, then type **MeteoSwiss** in the search field: all the cards appear with a preview, named in your Home Assistant language (*MeteoSwiss Tiles*, *MeteoSwiss My day*…).
@@ -156,34 +164,34 @@ HACS shows the new version → **Download** → **restart Home Assistant** → i
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map, animated radar</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon, clouds, rain, snow — alive</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A verdict, what to wear, the best time</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Morning, afternoon, evening, sunrise and sunset</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky-en.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon, clouds, rain, snow — alive</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing-en.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A verdict, what to wear, the best time</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day-en.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Morning, afternoon, evening, sunrise and sunset</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and Bern side by side</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, sea of fog, avalanches</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Neuchâtel → Chaumont → Chasseral, top and forecast</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare-en.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and Bern side by side</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain-en.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, sea of fog, avalanches</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog-en.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Neuchâtel → Chaumont → Chasseral, top and forecast</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes, water temperature, currents</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips.png" width="100%" alt="Tips of the day"><br><b>Tips of the day</b><br><sub>Laundry, frost, watering, stars, solar…</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris.png" width="100%" alt="Ephemeris"><br><b>Ephemeris</b><br><sub>Saint of the day, sun, moon drawn exactly</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake-en.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes, water temperature, currents</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips-en.png" width="100%" alt="Tips of the day"><br><b>Tips of the day</b><br><sub>Laundry, frost, watering, stars, solar…</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris-en.png" width="100%" alt="Ephemeris"><br><b>Ephemeris</b><br><sub>Saint of the day, sun, moon drawn exactly</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock and weather, red night mode</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard.png" width="100%" alt="Postcard"><br><b>Postcard</b><br><sub>Your town's monument and the weather, to share</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall-en.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock and weather, red night mode</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard-en.png" width="100%" alt="Postcard"><br><b>Postcard</b><br><sub>Your town's monument and the weather, to share</sub></td>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards, pollen</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain.png" width="100%" alt="Rain minute by minute"><br><b>Rain minute by minute</b><br><sub>The next 60 minutes, from the radar</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes.png" width="100%" alt="Climate stripes"><br><b>Climate stripes</b><br><sub>One stripe per year since 1864</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-month.png" width="100%" alt="Month summary"><br><b>Month summary</b><br><sub>This month vs the normal</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain-en.png" width="100%" alt="Rain minute by minute"><br><b>Rain minute by minute</b><br><sub>The next 60 minutes, from the radar</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes-en.png" width="100%" alt="Climate stripes"><br><b>Climate stripes</b><br><sub>One stripe per year since 1864</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-month-en.png" width="100%" alt="Month summary"><br><b>Month summary</b><br><sub>This month vs the normal</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers.png" width="100%" alt="Rivers"><br><b>Rivers</b><br><sub>The Aare in Bern: water, flow, level</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air.png" width="100%" alt="Air quality"><br><b>Air quality</b><br><sub>Ozone, NO₂, fine particles</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow.png" width="100%" alt="Snow"><br><b>Snow</b><br><sub>Snow depth around you</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers-en.png" width="100%" alt="Rivers"><br><b>Rivers</b><br><sub>The Aare in Bern: water, flow, level</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air-en.png" width="100%" alt="Air quality"><br><b>Air quality</b><br><sub>Ozone, NO₂, fine particles</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow-en.png" width="100%" alt="Snow"><br><b>Snow</b><br><sub>Snow depth around you</sub></td>
 </tr>
 </table>
 
@@ -322,8 +330,8 @@ The Days curve uses the hourly forecast where it exists (48 h by default) and co
 
 | | |
 |---|---|
-| ![Live sky](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png) | ![Should I go out?](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png) |
-| ![My day](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png) | ![Compare my places](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png) |
+| ![Live sky](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky-en.png) | ![Should I go out?](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing-en.png) |
+| ![My day](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day-en.png) | ![Compare my places](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare-en.png) |
 
 - **Live sky** (`meteoswiss-sky-card`): the sky of the moment drawn and animated behind the place and the temperature — sun or moon on its arc between sunrise and sunset, clouds drifting with the wind, rain, snow, lightning, fog banks, stars. `animate: false` for a still picture (also when the device asks for reduced motion).
 - **Should I go out?** (`meteoswiss-outing-card`): a verdict (*Yes, go!*, *with an umbrella*, *better later*, *better stay in*) and the reasons: when the rain starts, what to wear for the temperature and the wind, gusts, warnings in force, pollen, fog with the sunshine altitude, the best 2-hour window, sunset. `hours: 12`.
@@ -345,7 +353,7 @@ show_seconds: false
 
 ## Mountain
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" alt="Mountain" width="380" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain-en.png" alt="Mountain" width="380" align="right">
 
 A generic mountain (no names) up to 4,000 m with:
 
@@ -367,7 +375,7 @@ max_altitude: 4000
 
 ## Fog by region
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" alt="Fog by region" width="380" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog-en.png" alt="Fog by region" width="380" align="right">
 
 MeteoSwiss has no "fog top" measurement, so the integration **reads it from the stations**: each region has a ladder of stations from the plain to the summits. A station is *in the fog* when it gets no sun and the air is saturated; a station is *above* when it gets sun (by day) or dry air (by night). The top lies between the two.
 
@@ -403,7 +411,7 @@ The forecast reads three MeteoSwiss hourly files every 6 hours (~90 MB); turn fo
 
 ## Lakes
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" alt="Lake of Neuchâtel" width="380" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake-en.png" alt="Lake of Neuchâtel" width="380" align="right">
 
 Data from the **Eawag Alplakes** lake models (CC BY 4.0), for 27 lakes: Geneva, Constance, Neuchâtel, Maggiore, Lucerne, Zurich, Lugano, Thun, Biel, Zug, Brienz, Walen, Murten, Sempach, Hallwil, Gruyère, Joux, Greifen, Sarnen, Ägeri, Baldegg, Sils, Pfäffikon, Silvaplana, Lungern, Poschiavo, St. Moritz.
 
@@ -429,7 +437,7 @@ depth: 1
 
 ## Tips of the day
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips.png" alt="Tips of the day" width="380" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips-en.png" alt="Tips of the day" width="380" align="right">
 
 One card, the tiles you choose: **the day in one sentence**, **rain in … minutes** (radar), **solar production** today and tomorrow, **laundry drying** (best time), **frost tonight** (plants and windscreen), **garden watering** (water balance of the last 5 days), **stars tonight** (clouds and moon), **sunset** (colorful or dull), **rainbow** (possible right now), **foehn**, **bise**, **airing** (indoor vs outdoor humidity), **vs the 1991–2020 normal**, **yesterday**, **records of the year**, **first frost** and **first snow**. Good news is shown in green. Tap a tile for its details.
 
@@ -441,7 +449,7 @@ Each tip is also a sensor for your automations, and several have a ready-made tr
 
 ## Sun, moon and ephemeris
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris.png" alt="Ephemeris" width="380" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris-en.png" alt="Ephemeris" width="380" align="right">
 
 In the editor of the weather, forecast, now, days, my day, sky and wall cards, the **Sun and moon** section adds: sunrise and sunset, day length (and the change since yesterday), the **moon phase drawn for the exact day** with its % and name, moonrise and moonset, next full and new moon, and the **ephemeris** (saint of the day, week and day number) — in the language of the card. The **Ephemeris** card shows all of it at once.
 
@@ -463,7 +471,7 @@ Sensors: *Moon phase*, *Day length*, *Saint of the day*.
 
 ## Postcard, guessing game, badge, ambiance color, dashboard background
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard.png" alt="Weather postcard" width="300" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard-en.png" alt="Weather postcard" width="300" align="right">
 
 - **Weather postcard** (`meteoswiss-postcard-card`): your town's monument, the weather of the moment and the moon on a postcard — **Share** (phone) or **Download**.
 - **Guess the maximum** (`meteoswiss-guess-card`): guess today's maximum, see the measured result in the evening, keep your streak.
@@ -477,7 +485,7 @@ Sensors: *Moon phase*, *Day length*, *Saint of the day*.
 
 ## Rain minute by minute
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain.png" alt="Rain minute by minute" width="320" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain-en.png" alt="Rain minute by minute" width="320" align="right">
 
 The radar followed upstream of your home, every 5 minutes for the next hour: *Rain in 20 min*, *Raining — stops in about 15 min* or *No rain in the next hour*. Needs the rain alert (on by default).
 
@@ -487,7 +495,7 @@ The radar followed upstream of your home, every 5 minutes for the next hour: *Ra
 
 ## Climate stripes and month summary
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes.png" alt="Climate stripes" width="320" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes-en.png" alt="Climate stripes" width="320" align="right">
 
 **Climate stripes**: one stripe per year since your station opened (since 1864 in Neuchâtel or Bern), from blue (cool) to red (warm), and how much warmer the last 10 years are than 1961–1990.
 
@@ -499,7 +507,7 @@ The radar followed upstream of your home, every 5 minutes for the next hour: *Ra
 
 ## Rivers
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers.png" alt="Rivers" width="320" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers-en.png" alt="Rivers" width="320" align="right">
 
 The FOEN measures about 230 rivers and lakes every 10 minutes. Choose yours in *⚙️ Configure → Lakes, rivers and fog* (by default the nearest that measures the water temperature: the Aare in Bern, the Broye in Payerne…). Each one gets a *Water temperature* sensor (with the swimming comfort) and a *Discharge* or *Water level* sensor; the card shows them all, with the flood danger level (1 to 5).
 
@@ -509,7 +517,7 @@ The FOEN measures about 230 rivers and lakes every 10 minutes. Choose yours in *
 
 ## Air quality
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air.png" alt="Air quality" width="320" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air-en.png" alt="Air quality" width="320" align="right">
 
 The national monitoring network NABEL (16 sites, e.g. Chaumont, Bern, Payerne): ozone now, NO₂, PM10 and PM2.5 over 24 hours, against the Swiss air quality standards. Sensors *Air quality* (good, elevated, high, very high), *Ozone*, *Nitrogen dioxide*, *PM10*, *PM2.5*, and *Ozone peak* (on above 120 µg/m³). The nearest site is used; choose another one or turn it off in *Pollen, hazards and air*.
 
@@ -519,7 +527,7 @@ The national monitoring network NABEL (16 sites, e.g. Chaumont, Bern, Payerne): 
 
 ## Snow
 
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow.png" alt="Snow" width="320" align="right">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow-en.png" alt="Snow" width="320" align="right">
 
 The automatic snow depth of the 6 MeteoSwiss stations nearest to home, with the change since midnight. Sensor *Snow depth* (nearest station, the others as attributes).
 
