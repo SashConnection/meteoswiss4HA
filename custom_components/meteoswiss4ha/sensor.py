@@ -47,6 +47,8 @@ from .events import LevelEventMixin
 from .places import place_sensors
 from .sensor_env import env_sensors
 from .sensor_extra import extra_sensors
+from .sensor_forecast import forecast_value_sensors
+from .sensor_more import more_sensors
 from .symbol_descriptions import SYMBOL_DESCRIPTIONS
 from .symbols import symbol_to_condition
 
@@ -185,6 +187,8 @@ async def async_setup_entry(
         entities.extend(place_sensors(places[0], entry, places[1]))
     entities.extend(env_sensors(entry))
     entities.extend(extra_sensors(hass, entry))
+    entities.extend(forecast_value_sensors(entry))
+    entities.extend(more_sensors(entry))
     async_add_entities(entities)
 
 

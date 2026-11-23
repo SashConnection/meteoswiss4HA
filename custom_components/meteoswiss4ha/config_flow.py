@@ -39,21 +39,30 @@ from .api import (
     Station,
     distance_km,
 )
+from .air import SITES as AIR_SITES
+from .hydro import async_get_stations as async_get_hydro_stations, default_stations
 from .const import (
+    AIR_OFF,
+    CONF_AIR_SITE,
+    CONF_RIVERS,
     CONF_AVALANCHE_REGION,
     CONF_FOG,
     CONF_INDOOR_HUMIDITY,
     CONF_INDOOR_TEMPERATURE,
     CONF_LAKES,
     CONF_NOWCAST,
+    CONF_GUST_THRESHOLD,
     CONF_RAIN_ALERT_MINUTES,
+    CONF_WARNING_LEVEL,
     CONF_SOLAR_AZIMUTH,
     CONF_SOLAR_KWP,
     CONF_SOLAR_SENSOR,
     CONF_SOLAR_TILT,
     DEFAULT_FOG,
     DEFAULT_NOWCAST,
+    DEFAULT_GUST_THRESHOLD,
     DEFAULT_RAIN_ALERT_MINUTES,
+    DEFAULT_WARNING_LEVEL,
     CONF_POLLEN_STATION,
     CONF_ICON_PACK,
     CONF_PERSONS,
@@ -202,6 +211,14 @@ class MeteoSwissConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 AUTO = "auto"
+AIR_OFF_LABELS = {
+    "en": "Off",
+    "fr": "Désactivé",
+    "de": "Aus",
+    "it": "Disattivato",
+    "rm": "Deactivà",
+}
+
 AUTO_LABELS = {
     "en": "Automatic (nearest)",
     "fr": "Automatique (le plus proche)",
@@ -295,6 +312,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
             return self._save(
                 {
                     CONF_LAKES: list(user_input.get(CONF_LAKES, [])),
+                    CONF_RIVERS: list(user_input.get(CONF_RIVERS, [])),
                     CONF_FOG: user_input[CONF_FOG],
                 }
             )
@@ -306,10 +324,25 @@ class MeteoSwissOptionsFlow(OptionsFlow):
         current = self.config_entry.options.get(CONF_LAKES)
         if current is None:
             current = default_lakes(self.hass.config.latitude, self.hass.config.longitude)
+        river_options: list[SelectOptionDict] = []
+        rivers = self.config_entry.options.get(CONF_RIVERS)
+        try:
+            stations = await async_get_hydro_stations(async_get_clientsession(self.hass))
+            river_options = [
+                SelectOptionDict(value=s.id, label=s.label + (f" · {s.temperature:.1f} °C" if s.temperature is not None else ""))
+                for s in sorted(stations.values(), key=lambda s: s.label)
+            ]
+            if rivers is None:
+                rivers = default_stations(stations, self.hass.config.latitude, self.hass.config.longitude)
+        except Exception:  # noqa: BLE001 - the FOEN service may not answer
+            _LOGGER.warning("Cannot load the FOEN river stations")
         schema = vol.Schema(
             {
                 vol.Optional(CONF_LAKES, default=current): SelectSelector(
                     SelectSelectorConfig(options=options, multiple=True)
+                ),
+                vol.Optional(CONF_RIVERS, default=rivers or []): SelectSelector(
+                    SelectSelectorConfig(options=river_options, multiple=True, mode=SelectSelectorMode.DROPDOWN)
                 ),
                 vol.Required(
                     CONF_FOG, default=self.config_entry.options.get(CONF_FOG, DEFAULT_FOG)
@@ -326,6 +359,8 @@ class MeteoSwissOptionsFlow(OptionsFlow):
             values = {
                 CONF_NOWCAST: user_input[CONF_NOWCAST],
                 CONF_RAIN_ALERT_MINUTES: int(user_input[CONF_RAIN_ALERT_MINUTES]),
+                CONF_GUST_THRESHOLD: int(user_input[CONF_GUST_THRESHOLD]),
+                CONF_WARNING_LEVEL: int(user_input[CONF_WARNING_LEVEL]),
                 CONF_SOLAR_TILT: float(user_input.get(CONF_SOLAR_TILT, 30)),
                 CONF_SOLAR_AZIMUTH: float(user_input.get(CONF_SOLAR_AZIMUTH, 180)),
             }
@@ -344,6 +379,12 @@ class MeteoSwissOptionsFlow(OptionsFlow):
                 vol.Required(
                     CONF_RAIN_ALERT_MINUTES, default=o.get(CONF_RAIN_ALERT_MINUTES, DEFAULT_RAIN_ALERT_MINUTES)
                 ): number(5, 60, 5, "min"),
+                vol.Required(
+                    CONF_GUST_THRESHOLD, default=o.get(CONF_GUST_THRESHOLD, DEFAULT_GUST_THRESHOLD)
+                ): number(20, 150, 5, "km/h"),
+                vol.Required(
+                    CONF_WARNING_LEVEL, default=o.get(CONF_WARNING_LEVEL, DEFAULT_WARNING_LEVEL)
+                ): number(2, 5, 1),
                 vol.Optional(CONF_SOLAR_KWP): number(0, 100, 0.1, "kWp"),
                 vol.Required(CONF_SOLAR_TILT, default=o.get(CONF_SOLAR_TILT, 30)): number(0, 90, 1, "°"),
                 vol.Required(CONF_SOLAR_AZIMUTH, default=o.get(CONF_SOLAR_AZIMUTH, 180)): number(0, 359, 1, "°"),
@@ -409,6 +450,7 @@ class MeteoSwissOptionsFlow(OptionsFlow):
                 {
                     CONF_POLLEN_STATION: user_input[CONF_POLLEN_STATION],
                     CONF_AVALANCHE_REGION: user_input[CONF_AVALANCHE_REGION],
+                    CONF_AIR_SITE: user_input[CONF_AIR_SITE],
                 }
             )
 
@@ -441,6 +483,13 @@ class MeteoSwissOptionsFlow(OptionsFlow):
                 vol.Required(CONF_AVALANCHE_REGION, default=AUTO): SelectSelector(
                     SelectSelectorConfig(
                         options=region_options, mode=SelectSelectorMode.DROPDOWN
+                    )
+                ),
+                vol.Required(CONF_AIR_SITE, default=AUTO): SelectSelector(
+                    SelectSelectorConfig(
+                        options=[auto, SelectOptionDict(value=AIR_OFF, label=AIR_OFF_LABELS.get(lang, AIR_OFF_LABELS["en"]))]
+                        + [SelectOptionDict(value=k, label=v[0]) for k, v in sorted(AIR_SITES.items(), key=lambda kv: kv[1][0])],
+                        mode=SelectSelectorMode.DROPDOWN,
                     )
                 ),
             }

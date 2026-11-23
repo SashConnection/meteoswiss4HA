@@ -1,0 +1,57 @@
+blueprint:
+  name: MeteoSwiss – Frozen windscreen tomorrow morning
+  description: >-
+    In the evening, tells you when MeteoSwiss Complete For HA expects a frozen
+    windscreen tomorrow morning: cover it tonight or plan a few more minutes.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/windshield_frost.yaml
+  input:
+    windshield:
+      name: Frozen windscreen tomorrow morning sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    time:
+      name: Time of the check
+      default: "20:00:00"
+      selector:
+        time:
+    phone:
+      name: Phone to notify
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    title:
+      name: Title
+      default: "🚗 Frozen windscreen"
+      selector:
+        text:
+    message:
+      name: Message
+      description: "{minimum} is replaced by the expected minimum in the morning."
+      default: "Tomorrow morning the windscreen will be frozen ({minimum}). Cover it tonight or leave a few minutes earlier."
+      selector:
+        text:
+          multiline: true
+mode: single
+triggers:
+  - trigger: time
+    at: !input time
+conditions:
+  - condition: state
+    entity_id: !input windshield
+    state: "on"
+variables:
+  sensor: !input windshield
+  text: !input message
+actions:
+  - device_id: !input phone
+    domain: mobile_app
+    type: notify
+    title: !input title
+    message: >-
+      {% set m = state_attr(sensor, 'minimum') %}
+      {{ text | replace('{minimum}', (m | string ~ ' °C') if m is not none else '< 1 °C') }}

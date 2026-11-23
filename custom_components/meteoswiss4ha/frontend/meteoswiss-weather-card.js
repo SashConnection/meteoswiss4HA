@@ -373,7 +373,7 @@ class MeteoSwissWeatherCard extends HTMLElement {
     const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
     return sectionEditor({
       defaults: { show_header: true, show_chart: true, show_daily: true, hours: 24, days: 9, details: DEFAULT_DETAILS },
-      labels: L, astro: true, doc: { fr: "#carte-météo-détaillée", en: "#detailed-weather-card" },
+      labels: L, astro: true, doc: { fr: "#card-weather", en: "#card-weather" },
       top: () => [F.weather, F.text("name")],
       sections: [
         { key: "measures", icon: "mdi:format-list-checks", title: ST("Messwerte", "Mesures", "Misure", "Mesiraziuns", "Measurements"), keys: ["details", "show_header"],

@@ -8,12 +8,13 @@
   "dependencies": [
     "frontend",
     "http",
-    "panel_custom"
+    "panel_custom",
+    "repairs"
   ],
   "documentation": "https://github.com/SashConnection/meteoswiss4HA",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/SashConnection/meteoswiss4HA/issues",
   "requirements": [],
-  "version": "2026.11.12b0"
+  "version": "2026.11.13"
 }

@@ -17,9 +17,53 @@
     "abort": {
       "cannot_connect": "Impossible de joindre les données ouvertes de MétéoSuisse.",
       "already_configured": "Cette station et ce code postal sont déjà configurés."
+    },
+    "create_entry": {
+      "default": "Votre lieu est prêt. **Redémarrez Home Assistant** (Paramètres → Système → ⏻ → Redémarrer) pour que tous les tableaux de bord proposent les panneaux MeteoSwiss : ensuite **Modifier le tableau de bord → Ajouter une carte → chercher « MeteoSwiss »**. Déjà redémarré ? Rechargez la page (Ctrl+F5)."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "raining": {
+        "name": "Il pleut"
+      },
+      "strong_gusts": {
+        "name": "Fortes rafales"
+      },
+      "frost_risk": {
+        "name": "Risque de gel cette nuit"
+      },
+      "good_drying": {
+        "name": "Bon pour sécher le linge"
+      },
+      "rain_soon": {
+        "name": "Pluie imminente"
+      },
+      "warning_active": {
+        "name": "Avertissement météo en cours"
+      },
+      "fog_home": {
+        "name": "Brouillard à la maison"
+      },
+      "watering_needed": {
+        "name": "Arrosage nécessaire"
+      },
+      "airing_recommended": {
+        "name": "Aérer maintenant"
+      },
+      "windshield_frost": {
+        "name": "Pare-brise gelé demain matin"
+      },
+      "mowing_day": {
+        "name": "Bon jour pour tondre"
+      },
+      "cool_night": {
+        "name": "Nuit fraîche : aérer ce soir"
+      },
+      "ozone_peak": {
+        "name": "Pic d’ozone"
+      }
+    },
     "sensor": {
       "temperature": {
         "name": "Température"
@@ -350,6 +394,77 @@
       },
       "rain_arrival": {
         "name": "La pluie arrive dans"
+      },
+      "temperature_max_today": {
+        "name": "Maximum aujourd’hui"
+      },
+      "temperature_min_today": {
+        "name": "Minimum aujourd’hui"
+      },
+      "temperature_max_tomorrow": {
+        "name": "Maximum demain"
+      },
+      "temperature_min_tomorrow": {
+        "name": "Minimum demain"
+      },
+      "precipitation_today": {
+        "name": "Précipitations aujourd’hui"
+      },
+      "precipitation_tomorrow": {
+        "name": "Précipitations demain"
+      },
+      "rain_probability_today": {
+        "name": "Probabilité de pluie aujourd’hui"
+      },
+      "rain_probability_tomorrow": {
+        "name": "Probabilité de pluie demain"
+      },
+      "gust_max_today": {
+        "name": "Rafale la plus forte aujourd’hui"
+      },
+      "feels_like": {
+        "name": "Température ressentie"
+      },
+      "pressure_trend": {
+        "name": "Tendance de la pression (3 h)"
+      },
+      "snow_depth": {
+        "name": "Hauteur de neige"
+      },
+      "river_temperature": {
+        "name": "Température de l’eau {station}"
+      },
+      "river_discharge": {
+        "name": "Débit {station}"
+      },
+      "river_level": {
+        "name": "Niveau {station}"
+      },
+      "air_o3": {
+        "name": "Ozone"
+      },
+      "air_no2": {
+        "name": "Dioxyde d’azote"
+      },
+      "air_pm10": {
+        "name": "PM10"
+      },
+      "air_pm25": {
+        "name": "PM2.5"
+      },
+      "air_quality": {
+        "name": "Qualité de l’air",
+        "state": {
+          "good": "Bonne",
+          "elevated": "Accrue",
+          "high": "Élevée",
+          "very_high": "Très élevée"
+        }
+      }
+    },
+    "calendar": {
+      "weather_calendar": {
+        "name": "Calendrier météo"
       }
     }
   },
@@ -360,10 +475,10 @@
         "menu_options": {
           "display": "Affichage",
           "forecast": "Prévisions",
-          "environment": "Pollen et dangers",
+          "environment": "Pollen, dangers et air",
           "places": "Lieux et personnes surveillés",
-          "lakes": "Lacs et brouillard",
-          "extras": "Alerte pluie, solaire et intérieur"
+          "lakes": "Lacs, rivières et brouillard",
+          "extras": "Alerte pluie, vent, solaire et intérieur"
         }
       },
       "display": {
@@ -383,11 +498,12 @@
         }
       },
       "environment": {
-        "title": "Pollen et dangers",
-        "description": "Par défaut, la station pollen la plus proche et la région d’avalanche de votre domicile sont utilisées.",
+        "title": "Pollen, dangers et air",
+        "description": "Par défaut, la station pollen la plus proche et la région d’avalanche de votre domicile sont utilisées. Qualité de l’air : ozone, NO2 et particules fines de la station NABEL la plus proche (OFEV), ou désactivée.",
         "data": {
           "pollen_station": "Station pollen",
-          "avalanche_region": "Région d’avalanche (SLF)"
+          "avalanche_region": "Région d’avalanche (SLF)",
+          "air_site": "Qualité de l’air (station NABEL)"
         }
       },
       "places": {
@@ -399,19 +515,22 @@
         }
       },
       "lakes": {
-        "title": "Lacs et brouillard",
-        "description": "Lacs : un capteur de température de l’eau par lac (modèles Eawag Alplakes, avec prévision sur 4 jours). Brouillard : brouillard et stratus dans ta région, estimés avec des stations repères de la plaine aux sommets (p. ex. Neuchâtel, Chaumont, Chasseral) ; la prévision lit ~90 Mo toutes les 6 heures.",
+        "title": "Lacs, rivières et brouillard",
+        "description": "Lacs : un capteur de température de l’eau par lac (modèles Eawag Alplakes, avec prévision sur 4 jours). Brouillard : brouillard et stratus dans ta région, estimés avec des stations repères de la plaine aux sommets (p. ex. Neuchâtel, Chaumont, Chasseral) ; la prévision lit ~90 Mo toutes les 6 heures. Rivières : température de l’eau, débit et niveau des stations de l’OFEV choisies (par défaut la plus proche qui mesure la température de l’eau, p. ex. l’Aar à Berne).",
         "data": {
           "lakes": "Lacs",
+          "rivers": "Rivières (stations de l’OFEV)",
           "fog": "Brouillard et stratus par région"
         }
       },
       "extras": {
-        "title": "Alerte pluie, panneaux solaires et capteurs intérieurs",
-        "description": "Alerte pluie : le radar dit quand la pluie arrive chez vous. Solaire : la puissance crête de vos panneaux (kWc), leur inclinaison (0 = à plat) et leur orientation (180 = sud, 90 = est, 270 = ouest) donnent une prévision de production ; laissez la puissance vide si vous n’avez pas de panneaux. Intérieur : un capteur de température et un d’humidité de la maison disent quand aérer.",
+        "title": "Alerte pluie, vent, panneaux solaires et capteurs intérieurs",
+        "description": "Alerte pluie : le radar dit quand la pluie arrive chez vous. Solaire : la puissance crête de vos panneaux (kWc), leur inclinaison (0 = à plat) et leur orientation (180 = sud, 90 = est, 270 = ouest) donnent une prévision de production ; laissez la puissance vide si vous n’avez pas de panneaux. Intérieur : un capteur de température et un d’humidité de la maison disent quand aérer. Automatisations : le capteur « Fortes rafales » s’allume dès la vitesse de rafale ci-dessous (maintenant ou dans les 3 prochaines heures), le capteur « Avertissement météo en cours » dès le degré d’avertissement ci-dessous (2 = jaune, 3 = orange, 4 = rouge, 5 = rouge foncé).",
         "data": {
           "nowcast": "Alerte pluie d’après le radar",
           "rain_alert_minutes": "Alerter quand la pluie est à moins de …",
+          "gust_threshold": "Fortes rafales dès",
+          "warning_level": "Avertissement météo dès le degré",
           "solar_kwp": "Panneaux solaires : puissance crête",
           "solar_tilt": "Inclinaison des panneaux",
           "solar_azimuth": "Orientation des panneaux",
@@ -467,6 +586,19 @@
     },
     "extra_fields": {
       "level": "Degré (ou plus)"
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Redémarrez Home Assistant pour terminer l’installation de MeteoSwiss",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Redémarrer Home Assistant",
+            "description": "MeteoSwiss Complete For HA vient d’être installé. Redémarrez Home Assistant une fois pour que les panneaux MeteoSwiss apparaissent dans **Ajouter une carte** sur tous les tableaux de bord et dans l’application mobile.\n\nCliquez **Valider** pour redémarrer Home Assistant (environ une minute). Rechargez ensuite la page (Ctrl+F5) et cherchez « MeteoSwiss » dans **Ajouter une carte**."
+          }
+        }
+      }
     }
   }
 }

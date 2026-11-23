@@ -49,6 +49,9 @@ class HistoryData:
 
     days: list[DayValues] = field(default_factory=list)  # oldest first, up to yesterday
     normals: dict[int, tuple[float, float]] = field(default_factory=dict)  # day of year -> (tmax, tmin)
+    years: dict[int, float] = field(default_factory=dict)  # complete years -> mean temperature
+    month_normals: dict[int, dict[str, float]] = field(default_factory=dict)  # month -> 1991-2020 normal
+    past: list[DayValues] = field(default_factory=list)  # last ~400 days of the historical file
 
 
 def parse_daily(text: str) -> list[DayValues]:
@@ -82,6 +85,64 @@ def compute_normals(days: list[DayValues]) -> dict[int, tuple[float, float]]:
         if n_max >= 100 and n_min >= 100:  # at least ~7 years of data
             normals[doy] = (sum(w[0] for w in window) / n_max, sum(w[2] for w in window) / n_min)
     return normals
+
+
+def compute_climate(days: list[DayValues]) -> tuple[dict[int, float], dict[int, dict[str, float]]]:
+    """Mean temperature of each complete year, and the 1991-2020 normal of each month."""
+    by_year: dict[int, list[float]] = {}
+    months: dict[tuple[int, int], list[DayValues]] = {}
+    for d in days:
+        t = d.values["tmean"]
+        if t is not None:
+            by_year.setdefault(d.day.year, []).append(t)
+        if NORMAL_YEARS[0] <= d.day.year <= NORMAL_YEARS[1]:
+            months.setdefault((d.day.year, d.day.month), []).append(d)
+    years = {y: round(sum(v) / len(v), 2) for y, v in by_year.items() if len(v) >= 330}
+    sums: dict[int, dict[str, list[float]]] = {m: {"tmean": [], "rain": [], "sunshine": []} for m in range(1, 13)}
+    for (_, m), ds in months.items():
+        if len(ds) < 25:
+            continue
+        temps = [d.values["tmean"] for d in ds if d.values["tmean"] is not None]
+        rains = [d.values["rain"] for d in ds if d.values["rain"] is not None]
+        suns = [d.values["sunshine"] for d in ds if d.values["sunshine"] is not None]
+        if len(temps) >= 25:
+            sums[m]["tmean"].append(sum(temps) / len(temps))
+        if len(rains) >= 25:
+            sums[m]["rain"].append(sum(rains))
+        if len(suns) >= 25:
+            sums[m]["sunshine"].append(sum(suns) / 60)
+    month_normals = {
+        m: {k: round(sum(v) / len(v), 1) for k, v in vals.items() if len(v) >= 10}
+        for m, vals in sums.items()
+    }
+    return years, {m: v for m, v in month_normals.items() if v}
+
+
+def month_stats(days: list[DayValues], year: int, month: int, normal: dict[str, float] | None) -> dict[str, Any] | None:
+    """Summary of one month: temperature, rain, sunshine, frost and hot days, extremes, vs the normal."""
+    ds = [d for d in days if d.day.year == year and d.day.month == month]
+    if not ds:
+        return None
+    def vals(key):
+        return [d.values[key] for d in ds if d.values[key] is not None]
+    tmean, rain, sun, tmax, tmin = vals("tmean"), vals("rain"), vals("sunshine"), vals("tmax"), vals("tmin")
+    out: dict[str, Any] = {
+        "year": year, "month": month, "days": len(ds),
+        "tmean": round(sum(tmean) / len(tmean), 1) if tmean else None,
+        "rain": round(sum(rain), 1) if rain else None,
+        "rain_days": sum(1 for r in rain if r >= 1),
+        "sunshine": round(sum(sun) / 60, 1) if sun else None,
+        "frost_days": sum(1 for t in tmin if t < 0),
+        "summer_days": sum(1 for t in tmax if t >= 25),
+        "hot_days": sum(1 for t in tmax if t >= 30),
+        "tmax": max(tmax) if tmax else None,
+        "tmin": min(tmin) if tmin else None,
+    }
+    if normal:
+        out["normal"] = normal
+        if out["tmean"] is not None and "tmean" in normal:
+            out["tmean_vs_normal"] = round(out["tmean"] - normal["tmean"], 1)
+    return out
 
 
 def season_start(today: date) -> date:
@@ -171,6 +232,9 @@ class HistoryCoordinator(DataUpdateCoordinator[HistoryData]):
         self.station = station.lower()
         self._normals_at: datetime | None = None
         self._normals: dict[int, tuple[float, float]] = {}
+        self._years: dict[int, float] = {}
+        self._month_normals: dict[int, dict[str, float]] = {}
+        self._past: list[DayValues] = []
 
     async def _get(self, url: str, timeout) -> str:
         session = async_get_clientsession(self.hass)
@@ -190,8 +254,13 @@ class HistoryCoordinator(DataUpdateCoordinator[HistoryData]):
         now = dt_util.utcnow()
         if self._normals_at is None or now - self._normals_at >= NORMALS_UPDATE_INTERVAL:
             try:
-                self._normals = compute_normals(parse_daily(await self._get(f"{base}_d_historical.csv", STREAM_TIMEOUT)))
+                historical = parse_daily(await self._get(f"{base}_d_historical.csv", STREAM_TIMEOUT))
+                self._normals = compute_normals(historical)
+                self._years, self._month_normals = compute_climate(historical)
+                since = now.date() - timedelta(days=400)
+                self._past = [d for d in historical if d.day >= since]
                 self._normals_at = now
             except MeteoSwissConnectionError as err:
                 _LOGGER.debug("Station normals unavailable: %s", err)
-        return HistoryData(days=days, normals=self._normals)
+        return HistoryData(days=days, normals=self._normals, years=self._years,
+                           month_normals=self._month_normals, past=self._past)

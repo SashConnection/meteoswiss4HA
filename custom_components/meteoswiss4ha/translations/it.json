@@ -17,9 +17,53 @@
     "abort": {
       "cannot_connect": "Impossibile raggiungere i dati aperti di MeteoSvizzera.",
       "already_configured": "Questa stazione e questo numero postale sono già configurati."
+    },
+    "create_entry": {
+      "default": "Il tuo luogo è pronto. **Riavvia Home Assistant** (Impostazioni → Sistema → ⏻ → Riavvia) perché tutte le plance propongano le schede MeteoSwiss: poi **Modifica plancia → Aggiungi scheda → cerca «MeteoSwiss»**. Già riavviato? Ricarica la pagina (Ctrl+F5)."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "raining": {
+        "name": "Piove"
+      },
+      "strong_gusts": {
+        "name": "Raffiche forti"
+      },
+      "frost_risk": {
+        "name": "Rischio di gelo stanotte"
+      },
+      "good_drying": {
+        "name": "Buono per asciugare il bucato"
+      },
+      "rain_soon": {
+        "name": "Pioggia imminente"
+      },
+      "warning_active": {
+        "name": "Allerta meteo in vigore"
+      },
+      "fog_home": {
+        "name": "Nebbia a casa"
+      },
+      "watering_needed": {
+        "name": "Annaffiare"
+      },
+      "airing_recommended": {
+        "name": "Arieggiare ora"
+      },
+      "windshield_frost": {
+        "name": "Parabrezza gelato domattina"
+      },
+      "mowing_day": {
+        "name": "Buon giorno per falciare"
+      },
+      "cool_night": {
+        "name": "Notte fresca: arieggiare stasera"
+      },
+      "ozone_peak": {
+        "name": "Picco di ozono"
+      }
+    },
     "sensor": {
       "temperature": {
         "name": "Temperatura"
@@ -350,6 +394,77 @@
       },
       "rain_arrival": {
         "name": "La pioggia arriva tra"
+      },
+      "temperature_max_today": {
+        "name": "Massima oggi"
+      },
+      "temperature_min_today": {
+        "name": "Minima oggi"
+      },
+      "temperature_max_tomorrow": {
+        "name": "Massima domani"
+      },
+      "temperature_min_tomorrow": {
+        "name": "Minima domani"
+      },
+      "precipitation_today": {
+        "name": "Precipitazioni oggi"
+      },
+      "precipitation_tomorrow": {
+        "name": "Precipitazioni domani"
+      },
+      "rain_probability_today": {
+        "name": "Probabilità di pioggia oggi"
+      },
+      "rain_probability_tomorrow": {
+        "name": "Probabilità di pioggia domani"
+      },
+      "gust_max_today": {
+        "name": "Raffica più forte oggi"
+      },
+      "feels_like": {
+        "name": "Temperatura percepita"
+      },
+      "pressure_trend": {
+        "name": "Tendenza della pressione (3 h)"
+      },
+      "snow_depth": {
+        "name": "Altezza della neve"
+      },
+      "river_temperature": {
+        "name": "Temperatura dell’acqua {station}"
+      },
+      "river_discharge": {
+        "name": "Portata {station}"
+      },
+      "river_level": {
+        "name": "Livello {station}"
+      },
+      "air_o3": {
+        "name": "Ozono"
+      },
+      "air_no2": {
+        "name": "Biossido di azoto"
+      },
+      "air_pm10": {
+        "name": "PM10"
+      },
+      "air_pm25": {
+        "name": "PM2.5"
+      },
+      "air_quality": {
+        "name": "Qualità dell’aria",
+        "state": {
+          "good": "Buona",
+          "elevated": "Aumentata",
+          "high": "Elevata",
+          "very_high": "Molto elevata"
+        }
+      }
+    },
+    "calendar": {
+      "weather_calendar": {
+        "name": "Calendario meteo"
       }
     }
   },
@@ -360,10 +475,10 @@
         "menu_options": {
           "display": "Visualizzazione",
           "forecast": "Previsioni",
-          "environment": "Polline e pericoli",
+          "environment": "Polline, pericoli e aria",
           "places": "Luoghi e persone sorvegliati",
-          "lakes": "Laghi e nebbia",
-          "extras": "Allerta pioggia, solare e interni"
+          "lakes": "Laghi, fiumi e nebbia",
+          "extras": "Allerta pioggia, vento, solare e interno"
         }
       },
       "display": {
@@ -383,11 +498,12 @@
         }
       },
       "environment": {
-        "title": "Polline e pericoli",
-        "description": "Per impostazione predefinita vengono usate la stazione dei pollini più vicina e la regione valanghe di casa vostra.",
+        "title": "Polline, pericoli e aria",
+        "description": "Per impostazione predefinita vengono usate la stazione dei pollini più vicina e la regione valanghe di casa vostra. Qualità dell’aria: ozono, NO2 e polveri fini della stazione NABEL più vicina (UFAM), o disattivata.",
         "data": {
           "pollen_station": "Stazione dei pollini",
-          "avalanche_region": "Regione valanghe (SLF)"
+          "avalanche_region": "Regione valanghe (SLF)",
+          "air_site": "Qualità dell’aria (stazione NABEL)"
         }
       },
       "places": {
@@ -399,19 +515,22 @@
         }
       },
       "lakes": {
-        "title": "Laghi e nebbia",
-        "description": "Laghi: un sensore di temperatura dell’acqua per lago (modelli Eawag Alplakes, con previsione a 4 giorni). Nebbia: nebbia e strato nella tua regione, stimati con stazioni di riferimento dalla pianura alle vette (p. es. Neuchâtel, Chaumont, Chasseral); la previsione legge ~90 MB ogni 6 ore.",
+        "title": "Laghi, fiumi e nebbia",
+        "description": "Laghi: un sensore di temperatura dell’acqua per lago (modelli Eawag Alplakes, con previsione a 4 giorni). Nebbia: nebbia e strato nella tua regione, stimati con stazioni di riferimento dalla pianura alle vette (p. es. Neuchâtel, Chaumont, Chasseral); la previsione legge ~90 MB ogni 6 ore. Fiumi: temperatura dell’acqua, portata e livello delle stazioni UFAM scelte (di default la più vicina che misura la temperatura dell’acqua, p. es. l’Aare a Berna).",
         "data": {
           "lakes": "Laghi",
+          "rivers": "Fiumi (stazioni UFAM)",
           "fog": "Nebbia e strato per regione"
         }
       },
       "extras": {
-        "title": "Allerta pioggia, pannelli solari e sensori interni",
-        "description": "Allerta pioggia: il radar dice quando la pioggia arriva da te. Solare: potenza di picco (kWp), inclinazione (0 = piano) e orientamento (180 = sud, 90 = est, 270 = ovest) danno una previsione di produzione; lascia vuota la potenza se non hai pannelli. Interni: un sensore di temperatura e uno di umidità della casa dicono quando arieggiare.",
+        "title": "Allerta pioggia, vento, pannelli solari e sensori interni",
+        "description": "Allerta pioggia: il radar dice quando la pioggia arriva da te. Solare: potenza di picco (kWp), inclinazione (0 = piano) e orientamento (180 = sud, 90 = est, 270 = ovest) danno una previsione di produzione; lascia vuota la potenza se non hai pannelli. Interni: un sensore di temperatura e uno di umidità della casa dicono quando arieggiare. Automazioni: il sensore «Raffiche forti» si accende dalla velocità delle raffiche qui sotto (ora o nelle prossime 3 ore), il sensore «Allerta meteo in vigore» dal grado di pericolo qui sotto (2 = giallo, 3 = arancione, 4 = rosso, 5 = rosso scuro).",
         "data": {
           "nowcast": "Allerta pioggia dal radar",
           "rain_alert_minutes": "Avvisa quando la pioggia è a meno di …",
+          "gust_threshold": "Raffiche forti da",
+          "warning_level": "Allerta meteo dal grado",
           "solar_kwp": "Pannelli solari: potenza di picco",
           "solar_tilt": "Inclinazione dei pannelli",
           "solar_azimuth": "Orientamento dei pannelli",
@@ -467,6 +586,19 @@
     },
     "extra_fields": {
       "level": "Grado (o superiore)"
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Riavvia Home Assistant per completare l’installazione di MeteoSwiss",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Riavvia Home Assistant",
+            "description": "MeteoSwiss Complete For HA è appena stato installato. Riavvia Home Assistant una volta perché le schede MeteoSwiss compaiano in **Aggiungi scheda** su tutte le plance e nell’app.\n\nFai clic su **Invia** per riavviare Home Assistant (circa un minuto). Poi ricarica la pagina (Ctrl+F5) e cerca «MeteoSwiss» in **Aggiungi scheda**."
+          }
+        }
+      }
     }
   }
 }

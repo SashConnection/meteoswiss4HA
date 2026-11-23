@@ -1,0 +1,43 @@
+blueprint:
+  name: MeteoSwiss – Close the awning before strong gusts
+  description: >-
+    Closes your awnings, blinds or shutters as soon as MeteoSwiss Complete For HA
+    expects strong gusts (now or in the next 3 hours). The gust threshold is set in
+    the integration options ("Rain alert, wind, solar panels and indoor sensors").
+    Optionally closes them when it rains too.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/close_awning_wind.yaml
+  input:
+    gusts:
+      name: Strong gusts sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    rain:
+      name: Also close when it rains (optional)
+      description: Choose the "Raining now" or "Rain soon" sensor, or leave empty.
+      default: []
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    covers:
+      name: Awnings, blinds or shutters to close
+      selector:
+        target:
+          entity:
+            - domain: cover
+mode: single
+triggers:
+  - trigger: state
+    entity_id: !input gusts
+    to: "on"
+  - trigger: state
+    entity_id: !input rain
+    to: "on"
+actions:
+  - action: cover.close_cover
+    target: !input covers

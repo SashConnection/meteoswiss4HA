@@ -170,7 +170,7 @@ class MeteoSwissNowCard extends ForecastMixin {
   getCardSize() { return 7; }
   static getStubConfig(hass) { return { entity: findEntity(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { hours: 24, show_chart: true }, labels: LABELS, astro: true, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+    return sectionEditor({ defaults: { hours: 24, show_chart: true }, labels: LABELS, astro: true, doc: { fr: "#card-now-days-tiles", en: "#card-now-days-tiles" },
       top: () => [F.weather, F.text("name")],
       sections: [{ key: "chart", icon: "mdi:chart-line", title: ST("Stündliche Grafik", "Graphique heure par heure", "Grafico orario", "Grafica per ura", "Hourly chart"), keys: ["show_chart", "hours"],
         fields: () => [F.bool("show_chart"), F.num("hours", 6, 48)], summary: (c, { lang, w }) => (c.show_chart ? `${c.hours} h` : w.off) }] });
@@ -280,7 +280,7 @@ class MeteoSwissDaysCard extends ForecastMixin {
   getCardSize() { return 5; }
   static getStubConfig(hass) { return { entity: findEntity(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { days: 6 }, labels: LABELS, astro: true, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+    return sectionEditor({ defaults: { days: 6 }, labels: LABELS, astro: true, doc: { fr: "#card-now-days-tiles", en: "#card-now-days-tiles" },
       top: () => [F.weather, F.text("name")],
       sections: [{ key: "days", icon: "mdi:calendar-week", title: ST("Tage", "Jours", "Giorni", "Dis", "Days"), keys: ["days"],
         fields: () => [F.num("days", 2, 9)], summary: (c, { lang }) => `${c.days} ${String(T[lang].f.days).toLowerCase()}` }] });
@@ -419,7 +419,7 @@ class MeteoSwissTilesCard extends HTMLElement {
   getCardSize() { return 4; }
   static getStubConfig() { return { tap_path: "/meteoswiss" }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { tap_path: "/meteoswiss" }, labels: LABELS, doc: { fr: "#panneaux--maintenant--jours-et--tuiles-", en: "#3b-now-days-and-tiles-cards" },
+    return sectionEditor({ defaults: { tap_path: "/meteoswiss" }, labels: LABELS, doc: { fr: "#card-now-days-tiles", en: "#card-now-days-tiles" },
       sections: [{ key: "actions", icon: "mdi:gesture-tap", title: ST("Aktionen", "Actions", "Azioni", "Acziuns", "Actions"), keys: ["tap_path"],
         fields: () => [F.text("tap_path")], summary: (c) => c.tap_path || "–" }] });
   }

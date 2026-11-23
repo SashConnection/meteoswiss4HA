@@ -17,9 +17,53 @@
     "abort": {
       "cannot_connect": "MeteoSchweiz Open Data nicht erreichbar.",
       "already_configured": "Diese Station und Postleitzahl sind bereits eingerichtet."
+    },
+    "create_entry": {
+      "default": "Ihr Ort ist bereit. **Starten Sie Home Assistant neu** (Einstellungen → System → ⏻ → Neu starten), damit alle Dashboards die MeteoSwiss-Karten anbieten: dann **Dashboard bearbeiten → Karte hinzufügen → «MeteoSwiss» suchen**. Schon neu gestartet? Seite neu laden (Ctrl+F5)."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "raining": {
+        "name": "Es regnet"
+      },
+      "strong_gusts": {
+        "name": "Starke Böen"
+      },
+      "frost_risk": {
+        "name": "Frostgefahr heute Nacht"
+      },
+      "good_drying": {
+        "name": "Gut zum Wäschetrocknen"
+      },
+      "rain_soon": {
+        "name": "Regen in Kürze"
+      },
+      "warning_active": {
+        "name": "Wetterwarnung in Kraft"
+      },
+      "fog_home": {
+        "name": "Nebel zu Hause"
+      },
+      "watering_needed": {
+        "name": "Giessen nötig"
+      },
+      "airing_recommended": {
+        "name": "Jetzt lüften"
+      },
+      "windshield_frost": {
+        "name": "Gefrorene Scheibe morgen früh"
+      },
+      "mowing_day": {
+        "name": "Guter Tag zum Mähen"
+      },
+      "cool_night": {
+        "name": "Kühle Nacht: heute Abend lüften"
+      },
+      "ozone_peak": {
+        "name": "Ozonspitze"
+      }
+    },
     "sensor": {
       "temperature": {
         "name": "Temperatur"
@@ -350,6 +394,77 @@
       },
       "rain_arrival": {
         "name": "Regen kommt in"
+      },
+      "temperature_max_today": {
+        "name": "Höchstwert heute"
+      },
+      "temperature_min_today": {
+        "name": "Tiefstwert heute"
+      },
+      "temperature_max_tomorrow": {
+        "name": "Höchstwert morgen"
+      },
+      "temperature_min_tomorrow": {
+        "name": "Tiefstwert morgen"
+      },
+      "precipitation_today": {
+        "name": "Niederschlag heute"
+      },
+      "precipitation_tomorrow": {
+        "name": "Niederschlag morgen"
+      },
+      "rain_probability_today": {
+        "name": "Regenwahrscheinlichkeit heute"
+      },
+      "rain_probability_tomorrow": {
+        "name": "Regenwahrscheinlichkeit morgen"
+      },
+      "gust_max_today": {
+        "name": "Stärkste Böe heute"
+      },
+      "feels_like": {
+        "name": "Gefühlte Temperatur"
+      },
+      "pressure_trend": {
+        "name": "Drucktendenz (3 h)"
+      },
+      "snow_depth": {
+        "name": "Schneehöhe"
+      },
+      "river_temperature": {
+        "name": "Wassertemperatur {station}"
+      },
+      "river_discharge": {
+        "name": "Abfluss {station}"
+      },
+      "river_level": {
+        "name": "Pegel {station}"
+      },
+      "air_o3": {
+        "name": "Ozon"
+      },
+      "air_no2": {
+        "name": "Stickstoffdioxid"
+      },
+      "air_pm10": {
+        "name": "PM10"
+      },
+      "air_pm25": {
+        "name": "PM2.5"
+      },
+      "air_quality": {
+        "name": "Luftqualität",
+        "state": {
+          "good": "Gut",
+          "elevated": "Erhöht",
+          "high": "Hoch",
+          "very_high": "Sehr hoch"
+        }
+      }
+    },
+    "calendar": {
+      "weather_calendar": {
+        "name": "Wetterkalender"
       }
     }
   },
@@ -360,10 +475,10 @@
         "menu_options": {
           "display": "Anzeige",
           "forecast": "Prognosen",
-          "environment": "Pollen und Gefahren",
+          "environment": "Pollen, Gefahren und Luft",
           "places": "Beobachtete Orte und Personen",
-          "lakes": "Seen und Nebel",
-          "extras": "Regenalarm, Solar und Innenräume"
+          "lakes": "Seen, Flüsse und Nebel",
+          "extras": "Regenalarm, Wind, Solar und innen"
         }
       },
       "display": {
@@ -383,11 +498,12 @@
         }
       },
       "environment": {
-        "title": "Pollen und Gefahren",
-        "description": "Standardmässig werden die nächstgelegene Pollenstation und die Lawinenregion Ihres Zuhauses verwendet.",
+        "title": "Pollen, Gefahren und Luft",
+        "description": "Standardmässig werden die nächstgelegene Pollenstation und die Lawinenregion Ihres Zuhauses verwendet. Luftqualität: Ozon, NO2 und Feinstaub der nächsten NABEL-Station (BAFU), oder aus.",
         "data": {
           "pollen_station": "Pollenstation",
-          "avalanche_region": "Lawinenregion (SLF)"
+          "avalanche_region": "Lawinenregion (SLF)",
+          "air_site": "Luftqualität (NABEL-Station)"
         }
       },
       "places": {
@@ -399,19 +515,22 @@
         }
       },
       "lakes": {
-        "title": "Seen und Nebel",
-        "description": "Seen: ein Wassertemperatur-Sensor pro See (Modelle Eawag Alplakes, mit 4-Tage-Prognose). Nebel: Nebel und Hochnebel in deiner Region, geschätzt mit Referenzstationen von der Ebene bis zu den Gipfeln (z. B. Neuenburg, Chaumont, Chasseral); die Prognose liest ~90 MB alle 6 Stunden.",
+        "title": "Seen, Flüsse und Nebel",
+        "description": "Seen: ein Wassertemperatur-Sensor pro See (Modelle Eawag Alplakes, mit 4-Tage-Prognose). Nebel: Nebel und Hochnebel in deiner Region, geschätzt mit Referenzstationen von der Ebene bis zu den Gipfeln (z. B. Neuenburg, Chaumont, Chasseral); die Prognose liest ~90 MB alle 6 Stunden. Flüsse: Wassertemperatur, Abfluss und Pegel der gewählten BAFU-Stationen (standardmässig die nächste mit Wassertemperatur, z. B. die Aare in Bern).",
         "data": {
           "lakes": "Seen",
+          "rivers": "Flüsse (BAFU-Stationen)",
           "fog": "Nebel und Hochnebel nach Region"
         }
       },
       "extras": {
-        "title": "Regenalarm, Solaranlage und Innensensoren",
-        "description": "Regenalarm: Das Radar sagt, wann der Regen bei dir ankommt. Solar: Spitzenleistung (kWp), Neigung (0 = flach) und Ausrichtung (180 = Süd, 90 = Ost, 270 = West) ergeben eine Ertragsprognose; Leistung leer lassen, wenn keine Anlage vorhanden ist. Innen: ein Temperatur- und ein Feuchtesensor im Haus sagen, wann man lüften soll.",
+        "title": "Regenalarm, Wind, Solaranlage und Innensensoren",
+        "description": "Regenalarm: Das Radar sagt, wann der Regen bei dir ankommt. Solar: Spitzenleistung (kWp), Neigung (0 = flach) und Ausrichtung (180 = Süd, 90 = Ost, 270 = West) ergeben eine Ertragsprognose; Leistung leer lassen, wenn keine Anlage vorhanden ist. Innen: ein Temperatur- und ein Feuchtesensor im Haus sagen, wann man lüften soll. Automationen: der Sensor «Starke Böen» schaltet ab der Böengeschwindigkeit unten ein (jetzt oder in den nächsten 3 Stunden), der Sensor «Wetterwarnung in Kraft» ab der Warnstufe unten (2 = gelb, 3 = orange, 4 = rot, 5 = dunkelrot).",
         "data": {
           "nowcast": "Regenalarm vom Radar",
           "rain_alert_minutes": "Alarm, wenn der Regen weniger als … entfernt ist",
+          "gust_threshold": "Starke Böen ab",
+          "warning_level": "Wetterwarnung ab Stufe",
           "solar_kwp": "Solaranlage: Spitzenleistung",
           "solar_tilt": "Neigung der Module",
           "solar_azimuth": "Ausrichtung der Module",
@@ -467,6 +586,19 @@
     },
     "extra_fields": {
       "level": "Stufe (oder höher)"
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Home Assistant neu starten, um MeteoSwiss fertig zu installieren",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Home Assistant neu starten",
+            "description": "MeteoSwiss Complete For HA wurde soeben installiert. Starten Sie Home Assistant einmal neu, damit die MeteoSwiss-Karten unter **Karte hinzufügen** in allen Dashboards und in der App erscheinen.\n\nKlicken Sie auf **Absenden**, um Home Assistant neu zu starten (etwa eine Minute). Laden Sie danach die Seite neu (Ctrl+F5) und suchen Sie «MeteoSwiss» unter **Karte hinzufügen**."
+          }
+        }
+      }
     }
   }
 }

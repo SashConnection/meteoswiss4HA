@@ -18,7 +18,7 @@ ICON_PACKS: Final = ("animated", "vivid", "classic")
 FRONTEND_URL: Final = f"/{DOMAIN}/frontend"
 PANEL_URL_PATH: Final = "meteoswiss"
 # Bumped with the manifest version; busts the browser cache of the map module.
-VERSION: Final = "2026.11.12b0"
+VERSION: Final = "2026.11.13"
 
 # Attribute / forecast key carrying the native MeteoSwiss symbol code.
 ATTR_METEOSWISS_SYMBOL: Final = "meteoswiss_symbol"
@@ -75,6 +75,17 @@ CONF_SOLAR_AZIMUTH: Final = "solar_azimuth"
 CONF_SOLAR_SENSOR: Final = "solar_sensor"
 CONF_INDOOR_TEMPERATURE: Final = "indoor_temperature"
 CONF_INDOOR_HUMIDITY: Final = "indoor_humidity"
+# Yes / no sensors for automations: gust threshold and warning level.
+CONF_GUST_THRESHOLD: Final = "gust_threshold"
+DEFAULT_GUST_THRESHOLD: Final = 50  # km/h
+CONF_WARNING_LEVEL: Final = "warning_level"
+DEFAULT_WARNING_LEVEL: Final = 2  # 2 = moderate (yellow), the first real warning
+# Rivers (FOEN hydrology) and air quality (NABEL).
+CONF_RIVERS: Final = "rivers"
+HYDRO_UPDATE_INTERVAL: Final = timedelta(minutes=10)
+CONF_AIR_SITE: Final = "air_site"
+AIR_OFF: Final = "off"
+AIR_UPDATE_INTERVAL: Final = timedelta(minutes=60)
 
 # Radar frame server (the Node-RED flow in nodered/, run by the project).
 RADAR_URL: Final = "https://ha.jesaispas.ch/endpoint/meteoswiss/radar"

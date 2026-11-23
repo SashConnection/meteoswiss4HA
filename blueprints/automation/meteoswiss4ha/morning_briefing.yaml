@@ -1,0 +1,88 @@
+blueprint:
+  name: MeteoSwiss – Morning weather
+  description: >-
+    Every morning, sends the day in one sentence (in your Home Assistant language),
+    the maximum and the rain probability to your phone. Can also be read aloud by a
+    speaker.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/morning_briefing.yaml
+  input:
+    summary:
+      name: Summary sensor ("The day in one sentence")
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: sensor
+    maximum:
+      name: Maximum today sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: sensor
+    rain:
+      name: Rain probability today sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: sensor
+    time:
+      name: Time
+      default: "07:00:00"
+      selector:
+        time:
+    phone:
+      name: Phone to notify
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    speaker:
+      name: Speaker to read it aloud (optional)
+      default: []
+      selector:
+        entity:
+          filter:
+            - domain: media_player
+    tts:
+      name: Text-to-speech engine (needed for the speaker)
+      default: []
+      selector:
+        entity:
+          filter:
+            - domain: tts
+    title:
+      name: Title
+      default: "☀️ Today"
+      selector:
+        text:
+mode: single
+triggers:
+  - trigger: time
+    at: !input time
+variables:
+  summary: !input summary
+  maximum: !input maximum
+  rain: !input rain
+  speaker: !input speaker
+  tts_engine: !input tts
+  text: >-
+    {{ states(summary) }} {{ states(maximum) | float(0) | round(0) | int }} °C, {{ states(rain) | float(0) | round(0) | int }} %.
+actions:
+  - device_id: !input phone
+    domain: mobile_app
+    type: notify
+    title: !input title
+    message: "{{ text }}"
+  - if:
+      - condition: template
+        value_template: "{{ speaker | length > 0 and tts_engine | length > 0 }}"
+    then:
+      - action: tts.speak
+        target:
+          entity_id: !input tts
+        data:
+          media_player_entity_id: !input speaker
+          message: "{{ text }}"

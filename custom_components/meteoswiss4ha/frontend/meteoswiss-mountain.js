@@ -243,7 +243,7 @@ class MeteoSwissMountainCard extends ForecastCard {
   getCardSize() { return 6; }
   static getStubConfig(hass) { return { entity: findWeather(hass), avalanche_scope: "home" }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { avalanche_scope: "home", max_altitude: 4000 }, labels: LABELS, doc: { fr: "#montagne", en: "#3e-mountain" },
+    return sectionEditor({ defaults: { avalanche_scope: "home", max_altitude: 4000 }, labels: LABELS, doc: { fr: "#card-mountain", en: "#card-mountain" },
       top: () => [F.weather],
       sections: [
         { key: "avalanche", icon: "mdi:snowflake-alert", title: ST("Lawinengefahr", "Danger d’avalanche", "Pericolo valanghe", "Privel da lavinas", "Avalanche danger"), keys: ["avalanche_scope"],
@@ -379,7 +379,7 @@ class MeteoSwissFogCard extends HTMLElement {
   static getStubConfig() { return { show_map: true, show_forecast: true }; }
   static getConfigElement() {
     const REGIONS = ["three_lakes", "leman", "fribourg", "bern", "zurich", "central", "basel", "ticino"];
-    return sectionEditor({ defaults: { show_map: true, show_forecast: true, show_all: false }, labels: LABELS, doc: { fr: "#brouillard-par-région", en: "#3f-fog-by-region" },
+    return sectionEditor({ defaults: { show_map: true, show_forecast: true, show_all: false }, labels: LABELS, doc: { fr: "#card-fog", en: "#card-fog" },
       load: (hass) => api(hass, "fog", 5 * 60000).catch(() => null),
       top: () => [F.text("name")],
       sections: [

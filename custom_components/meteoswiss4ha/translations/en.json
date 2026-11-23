@@ -17,9 +17,53 @@
     "abort": {
       "cannot_connect": "Cannot reach MeteoSwiss open data.",
       "already_configured": "This station and postal code are already configured."
+    },
+    "create_entry": {
+      "default": "Your place is ready. **Restart Home Assistant** (Settings → System → ⏻ → Restart) so that every dashboard offers the MeteoSwiss cards: then **Edit dashboard → Add card → search \"MeteoSwiss\"**. Already restarted? Reload the page (Ctrl+F5)."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "raining": {
+        "name": "Raining now"
+      },
+      "strong_gusts": {
+        "name": "Strong gusts"
+      },
+      "frost_risk": {
+        "name": "Frost risk tonight"
+      },
+      "good_drying": {
+        "name": "Good for drying laundry"
+      },
+      "rain_soon": {
+        "name": "Rain soon"
+      },
+      "warning_active": {
+        "name": "Weather warning in force"
+      },
+      "fog_home": {
+        "name": "Fog at home"
+      },
+      "watering_needed": {
+        "name": "Watering needed"
+      },
+      "airing_recommended": {
+        "name": "Air the rooms now"
+      },
+      "windshield_frost": {
+        "name": "Frozen windscreen tomorrow morning"
+      },
+      "mowing_day": {
+        "name": "Good day to mow"
+      },
+      "cool_night": {
+        "name": "Cool night: air tonight"
+      },
+      "ozone_peak": {
+        "name": "Ozone peak"
+      }
+    },
     "sensor": {
       "temperature": {
         "name": "Temperature"
@@ -350,6 +394,77 @@
       },
       "rain_arrival": {
         "name": "Rain arrives in"
+      },
+      "temperature_max_today": {
+        "name": "Maximum today"
+      },
+      "temperature_min_today": {
+        "name": "Minimum today"
+      },
+      "temperature_max_tomorrow": {
+        "name": "Maximum tomorrow"
+      },
+      "temperature_min_tomorrow": {
+        "name": "Minimum tomorrow"
+      },
+      "precipitation_today": {
+        "name": "Precipitation today"
+      },
+      "precipitation_tomorrow": {
+        "name": "Precipitation tomorrow"
+      },
+      "rain_probability_today": {
+        "name": "Rain probability today"
+      },
+      "rain_probability_tomorrow": {
+        "name": "Rain probability tomorrow"
+      },
+      "gust_max_today": {
+        "name": "Strongest gust today"
+      },
+      "feels_like": {
+        "name": "Feels like"
+      },
+      "pressure_trend": {
+        "name": "Pressure trend (3 h)"
+      },
+      "snow_depth": {
+        "name": "Snow depth"
+      },
+      "river_temperature": {
+        "name": "Water temperature {station}"
+      },
+      "river_discharge": {
+        "name": "Discharge {station}"
+      },
+      "river_level": {
+        "name": "Water level {station}"
+      },
+      "air_o3": {
+        "name": "Ozone"
+      },
+      "air_no2": {
+        "name": "Nitrogen dioxide"
+      },
+      "air_pm10": {
+        "name": "PM10"
+      },
+      "air_pm25": {
+        "name": "PM2.5"
+      },
+      "air_quality": {
+        "name": "Air quality",
+        "state": {
+          "good": "Good",
+          "elevated": "Elevated",
+          "high": "High",
+          "very_high": "Very high"
+        }
+      }
+    },
+    "calendar": {
+      "weather_calendar": {
+        "name": "Weather calendar"
       }
     }
   },
@@ -360,10 +475,10 @@
         "menu_options": {
           "display": "Display",
           "forecast": "Forecasts",
-          "environment": "Pollen and hazards",
+          "environment": "Pollen, hazards and air",
           "places": "Watched places and persons",
-          "lakes": "Lakes and fog",
-          "extras": "Rain alert, solar and indoor"
+          "lakes": "Lakes, rivers and fog",
+          "extras": "Rain alert, wind, solar and indoor"
         }
       },
       "display": {
@@ -383,11 +498,12 @@
         }
       },
       "environment": {
-        "title": "Pollen and hazards",
-        "description": "By default the nearest pollen station and the avalanche region of your home are used.",
+        "title": "Pollen, hazards and air",
+        "description": "By default the nearest pollen station and the avalanche region of your home are used. Air quality: ozone, NO2 and fine particles of the nearest NABEL site (FOEN), or off.",
         "data": {
           "pollen_station": "Pollen station",
-          "avalanche_region": "Avalanche region (SLF)"
+          "avalanche_region": "Avalanche region (SLF)",
+          "air_site": "Air quality (NABEL site)"
         }
       },
       "places": {
@@ -399,19 +515,22 @@
         }
       },
       "lakes": {
-        "title": "Lakes and fog",
-        "description": "Lakes: one water temperature sensor per lake (Eawag Alplakes models, with a 4-day forecast). Fog: fog and low stratus in your region, estimated with reference stations from the plain to the summits (e.g. Neuchâtel, Chaumont, Chasseral); the forecast reads ~90 MB every 6 hours.",
+        "title": "Lakes, rivers and fog",
+        "description": "Lakes: one water temperature sensor per lake (Eawag Alplakes models, with a 4-day forecast). Fog: fog and low stratus in your region, estimated with reference stations from the plain to the summits (e.g. Neuchâtel, Chaumont, Chasseral); the forecast reads ~90 MB every 6 hours. Rivers: water temperature, discharge and level of the FOEN stations you choose (by default the nearest with a water temperature, e.g. the Aare in Bern).",
         "data": {
           "lakes": "Lakes",
+          "rivers": "Rivers (FOEN stations)",
           "fog": "Fog and low stratus by region"
         }
       },
       "extras": {
-        "title": "Rain alert, solar panels and indoor sensors",
-        "description": "Rain alert: the radar tells when rain reaches your home. Solar: your panels' peak power (kWp), tilt (0 = flat) and orientation (180 = south, 90 = east, 270 = west) give a production forecast; leave the power empty if you have no panels. Indoor: a temperature and a humidity sensor of your home tell when to air.",
+        "title": "Rain alert, wind, solar panels and indoor sensors",
+        "description": "Rain alert: the radar tells when rain reaches your home. Solar: your panels' peak power (kWp), tilt (0 = flat) and orientation (180 = south, 90 = east, 270 = west) give a production forecast; leave the power empty if you have no panels. Indoor: a temperature and a humidity sensor of your home tell when to air. Automations: the \"Strong gusts\" sensor turns on from the gust speed below (now or in the next 3 hours), the \"Weather warning in force\" sensor from the warning level below (2 = yellow, 3 = orange, 4 = red, 5 = dark red).",
         "data": {
           "nowcast": "Rain alert from the radar",
           "rain_alert_minutes": "Alert when rain is less than … away",
+          "gust_threshold": "Strong gusts from",
+          "warning_level": "Weather warning from level",
           "solar_kwp": "Solar panels: peak power",
           "solar_tilt": "Panel tilt",
           "solar_azimuth": "Panel orientation",
@@ -467,6 +586,19 @@
     },
     "extra_fields": {
       "level": "Level (or higher)"
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Restart Home Assistant to finish installing MeteoSwiss",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Restart Home Assistant",
+            "description": "MeteoSwiss Complete For HA was just installed. Restart Home Assistant once so that the MeteoSwiss cards appear in **Add card** on every dashboard and in the mobile app.\n\nClick **Submit** to restart Home Assistant (about a minute). Then reload the page (Ctrl+F5) and search \"MeteoSwiss\" in **Add card**."
+          }
+        }
+      }
     }
   }
 }

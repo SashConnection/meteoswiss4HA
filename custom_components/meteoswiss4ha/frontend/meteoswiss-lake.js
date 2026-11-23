@@ -374,7 +374,7 @@ class MeteoSwissLakeCard extends HTMLElement {
   getCardSize() { return 10; }
   static getStubConfig() { return { lake: "neuchatel" }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { show_map: true, show_profile: true, show_forecast: true, depth: 1 }, labels: LABELS, doc: { fr: "#lacs", en: "#3g-lakes" },
+    return sectionEditor({ defaults: { show_map: true, show_profile: true, show_forecast: true, depth: 1 }, labels: LABELS, doc: { fr: "#card-lake", en: "#card-lake" },
       top: () => [F.text("name"), F.select("lake", LAKE_KEYS.map(([k, n]) => ({ value: k, label: n })))],
       sections: [
         { key: "values", icon: "mdi:format-list-numbered", title: ST("Werte", "Valeurs", "Valori", "Valurs", "Values"), keys: ["measures"],

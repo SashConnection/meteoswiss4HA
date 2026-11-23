@@ -111,6 +111,67 @@ def _night(hours: list[dict[str, Any]], hass: HomeAssistant) -> list[dict[str, A
     return [h for h in hours if start < h["time"] <= end + timedelta(hours=1)]
 
 
+# Indicators shared with the yes / no sensors (binary_sensor.py).
+
+
+def drying_result(entry: MeteoSwissConfigEntry) -> dict[str, Any]:
+    """Laundry drying for the rest of today."""
+    now = dt_util.utcnow()
+    today = [h for h in _local_day(forecast_hours(entry), dt_util.now().date()) if h["time"] > now]
+    return ind.drying(today) if len(today) >= 3 else {"state": None}
+
+
+def frost_result(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> dict[str, Any]:
+    """Frost in the coming night."""
+    return ind.frost(_night(forecast_hours(entry), hass))
+
+
+def _number(hass: HomeAssistant, entity_id: str | None) -> float | None:
+    state = hass.states.get(entity_id) if entity_id else None
+    try:
+        return float(state.state) if state is not None else None
+    except ValueError:
+        return None
+
+
+def airing_result(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> dict[str, Any]:
+    """Open the windows? Indoor sensors against the station."""
+    cur = entry.runtime_data.current.data
+    o = entry.options
+    return ind.airing(_number(hass, o.get(CONF_INDOOR_TEMPERATURE)), _number(hass, o.get(CONF_INDOOR_HUMIDITY)),
+                      cur.values.get("tre200s0") if cur else None, cur.values.get("ure200s0") if cur else None)
+
+
+def history_summary(entry: MeteoSwissConfigEntry) -> dict[str, Any]:
+    """Yesterday, normals, records and first frost / snow at the station."""
+    history = entry.runtime_data.history
+    if history is None or history.data is None:
+        return {}
+    fc = entry.runtime_data.forecast.data
+    tmax = None
+    if fc is not None:
+        today = dt_util.now().date()
+        step = next((s for s in fc.daily if s.time.date() == today), None)
+        tmax = step.values.get(DAILY_TEMP_MAX) if step else None
+    cur = entry.runtime_data.current.data
+    return summarize(history.data, dt_util.now().date(), tmax, cur.values if cur else None)
+
+
+def watering_result(entry: MeteoSwissConfigEntry) -> dict[str, Any]:
+    """Garden watering from the water balance of the last days and the forecast."""
+    s = history_summary(entry)
+    if not s:
+        return {"state": None}
+    fc = entry.runtime_data.forecast.data
+    rain_next = tmax = None
+    if fc is not None:
+        today = dt_util.now().date()
+        nxt = [st for st in fc.daily if today <= st.time.date() <= today + timedelta(days=1)]
+        rain_next = sum(st.values.get(DAILY_PRECIPITATION) or 0 for st in nxt)
+        tmax = max((st.values.get(DAILY_TEMP_MAX) or -99 for st in nxt), default=None)
+    return ind.watering(s.get("rain_5_days") or [], s.get("evaporation_5_days") or [], rain_next, tmax)
+
+
 def extra_sensors(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -> list[SensorEntity]:
     """All sensors of this module that can be created for the entry."""
     data = entry.runtime_data
@@ -275,10 +336,7 @@ class DryingSensor(_ForecastIndicator):
         super().__init__(c, e, "drying")
 
     def _result(self) -> dict[str, Any]:
-        hours = forecast_hours(self._entry)
-        now = dt_util.utcnow()
-        today = [h for h in _local_day(hours, dt_util.now().date()) if h["time"] > now]
-        return ind.drying(today) if len(today) >= 3 else {"state": None}
+        return drying_result(self._entry)
 
 
 class FrostSensor(_ForecastIndicator):
@@ -291,7 +349,7 @@ class FrostSensor(_ForecastIndicator):
         super().__init__(c, e, "frost_tonight")
 
     def _result(self) -> dict[str, Any]:
-        return ind.frost(_night(forecast_hours(self._entry), self.hass))
+        return frost_result(self.hass, self._entry)
 
 
 class StargazingSensor(_ForecastIndicator):
@@ -470,18 +528,8 @@ class AiringSensor(_ForecastIndicator):
     def __init__(self, c, e) -> None:
         super().__init__(c, e, "airing")
 
-    def _num(self, entity_id: str | None) -> float | None:
-        state = self.hass.states.get(entity_id) if entity_id else None
-        try:
-            return float(state.state) if state is not None else None
-        except ValueError:
-            return None
-
     def _result(self) -> dict[str, Any]:
-        cur = self.coordinator.data
-        o = self._entry.options
-        return ind.airing(self._num(o.get(CONF_INDOOR_TEMPERATURE)), self._num(o.get(CONF_INDOOR_HUMIDITY)),
-                          cur.values.get("tre200s0") if cur else None, cur.values.get("ure200s0") if cur else None)
+        return airing_result(self.hass, self._entry)
 
 
 # -------------------------------------------------------------- history
@@ -489,16 +537,7 @@ class AiringSensor(_ForecastIndicator):
 
 class _HistoryBase(_Extra):
     def _summary(self) -> dict[str, Any]:
-        if self.coordinator.data is None:
-            return {}
-        fc = self._entry.runtime_data.forecast.data
-        tmax = None
-        if fc is not None:
-            today = dt_util.now().date()
-            step = next((s for s in fc.daily if s.time.date() == today), None)
-            tmax = step.values.get(DAILY_TEMP_MAX) if step else None
-        cur = self._entry.runtime_data.current.data
-        return summarize(self.coordinator.data, dt_util.now().date(), tmax, cur.values if cur else None)
+        return history_summary(self._entry)
 
 
 class AnomalySensor(_HistoryBase):
@@ -611,17 +650,7 @@ class WateringSensor(_HistoryBase):
         super().__init__(c, e, "watering")
 
     def _result(self) -> dict[str, Any]:
-        s = self._summary()
-        if not s:
-            return {"state": None}
-        fc = self._entry.runtime_data.forecast.data
-        rain_next = tmax = None
-        if fc is not None:
-            today = dt_util.now().date()
-            nxt = [st for st in fc.daily if today <= st.time.date() <= today + timedelta(days=1)]
-            rain_next = sum(st.values.get(DAILY_PRECIPITATION) or 0 for st in nxt)
-            tmax = max((st.values.get(DAILY_TEMP_MAX) or -99 for st in nxt), default=None)
-        return ind.watering(s.get("rain_5_days") or [], s.get("evaporation_5_days") or [], rain_next, tmax)
+        return watering_result(self._entry)
 
     @property
     def native_value(self) -> str | None:
@@ -652,7 +681,7 @@ class RainArrivalSensor(_Extra):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         d = self.coordinator.data or {}
-        return {k: d.get(k) for k in ("state", "arrival", "speed", "from_bearing", "radar_time", "stale")}
+        return {k: d.get(k) for k in ("state", "arrival", "speed", "from_bearing", "radar_time", "stale", "timeline")}
 
     def _handle_coordinator_update(self) -> None:
         d = self.coordinator.data or {}

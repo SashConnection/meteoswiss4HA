@@ -1,0 +1,51 @@
+blueprint:
+  name: MeteoSwiss – Weather warning
+  description: >-
+    Notifies you when a MeteoSwiss weather warning comes into force at home (wind,
+    thunderstorm, rain, snow, slippery roads, heat, frost), from the level set in the
+    integration options.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/weather_warning.yaml
+  input:
+    warning:
+      name: Weather warning in force sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    phone:
+      name: Phone to notify
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    title:
+      name: Title
+      default: "⚠️ Weather warning"
+      selector:
+        text:
+    message:
+      name: Message
+      description: "{warnings} is replaced by the warnings in force, {level} by the highest level (2 to 5)."
+      default: "Warning in force: {warnings} (level {level})."
+      selector:
+        text:
+          multiline: true
+mode: single
+triggers:
+  - trigger: state
+    entity_id: !input warning
+    from: "off"
+    to: "on"
+variables:
+  sensor: !input warning
+  text: !input message
+actions:
+  - device_id: !input phone
+    domain: mobile_app
+    type: notify
+    title: !input title
+    message: >-
+      {{ text | replace('{warnings}', (state_attr(sensor, 'warnings') or []) | join(', '))
+              | replace('{level}', state_attr(sensor, 'highest_level') | string) }}

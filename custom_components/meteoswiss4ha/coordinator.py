@@ -76,6 +76,10 @@ class MeteoSwissData:
     # Station history (history.HistoryCoordinator) and rain nowcast (nowcast.NowcastCoordinator).
     history: Any = None
     nowcast: Any = None
+    # Pressure trend and snow (station_now), rivers (hydro) and air quality (air).
+    station_now: Any = None
+    rivers: Any = None
+    air: Any = None
 
 
 class PollenCoordinator(DataUpdateCoordinator[PollenData]):

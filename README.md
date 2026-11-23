@@ -3,37 +3,36 @@
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/logo.png" alt="Logo" width="96" align="right">
 
 **All of Swiss weather in Home Assistant, in one integration.**
-Official MeteoSwiss data, ready-made cards, nothing to program — in **German, French, Italian, Romansh and English**.
+Official MeteoSwiss data, ready-made cards and automations, nothing to program — in **German, French, Italian, Romansh and English**.
 
-## Ready to use — no YAML, ever
+**Ready to use — no YAML, ever.** Install, pick your station, add a card: that's it. Every card is set up with the mouse in a visual editor, every automation is chosen from menus.
 
-**Install, pick your station, add a card. That's it.** Every card is set up with a few clicks in the visual editor: clear sections with a summary of what is on, a ↺ button to go back to the defaults, a link to the right page of this guide. No code, no YAML, no template — and it speaks your Home Assistant language.
-
-<table><tr>
-<td width="38%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/editor.png" width="100%" alt="Card editor"></td>
-<td valign="top">
-
-- ✅ **Works out of the box**: station, forecast point, pollen station and avalanche region are found for your home.
-- 🖱️ **Everything in the editor**: tick the measurements you want, drag them in order, switch the chart, the days, the sun and the moon on or off.
-- 🔔 **Automations from menus**: *Rain arrives soon*, *First frost*, *Fog clears*, *Thunderstorm warning announced*… pick a trigger, no YAML.
-- 🌍 **5 languages** follow Home Assistant by themselves (German, French, Italian, Romansh, English).
-- 🎨 **Looks great everywhere**: phone, tablet, wall screen, light and dark.
-
-</td></tr></table>
-
-![New: tips of the day, ephemeris, postcard](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/highlights2.png)
-
-<sub>Example values.</sub>
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.png" width="720" alt="MeteoSwiss Complete For HA">
 
 🇫🇷 **[Mode d'emploi en français](https://github.com/SashConnection/meteoswiss4HA/blob/main/docs/GUIDE.fr.md)**
 
-![Everything at a glance](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/highlights.png)
+## Contents
 
-<sub>Lake and fog: real data of 10 November 2026 (Eawag Alplakes, MeteoSwiss stations). Other values are examples.</sub>
+- [What you get](#what-you-get)
+- **Step by step**
+  1. [Install](#1-install)
+  2. [Add your home](#2-add-your-home)
+  3. [Add a card to a dashboard](#3-add-a-card-to-a-dashboard)
+  4. [Show a sensor on a dashboard](#4-show-a-sensor-on-a-dashboard)
+  5. [Create an automation](#5-create-an-automation)
+  6. [Change the settings](#6-change-the-settings)
+  7. [Add another place](#7-add-another-place)
+  8. [Update](#8-update)
+- [The cards](#the-cards): [Forecast](#card-forecast) · [Detailed weather](#card-weather) · [Pollen](#card-pollen) · [Now, Days, Tiles](#card-now-days-tiles) · [Everyday](#card-everyday) · [Mountain](#card-mountain) · [Fog](#card-fog) · [Lakes](#card-lake) · [Tips](#card-tips) · [Ephemeris](#card-ephemeris) · [Postcard and more](#card-postcard) · [Rain minute by minute](#card-rain) · [Climate](#card-stripes) · [Rivers](#card-rivers) · [Air](#card-air) · [Snow](#card-snow)
+- [Sun and moon](#sun-and-moon)
+- [Switzerland map](#card-map)
+- [Automations](#automations): [yes / no sensors](#yes--no-sensors) · [forecast numbers](#forecast-numbers) · [ready-made triggers](#ready-made-triggers) · [blueprints](#ready-made-automations-blueprints) · [calendar and Energy](#calendar-and-energy-dashboard)
+- [All entities](#all-entities)
+- [Languages, pictograms and monuments](#languages-pictograms-and-monuments)
+- [Troubleshooting](#troubleshooting) · [Technical notes](#technical-notes) · [Data sources and license](#data-sources-and-license)
+- [What's new, version by version](#whats-new-version-by-version)
 
-![MeteoSwiss Complete For HA](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/overview.png)
-
-## Everything in one
+## What you get
 
 | | |
 |---|---|
@@ -53,48 +52,142 @@ Official MeteoSwiss data, ready-made cards, nothing to program — in **German, 
 | ☀️ **Solar forecast** | Your panels' production today and tomorrow, hour by hour (just enter their power) |
 | 🌙 **Sun, moon, ephemeris** | Sunrise, sunset, day length, moon phase drawn exactly (%, name), saint of the day — in every card you want |
 | 📈 **History** | Yesterday, the 1991–2020 normal, the records of the year, first frost and first snow of the season |
+| 🏊 **Rivers** | Water temperature, discharge, level and flood danger of the FOEN stations — the Aare in Bern, the Rhine, the Rhône… with swimming comfort |
+| 🌬️ **Air quality** | Ozone, NO₂ and fine particles of the nearest NABEL site, with an *Ozone peak* alert |
+| ❄️ **Snow** | Snow depth at the stations near home, and how much fell today |
+| 📊 **Climate** | Climate stripes of your station since 1864, and this month vs the normal |
+| 🧭 **Feels like, pressure** | Feels-like temperature (wind chill, heat), pressure trend over 3 hours |
+| 📅 **Calendar and Energy** | A weather calendar (warnings, full moons, hot days, frost) and your solar forecast in the Energy dashboard |
+| 🤖 **Automations** | Yes / no sensors (*Strong gusts*, *Rain soon*, *Frost risk tonight*, *Weather warning in force*, *Frozen windscreen tomorrow morning*, *Good day to mow*, *Cool night*, *Ozone peak*…), forecast numbers (maximum tomorrow, rain today…), ready-made triggers and one-click automations |
 | 🎁 **Fun** | A weather postcard to share, a "guess the maximum" game, a badge for the header, a color for your lights |
 
-## Ready-made cards
+# Step by step
+
+## 1. Install
+
+You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
+
+1. Open **HACS**, then the menu **⋮ → Custom repositories**.
+2. Paste `https://github.com/SashConnection/meteoswiss4HA`, category **Integration**, then **Add**.
+3. Search **MeteoSwiss Complete For HA** in HACS, open it and click **Download**.
+4. **Restart Home Assistant**: *Settings → System → ⏻ (top right) → Restart Home Assistant*.
+
+## 2. Add your home
+
+1. **Settings → Devices & services → Add integration** (button at the bottom right).
+2. Search **MeteoSwiss Complete For HA**.
+3. Choose the **weather station** (the nearest is first in the list) and the **postal code** of the forecast, e.g. `2000` for Neuchâtel or `3000` for Bern.
+4. **Submit**. Done: the integration creates a *service* named after your place, with a weather entity and its sensors.
+5. **Restart Home Assistant** once, as the message at the end reminds you. After a first install, **Settings → Repairs** also shows *Restart Home Assistant to finish installing MeteoSwiss*, with a button that does it for you. Then the cards appear on every dashboard and in the app.
+
+On the integration page you then see your place (e.g. *Neuchâtel (2000)*) with its number of entities. Click it to see them all.
+
+## 3. Add a card to a dashboard
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/editor.png" width="300" align="right" alt="Card editor">
+
+1. Open your dashboard, click the **✏️ pencil** (top right) to edit it.
+2. **+ Add card**, then type **MeteoSwiss** in the search field: all the cards appear with a preview, named in your Home Assistant language (*MeteoSwiss Tiles*, *MeteoSwiss My day*…).
+3. Click the card you want. Its editor opens: clear sections, a summary of what is on, **↺** to go back to the defaults, a link to this guide.
+4. Tick what you want to see, then **Save**, and **Done** at the top.
+
+Nothing to type: every card finds your MeteoSwiss weather entity by itself.
+
+> No MeteoSwiss card in the list? Restart Home Assistant (see step 2), then reload the page with **Ctrl+F5** (in the app: *Settings → Companion app → Debugging → Reload frontend*).
+
+<br clear="right">
+
+## 4. Show a sensor on a dashboard
+
+Every value (temperature, *Rain soon*, *Frost risk tonight*, *Maximum tomorrow*…) can be shown on its own:
+
+1. **Edit the dashboard → + Add card → By entity**.
+2. Search the value, e.g. *Strong gusts* or *Maximum tomorrow*, tick it, then **Continue → Add to dashboard**.
+
+Or the other way round: **Settings → Devices & services → MeteoSwiss Complete For HA →** your place → **Add to dashboard** adds all its values at once.
+
+> A value you do not find may be **disabled** (e.g. *Pressure QNH*): open it in the device page, ⚙️ → **Enabled** → Update.
+
+## 5. Create an automation
+
+Three ways, all without YAML:
+
+- **One click, ready-made** — the [blueprints](#ready-made-automations-blueprints): *Close the awning before strong gusts*, *Rain is coming*, *Frost tonight*, *Weather warning*, *Morning weather*. Click **Import**, choose your sensor and your phone, save.
+- **From a yes / no sensor** — **Settings → Automations & scenes → + Create automation → Create new automation → + Add trigger → Entity → State**, choose e.g. *Strong gusts*, **To: On**. Then **+ Add action**, e.g. *Cover → Close*.
+- **From a ready-made trigger** — **+ Add trigger → Device →** your MeteoSwiss place, then *Rain arrives soon*, *Thunderstorm warning announced*, *First frost of the season*, *The fog clears*…
+
+## 6. Change the settings
+
+**Settings → Devices & services → MeteoSwiss Complete For HA → ⚙️ Configure**. The menu has six pages:
+
+| Page | Settings |
+|---|---|
+| **Display** | Pictogram pack: **Animated** (default), **Vivid** or **Classic**. Option **"Show the map page in the sidebar"** (off by default). |
+| **Forecast** | Hourly forecast on/off, horizon (48 h by default) and refresh interval. MeteoSwiss hourly files are large: reduce the horizon to save bandwidth. |
+| **Pollen, hazards and air** | Pollen station, avalanche region and air quality site (NABEL). "Automatic" picks the one nearest to your home; air quality can be turned off. |
+| **Lakes, rivers and fog** | The lakes that get a water temperature sensor (default: the lake nearest to your home, if within 15 km), the **rivers** (FOEN stations; default: the nearest that measures the water temperature, within 20 km) and **fog by region** (on by default). |
+| **Rain alert, wind, solar and indoor** | Rain alert from the radar (and how many minutes in advance), the *Strong gusts* threshold (50 km/h by default) and the warning level of *Weather warning in force* (2 = yellow by default), your solar panels (power, tilt, orientation) and indoor sensors (airing). |
+| **Watched places and persons** | Postal codes or places, and persons to follow (see [7](#7-add-another-place)). |
+
+The integration reloads by itself after a change.
+
+## 7. Add another place
+
+Two possibilities:
+
+- **Warnings for other places and for where you are**: *⚙️ Configure → Watched places and persons*. Enter postal codes or places (`2053` or `Cernier`, `3000` or `Bern`) and persons to follow (a person or your phone's tracker: the warnings follow you, in Switzerland). Each one becomes a device with the 7 warning sensors and its own triggers, and appears in the *Compare my places* card.
+- **A second complete place** (e.g. your chalet): on the integration page, **Add a service**, and choose its station and postal code. You get a second set of entities and can pick it in every card.
+
+## 8. Update
+
+HACS shows the new version → **Download** → **restart Home Assistant** → in the browser **Ctrl+F5** (in the app: *Settings → Companion app → Debugging → Reload frontend*). What changed is in the [CHANGELOG](https://github.com/SashConnection/meteoswiss4HA/blob/main/CHANGELOG.md). Versions follow the calendar: **YEAR.MONTH.N**.
+
+# The cards
 
 <table>
 <tr>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="100%" alt="Detailed weather"><br><b>Detailed weather</b><br><sub>Your place and altitude, the measurements you choose, hourly chart, 9 days</sub></td>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>A sketch of each plant, colored by the pollen level, for the stations you choose</sub>
-<br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="100%" alt="Forecast"><br><b>Forecast</b><br><sub>Compact current weather, hours and days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="100%" alt="Detailed weather"><br><b>Detailed weather</b><br><sub>Place, measurements you choose, hourly chart, 9 days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="100%" alt="Forecast"><br><b>Forecast</b><br><sub>Compact current weather, hours and days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>A sketch of each plant, colored by the level</sub></td>
 </tr>
 <tr>
-<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards and pollen — one tap to switch</sub></td>
-<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-map-home-radar.png" width="100%" alt="Map of your region"><br><b>Map of your region</b><br><sub>Any layer, zoomed on your home (here: radar over Neuchâtel)</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One temperature curve and rain over the next days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map, animated radar</sub></td>
 </tr>
 <tr>
-<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours: temperature with its uncertainty band, rain probability and amount</sub></td>
-<td valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One continuous temperature curve and rain over the next days</sub>
-<br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map with hazard chips, animated radar</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon, clouds, rain, snow — alive</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A verdict, what to wear, the best time</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Morning, afternoon, evening, sunrise and sunset</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon on its arc, drifting clouds, rain, snow, fog banks and stars — the weather of the moment, alive</sub></td>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A clear verdict, when the rain starts, what to wear, gusts, warnings, pollen, fog, the best time</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and Bern side by side</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, sea of fog, avalanches</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Neuchâtel → Chaumont → Chasseral, top and forecast</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Night, morning, afternoon, evening, with the temperature curve, sunrise and sunset</sub></td>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and your watched places (e.g. Bern) side by side, with the best place today</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes, water temperature, currents</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips.png" width="100%" alt="Tips of the day"><br><b>Tips of the day</b><br><sub>Laundry, frost, watering, stars, solar…</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris.png" width="100%" alt="Ephemeris"><br><b>Ephemeris</b><br><sub>Saint of the day, sun, moon drawn exactly</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, temperatures by altitude (measured and estimated), sea of fog, avalanche danger of your region, a large region or all of Switzerland</sub></td>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Reference stations from the plain to the summits (Neuchâtel, Chaumont, Chasseral…), top of the fog, 3-day forecast, map of Switzerland</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock and weather, red night mode</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard.png" width="100%" alt="Postcard"><br><b>Postcard</b><br><sub>Your town's monument and the weather, to share</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards, pollen</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes: water temperature and forecast, oxygen, thermocline, ice, depth profile; 13 lakes drawn in color with currents and the lakeside towns</sub></td>
-<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock, weather, next hours and warnings for a wall tablet</sub><br><br><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall-night.png" width="100%" alt="Night mode"><br><b>…and its night mode</b><br><sub>Dark red at night, so it does not light up the room</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain.png" width="100%" alt="Rain minute by minute"><br><b>Rain minute by minute</b><br><sub>The next 60 minutes, from the radar</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes.png" width="100%" alt="Climate stripes"><br><b>Climate stripes</b><br><sub>One stripe per year since 1864</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-month.png" width="100%" alt="Month summary"><br><b>Month summary</b><br><sub>This month vs the normal</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers.png" width="100%" alt="Rivers"><br><b>Rivers</b><br><sub>The Aare in Bern: water, flow, level</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air.png" width="100%" alt="Air quality"><br><b>Air quality</b><br><sub>Ozone, NO₂, fine particles</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow.png" width="100%" alt="Snow"><br><b>Snow</b><br><sub>Snow depth around you</sub></td>
 </tr>
 </table>
 
-Add them with **Edit dashboard → Add card → search "MeteoSwiss"**. Every setting is in the card editor, in clear sections: **no YAML needed, ever**. The YAML examples in this guide are only for those who like it.
-
-## Everything you find in the cards
-
-Add them with **Edit dashboard → Add card → "MeteoSwiss"**; then everything is set with the mouse.
+<sub>Screenshots: Neuchâtel and Bern; lake and fog show real data of 10 November 2026, other values are examples.</sub>
 
 | Card | What it shows | One-click settings |
 |---|---|---|
@@ -118,111 +211,16 @@ Add them with **Edit dashboard → Add card → "MeteoSwiss"**; then everything 
 | 💌 **Postcard** | Your town's monument, the weather and the moon, to share or download | Place |
 | 🎯 **Guess the maximum** | Bet on the maximum temperature, result in the evening, streak | — |
 | 🏷️ **Badge** | Pictogram and temperature at the top of a dashboard, "☂ Rain in 15 min" | Rain alert |
+| ☂️ **Rain minute by minute** | Rain at home over the next 60 minutes, bar by bar, when it starts or stops | — |
+| 📊 **Climate stripes** | One stripe per year since the station opened, last 10 years vs 1961–1990 | — |
+| 🗓️ **Month summary** | This month and last month: mean temperature, rain, sunshine, rain days, frost, summer and hot days, extremes, vs the normal | — |
+| 🏊 **Rivers** | Your FOEN stations: water temperature and swimming comfort, discharge, level, flood danger | Stations in the options |
+| 🌬️ **Air quality** | Overall level, ozone, NO₂, PM10, PM2.5 against the Swiss standards | Site in the options |
+| ❄️ **Snow** | Snow depth and today's change at the stations near home | — |
 
-### The sun: sunrise, sunset and day length
+<a id="card-forecast"></a>
 
-**Sunrise and sunset** are computed for your home, to the minute, with nothing to download. You find them:
-
-- in the **"Sun and moon"** section of most cards, with the **day length** and the change since yesterday ("9 h 29, −3 min vs yesterday");
-- in the **ephemeris**, in large;
-- in **"My day"**: the night is shaded on the temperature curve, with the sunrise ☀ and sunset ☾ times;
-- in the **live sky**: the sun follows its real path between sunrise and sunset, dawn and dusk color the sky, then the moon and the stars take over;
-- in **"Should I go out?"** ("Sunset 16:58") and in the wall screen's **automatic night mode**, which turns dark red at sunset;
-- in the **tips of the day**: "Beautiful sunset" when the clouds promise colors.
-
-For your automations: the **Day length** sensor (with sunrise, sunset and the change since yesterday) and the **"Beautiful sunset expected"** trigger.
-
-### The moon, drawn for the exact day
-
-The moon is not a stock icon: it is **drawn for the exact phase of the day**, the lit part at the right percentage, with craters and the dark side in night blue. It appears in the ephemeris, in the cards' "Sun and moon" section, in the live sky and on the postcard, with the **phase name in your language** and the **% illuminated**.
-
-![The moon phases](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/moon-phases-en.png)
-
-## A monument for every town
-
-Each town of the map has its own line pictogram of its best-known monument — the Zytglogge in Bern, the Jet d’eau in Geneva, the Kapellbrücke in Lucerne, the Matterhorn in Zermatt… They appear on the map labels and next to the place name in the cards (option `monument: false` to hide them).
-
-![Monuments](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/monuments.png)
-
-## Five languages
-
-Everything — settings, entities, cards and map — speaks **Deutsch, Français, Italiano, Rumantsch and English**. By default the cards follow the Home Assistant language; each card can also be set to another one.
-
-![The pollen card in five languages](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/languages.jpg)
-
-## Animated or static — your choice
-
-Three pictogram packs, one per MeteoSwiss weather symbol. Pick one in the integration options; the animated pack is the default.
-
-<p>
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/1.svg" width="64" alt="Sunny">
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/5.svg" width="64" alt="Cloudy">
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/17.svg" width="64" alt="Rain">
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/23.svg" width="64" alt="Thunderstorm">
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/26.svg" width="64" alt="Snow">
-<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/101.svg" width="64" alt="Clear night">
-</p>
-
-![Pictogram packs](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/packs.jpg)
-
-## Ready in 2 minutes
-
-1. **HACS** → ⋮ → Custom repositories → `https://github.com/SashConnection/meteoswiss4HA` (Integration) → Download → restart Home Assistant.
-2. **Settings → Devices & services → Add integration → MeteoSwiss Complete For HA**: pick your station and postal code (the nearest are suggested).
-3. **Add a card** to your dashboard: search "MeteoSwiss".
-
-> Screenshots: Neuchâtel and Bern; lake and fog cards show real data of 10 November 2026, some other values (forecasts, pollen) are examples.
-
----
-
-# User guide
-
-## Contents
-
-1. [Installation](#1-installation)
-2. [Settings](#2-settings)
-3. [Forecast card](#3-forecast-card) · [Tips, sun and moon](#3h-tips-of-the-day-sun-and-moon-and-more) · [Everyday panels](#3d-everyday-panels) · [Mountain](#3e-mountain) · [Fog by region](#3f-fog-by-region) · [Lakes](#3g-lakes)
-4. [Switzerland map](#4-switzerland-map)
-5. [One map per hazard, or zoomed on your region](#5-one-map-per-hazard-or-zoomed-on-your-region)
-6. [On a phone](#6-on-a-phone)
-7. [Entities for your automations](#7-entities-for-your-automations)
-8. [Updates and versions](#8-updates-and-versions)
-9. [Troubleshooting](#9-troubleshooting)
-10. [Technical notes](#10-technical-notes)
-11. [Data sources and license](#11-data-sources-and-license)
-
----
-
-## 1. Installation
-
-Requires Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
-
-1. In HACS, open the menu **⋮ → Custom repositories**.
-2. Add `https://github.com/SashConnection/meteoswiss4HA`, category **Integration**.
-3. Search for **MeteoSwiss Complete For HA**, click **Download**, then **restart Home Assistant**.
-4. **Settings → Devices & services → Add integration**, search for **MeteoSwiss Complete For HA**.
-5. Choose:
-   - the **weather station** (sorted from nearest to farthest from your home): it gives the current temperature, wind, etc.;
-   - the **postal code** used for the local forecast.
-
-The integration creates a weather entity and sensors, and adds two cards for your dashboards.
-
-## 2. Settings
-
-**Settings → Devices & services → MeteoSwiss Complete For HA → Configure**. The menu has six pages:
-
-| Page | Settings |
-|---|---|
-| **Display** | Pictogram pack: **Animated** (default), **Vivid** or **Classic**. Option **"Show the map page in the sidebar"** (off by default). |
-| **Forecast** | Hourly forecast on/off, horizon (48 h by default) and refresh interval. MeteoSwiss hourly files are large: reduce the horizon to save bandwidth. |
-| **Pollen and hazards** | Pollen station and avalanche region. "Automatic" picks the one nearest to your home. |
-| **Lakes and fog** | The lakes that get a water temperature sensor (default: the lake nearest to your home, if within 15 km) and **fog by region** (on by default). |
-| **Rain alert, solar and indoor** | Rain alert from the radar (and how many minutes in advance), your solar panels (power, tilt, orientation) and indoor sensors (airing). |
-| **Watched places and persons** | Postal codes or places, and persons to follow (see [3c](#3c-warnings-for-your-places-and-where-you-are)). |
-
-The integration reloads by itself after a change.
-
-## 3. Forecast card
+## Forecast
 
 The standard Home Assistant weather card always uses its own icons. To see **our pictograms** (animated by default), use the **MeteoSwiss forecast** card:
 
@@ -250,7 +248,9 @@ show_details: true    # humidity, wind, pressure
 
 The hourly part needs the **hourly forecast** turned on (Forecast settings page).
 
-### Detailed weather card
+<a id="card-weather"></a>
+
+## Detailed weather
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" alt="Detailed weather card" width="360" align="right">
 
@@ -276,7 +276,9 @@ days: 9
 
 <br clear="right">
 
-### Pollen card
+<a id="card-pollen"></a>
+
+## Pollen
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" alt="Pollen card" width="360" align="right">
 
@@ -293,7 +295,9 @@ language: auto        # or de, fr, it, rm, en
 
 <br clear="right">
 
-## 3b. Now, Days and Tiles cards
+<a id="card-now-days-tiles"></a>
+
+## Now, Days and Tiles
 
 | Now | Days | Tiles |
 |---|---|---|
@@ -312,27 +316,9 @@ tap_path: /meteoswiss                # page opened on tap
 
 The Days curve uses the hourly forecast where it exists (48 h by default) and continues through the daily minimum and maximum; set the hourly horizon to 120 h in the options for a full hourly curve.
 
-## 3c. Warnings for your places and where you are
+<a id="card-everyday"></a>
 
-**Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Watched places and persons**:
-
-- **Postal codes or places**: e.g. `2053` or `Cernier`, `3000` or `Bern` (the nearest forecast point is used);
-- **Persons to follow**: a person or the device tracker of your phone (Home Assistant app). The warnings follow its position (in Switzerland).
-
-Each one becomes a device (e.g. *MeteoSwiss Bern (3004)*) with the 7 weather warning sensors.
-
-### Ready-made automation triggers
-
-**Settings → Automations → Create → Add trigger → Device →** a MeteoSwiss device, then choose:
-
-- *Thunderstorm warning announced* (an upcoming warning is published),
-- *Rain warning starts* / *ends*,
-- *Wind warning reaches a level* (2 to 5),
-- on the main device also: *Forest fire / Flood / Drought / Avalanche danger reaches a level*, *Pollen reaches a level*, *Fog or low stratus forms*, *The fog clears*.
-
-Example: notify your phone when a thunderstorm warning is announced where you are — no YAML needed.
-
-## 3d. Everyday panels
+## Live sky, Should I go out?, My day, Compare, Wall screen
 
 | | |
 |---|---|
@@ -355,7 +341,9 @@ hours: 8
 show_seconds: false
 ```
 
-## 3e. Mountain
+<a id="card-mountain"></a>
+
+## Mountain
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain.png" alt="Mountain" width="380" align="right">
 
@@ -375,7 +363,9 @@ max_altitude: 4000
 
 <br clear="right">
 
-## 3f. Fog by region
+<a id="card-fog"></a>
+
+## Fog by region
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog.png" alt="Fog by region" width="380" align="right">
 
@@ -409,7 +399,9 @@ The forecast reads three MeteoSwiss hourly files every 6 hours (~90 MB); turn fo
 
 <br clear="right">
 
-## 3g. Lakes
+<a id="card-lake"></a>
+
+## Lakes
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake.png" alt="Lake of Neuchâtel" width="380" align="right">
 
@@ -432,9 +424,10 @@ depth: 1
 
 <br clear="right">
 
-## 3h. Tips of the day, sun and moon, and more
 
-### Tips of the day
+<a id="card-tips"></a>
+
+## Tips of the day
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips.png" alt="Tips of the day" width="380" align="right">
 
@@ -444,7 +437,9 @@ Each tip is also a sensor for your automations, and several have a ready-made tr
 
 <br clear="right">
 
-### Sun, moon and ephemeris
+<a id="card-ephemeris"></a>
+
+## Sun, moon and ephemeris
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris.png" alt="Ephemeris" width="380" align="right">
 
@@ -454,7 +449,9 @@ Sensors: *Moon phase*, *Day length*, *Saint of the day*.
 
 <br clear="right">
 
-### Rain arriving, solar panels, airing
+<a id="rain-solar-airing"></a>
+
+## Rain arriving, solar panels, airing
 
 **Settings → Devices & services → MeteoSwiss Complete For HA → Configure → Rain alert, solar and indoor**:
 
@@ -462,7 +459,9 @@ Sensors: *Moon phase*, *Day length*, *Saint of the day*.
 - **Solar panels**: enter the peak power (kWp), tilt and orientation — the sensors *Solar production today / tomorrow* give the kWh and the best hour, hour by hour in their attributes. Perfect to start the dishwasher or charge the car at the right time.
 - **Indoor sensors**: choose your indoor temperature and humidity sensors; *Airing* tells when opening the windows dries the house.
 
-### Postcard, guessing game, badge, ambiance color, dashboard background
+<a id="card-postcard"></a>
+
+## Postcard, guessing game, badge, ambiance color, dashboard background
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard.png" alt="Weather postcard" width="300" align="right">
 
@@ -474,9 +473,86 @@ Sensors: *Moon phase*, *Day length*, *Saint of the day*.
 
 <br clear="right">
 
-## 4. Switzerland map
+<a id="card-rain"></a>
 
-Add the **MeteoSwiss map** card to a dashboard (or turn on the sidebar page, see [Settings](#2-settings)). The toolbar at the top left switches maps; the **colored line** above each button shows the highest danger level currently in force in Switzerland.
+## Rain minute by minute
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain.png" alt="Rain minute by minute" width="320" align="right">
+
+The radar followed upstream of your home, every 5 minutes for the next hour: *Rain in 20 min*, *Raining — stops in about 15 min* or *No rain in the next hour*. Needs the rain alert (on by default).
+
+<br clear="right">
+
+<a id="card-stripes"></a>
+
+## Climate stripes and month summary
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes.png" alt="Climate stripes" width="320" align="right">
+
+**Climate stripes**: one stripe per year since your station opened (since 1864 in Neuchâtel or Bern), from blue (cool) to red (warm), and how much warmer the last 10 years are than 1961–1990.
+
+<a id="card-month"></a>**Month summary**: this month so far and last month — mean temperature, rain, sunshine, rain days, frost, summer and hot days, extremes — compared with the 1991–2020 normal (for the month in progress, with the share of the normal for the days already past).
+
+<br clear="right">
+
+<a id="card-rivers"></a>
+
+## Rivers
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers.png" alt="Rivers" width="320" align="right">
+
+The FOEN measures about 230 rivers and lakes every 10 minutes. Choose yours in *⚙️ Configure → Lakes, rivers and fog* (by default the nearest that measures the water temperature: the Aare in Bern, the Broye in Payerne…). Each one gets a *Water temperature* sensor (with the swimming comfort) and a *Discharge* or *Water level* sensor; the card shows them all, with the flood danger level (1 to 5).
+
+<br clear="right">
+
+<a id="card-air"></a>
+
+## Air quality
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air.png" alt="Air quality" width="320" align="right">
+
+The national monitoring network NABEL (16 sites, e.g. Chaumont, Bern, Payerne): ozone now, NO₂, PM10 and PM2.5 over 24 hours, against the Swiss air quality standards. Sensors *Air quality* (good, elevated, high, very high), *Ozone*, *Nitrogen dioxide*, *PM10*, *PM2.5*, and *Ozone peak* (on above 120 µg/m³). The nearest site is used; choose another one or turn it off in *Pollen, hazards and air*.
+
+<br clear="right">
+
+<a id="card-snow"></a>
+
+## Snow
+
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow.png" alt="Snow" width="320" align="right">
+
+The automatic snow depth of the 6 MeteoSwiss stations nearest to home, with the change since midnight. Sensor *Snow depth* (nearest station, the others as attributes).
+
+<br clear="right">
+
+<a id="sun-and-moon"></a>
+
+# Sun and moon
+
+## The sun: sunrise, sunset and day length
+
+**Sunrise and sunset** are computed for your home, to the minute, with nothing to download. You find them:
+
+- in the **"Sun and moon"** section of most cards, with the **day length** and the change since yesterday ("9 h 29, −3 min vs yesterday");
+- in the **ephemeris**, in large;
+- in **"My day"**: the night is shaded on the temperature curve, with the sunrise ☀ and sunset ☾ times;
+- in the **live sky**: the sun follows its real path between sunrise and sunset, dawn and dusk color the sky, then the moon and the stars take over;
+- in **"Should I go out?"** ("Sunset 16:58") and in the wall screen's **automatic night mode**, which turns dark red at sunset;
+- in the **tips of the day**: "Beautiful sunset" when the clouds promise colors.
+
+For your automations: the **Day length** sensor (with sunrise, sunset and the change since yesterday) and the **"Beautiful sunset expected"** trigger.
+
+## The moon, drawn for the exact day
+
+The moon is not a stock icon: it is **drawn for the exact phase of the day**, the lit part at the right percentage, with craters and the dark side in night blue. It appears in the ephemeris, in the cards' "Sun and moon" section, in the live sky and on the postcard, with the **phase name in your language** and the **% illuminated**.
+
+![The moon phases](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/moon-phases-en.png)
+
+<a id="card-map"></a>
+
+# Switzerland map
+
+Add the **MeteoSwiss map** card to a dashboard (or turn on the sidebar page, see [Change the settings](#6-change-the-settings)). The toolbar at the top left switches maps; the **colored line** above each button shows the highest danger level currently in force in Switzerland.
 
 Buttons under the zoom: **⌖** re-centers the map, **+ / −** zoom.
 
@@ -518,7 +594,7 @@ FOEN maps by region (and by river for floods). The **Avalanches** (SLF bulletin,
 | 4 | red | High danger |
 | 5 | dark red | Very high danger |
 
-## 5. One map per hazard, or zoomed on your region
+## One map per hazard, or zoomed on your region
 
 In the **MeteoSwiss map** card editor:
 
@@ -542,13 +618,87 @@ legend: true
 height: 360
 ```
 
-## 6. On a phone
+## On a phone
 
 <img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/mobile.jpg" alt="On a phone" width="300">
 
 On a narrow screen the legend becomes one compact line and the tabs use icons. On the sidebar page, the ☰ button opens the Home Assistant menu.
 
-## 7. Entities for your automations
+# Automations
+
+Everything here is chosen in menus: see [Create an automation](#5-create-an-automation).
+
+## Yes / no sensors
+
+They are **on** when something is happening or needs doing — an automation only needs *"when it turns on"*.
+
+| Sensor | On when… |
+|---|---|
+| ☔ **Raining now** | the station measured rain in the last 10 minutes, or the radar sees rain at home |
+| 🌧️ **Rain soon** | the radar sees rain reaching home within the alert time (20 min by default); attribute `minutes` |
+| 💨 **Strong gusts** | gusts reach the threshold (50 km/h by default) now or in the next 3 hours — close the awning; attributes: peak and its time |
+| ⚠️ **Weather warning in force** | a MeteoSwiss warning at home reaches the chosen level (2 = yellow by default); attributes: which warnings, highest level, upcoming |
+| ❄️ **Frost risk tonight** | frost is possible or likely in the coming night |
+| 👕 **Good for drying laundry** | the rest of today is good to dry laundry outside |
+| 🌫️ **Fog at home** | fog or low stratus in your region now |
+| 🪴 **Watering needed** | the water balance of the last days says the garden needs water |
+| 🪟 **Air the rooms now** | opening the windows dries the house (only with your indoor sensors) |
+| 🚗 **Frozen windscreen tomorrow morning** | the morning (5–8 h) will be below zero, or close to zero under a clear sky |
+| 🌱 **Good day to mow** | March to October, dry now and for the rest of the day, warm enough |
+| 🌙 **Cool night: air tonight** | a warm day (25 °C or more) followed by a night at 18 °C or less — open the windows to cool the house |
+| 🫁 **Ozone peak** | ozone above the Swiss standard (120 µg/m³) at the NABEL site |
+
+The thresholds are in *⚙️ Configure → Rain alert, wind, solar and indoor*.
+
+## Forecast numbers
+
+Plain numbers, for *"if the maximum tomorrow is above 30 °C…"*:
+
+| Sensor | Value |
+|---|---|
+| **Maximum today / tomorrow**, **Minimum today / tomorrow** | °C of the local forecast |
+| **Precipitation today / tomorrow** | mm |
+| **Rain probability today / tomorrow** | % (highest hourly probability of the day) |
+| **Strongest gust today** | km/h still expected today, with its time |
+| **Rain arrives in** | minutes before the rain reaches home (radar); the 60-minute timeline as attribute |
+| **Feels like** | °C: wind chill in the cold, heat index in the heat |
+| **Pressure trend (3 h)** | hPa per 3 hours: falling fast, falling, steady, rising, rising fast |
+| **Snow depth** | cm at the nearest station that measures it |
+| **Water temperature / Discharge / Water level** *(river)* | °C, m³/s, m of your FOEN stations |
+| **Ozone**, **Nitrogen dioxide**, **PM10**, **PM2.5** | µg/m³ at the NABEL site |
+
+Use them with **+ Add trigger → Entity → Numeric state**, e.g. *Minimum tomorrow* below 0 → cover the plants.
+
+<a id="ready-made-triggers"></a>
+
+## Ready-made triggers
+
+**+ Add trigger → Device →** your MeteoSwiss place, then:
+
+- weather warnings: *Thunderstorm warning announced* (an upcoming warning is published), *Rain warning starts / ends*, *Wind warning reaches a level* (2 to 5) — also for your watched places and persons;
+- *Forest fire / Flood / Drought / Avalanche danger reaches a level*, *Pollen reaches a level*;
+- *Fog or low stratus forms*, *The fog clears*;
+- *Rain arrives soon*, *First frost of the season*, *First snow of the season*, *Rainbow possible*, *Beautiful sunset expected*, *Foehn blows*, *Bise blows*.
+
+## Ready-made automations (blueprints)
+
+Click **Import**, confirm, then **Create automation** from the blueprint: choose your sensor, your phone (Home Assistant app) or your covers, save. The texts of the messages can be changed in your language.
+
+| Automation | What it does | |
+|---|---|---|
+| 💨 **Close the awning before strong gusts** | Closes awnings, blinds or shutters when *Strong gusts* turns on (optionally also when it rains) | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fclose_awning_wind.yaml) |
+| 🌧️ **Rain is coming** | Notifies your phone: *"Rain reaches home in about 15 minutes"* | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Frain_alert.yaml) |
+| ❄️ **Frost tonight** | In the evening, warns you when frost is expected, with the minimum | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Ffrost_alert.yaml) |
+| ⚠️ **Weather warning** | Notifies you when a warning comes into force at home | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fweather_warning.yaml) |
+| 🚗 **Frozen windscreen** | In the evening, warns you when the windscreen will be frozen tomorrow morning | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fwindshield_frost.yaml) |
+| ☀️ **Morning weather** | Every morning, the day in one sentence, the maximum and the rain probability — on your phone and, if you like, read aloud by a speaker | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fmorning_briefing.yaml) |
+
+## Calendar and Energy dashboard
+
+- **Weather calendar** (`calendar.<location>_weather_calendar`): weather warnings in force and announced, full and new moons, hot days (30 °C or more), frost and heavy rain of the forecast. It shows in the Home Assistant calendar and can trigger automations (*Calendar event starts*).
+- **Energy dashboard**: when your solar panels are set (*Rain alert, wind, solar and indoor*), **Settings → Dashboards → Energy → Solar panels → Solar production forecast** offers *MeteoSwiss Complete For HA*: the estimated production appears in the Energy charts.
+
+# All entities
 
 | Entity | Content |
 |---|---|
@@ -568,8 +718,17 @@ On a narrow screen the legend becomes one compact line and the tabs use icons. O
 | `sensor.<location>_temperature_vs_normal`, `_yesterday_s_maximum`, `_warmest_of_the_year`, `_coldest_of_the_year`, `_strongest_gust_of_the_year`, `_first_frost_of_the_season`, `_first_snow_of_the_season` | History of your station: normal 1991–2020, yesterday, records, first frost and snow. |
 | `sensor.<location>_fog`, `_fog_top` | Fog / low stratus in your region and the estimated top (m). |
 | `sensor.<location>_water_temperature_<lake>` | Water temperature of a lake (1 m), with forecast, oxygen, thermocline, ice and lake facts as attributes. |
+| `binary_sensor.<location>_raining_now`, `_rain_soon`, `_strong_gusts`, `_weather_warning_in_force`, `_frost_risk_tonight`, `_good_for_drying_laundry`, `_fog_at_home`, `_watering_needed`, `_air_the_rooms_now` | Yes / no sensors for automations (see [above](#yes--no-sensors)). |
+| `sensor.<location>_maximum_today`, `_minimum_today`, `_maximum_tomorrow`, `_minimum_tomorrow`, `_precipitation_today`, `_precipitation_tomorrow`, `_rain_probability_today`, `_rain_probability_tomorrow`, `_strongest_gust_today` | Forecast numbers. |
+| `binary_sensor.<location>_frozen_windscreen_tomorrow_morning`, `_good_day_to_mow`, `_cool_night_air_tonight`, `_ozone_peak` | More yes / no sensors. |
+| `sensor.<location>_feels_like`, `_pressure_trend_3_h`, `_snow_depth` | Feels-like temperature, pressure trend (with `trend`), snow depth (stations around as attributes). |
+| `sensor.<location>_water_temperature_<station>`, `_discharge_<station>`, `_water_level_<station>` | Rivers (FOEN): values, flood danger, swimming comfort. |
+| `sensor.<location>_air_quality`, `_ozone`, `_nitrogen_dioxide`, `_pm10`, `_pm2_5` | Air quality (NABEL). |
+| `calendar.<location>_weather_calendar` | Weather calendar. |
 
-Example: get notified as soon as a thunderstorm warning is announced.
+The entity ids above are those of an English Home Assistant; they follow the language set when the integration was added.
+
+For those who like YAML: a notification as soon as a thunderstorm warning is announced.
 
 ```yaml
 triggers:
@@ -592,16 +751,34 @@ type: picture-entity
 entity: sensor.home_meteoswiss_symbol
 ```
 
-## 8. Updates and versions
+# Languages, pictograms and monuments
 
-Versions follow the calendar: **YEAR.MONTH.N**, for example 2026.11.0, then 2026.11.1 for the next update in the same month, 2026.12.0 the following month. What changed in each version is in the [CHANGELOG](https://github.com/SashConnection/meteoswiss4HA/blob/main/CHANGELOG.md).
+Everything — settings, entities, cards and map — speaks **Deutsch, Français, Italiano, Rumantsch and English**. By default the cards follow the Home Assistant language; each card can also be set to another one.
 
-To update: HACS offers the new version → **Download** → **restart Home Assistant** → in the browser, **Ctrl+F5** to reload the cards.
+![The pollen card in five languages](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/languages.jpg)
 
-## 9. Troubleshooting
+Three pictogram packs, one per MeteoSwiss weather symbol. Pick one in the integration options; the animated pack is the default.
+
+<p>
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/1.svg" width="64" alt="Sunny">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/5.svg" width="64" alt="Cloudy">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/17.svg" width="64" alt="Rain">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/23.svg" width="64" alt="Thunderstorm">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/26.svg" width="64" alt="Snow">
+<img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/custom_components/meteoswiss4ha/icons/animated/101.svg" width="64" alt="Clear night">
+</p>
+
+![Pictogram packs](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/packs.jpg)
+
+Each town of the map has its own line pictogram of its best-known monument — the Zytglogge in Bern, the Jet d’eau in Geneva, the Kapellbrücke in Lucerne, the Matterhorn in Zermatt… They appear on the map labels and next to the place name in the cards (option `monument: false` to hide them).
+
+![Monuments](https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/monuments.png)
+
+# Troubleshooting
 
 | Problem | Solution |
 |---|---|
+| No MeteoSwiss card in *Add card* | Restart Home Assistant once after installing (*Settings → Repairs* has a button for it), then Ctrl+F5. Search **MeteoSwiss**. |
 | The cards did not change after an update | Ctrl+F5 in the browser; in the mobile app, *App settings → Debugging → Reload frontend*. |
 | The map is off-center | **⌖** button under the zoom. |
 | "The radar is not available at the moment" | The project's radar server does not answer; it recovers by itself, try again later. |
@@ -610,23 +787,63 @@ To update: HACS offers the new version → **Download** → **restart Home Assis
 | The fog card says "unavailable" | Turn on *Fog and low stratus by region* in *Lakes and fog*. |
 | A lake card stays empty | The Eawag server limits the number of requests; the card retries at the next refresh. |
 
-## 10. Technical notes
+# Technical notes
 
 - **Bandwidth**: MeteoSwiss publishes one hourly forecast file per parameter for all ~5,800 points (~33 MB each). The integration streams them and stops once the requested horizon is reached (~8 MB per parameter for 48 h).
 - **Fog**: the forecast reads three whole hourly files (low clouds, sunshine, symbol: ~90 MB) every 6 hours; the measurements come with the current conditions (no extra download). The top altitude is an estimate between two stations.
 - **History and normals**: the station's daily values of the year (~50 kB, every 3 hours); the 1991–2020 normals are computed once a week from its full daily history (~6 MB).
 - **Rain alert**: two radar images every 5 minutes (a few kB), compared around your home to follow the rain.
 - **Sun and moon**: computed in Home Assistant and in the browser, nothing downloaded.
+- **Rivers**: one small query (~60 kB) every 10 minutes to the federal linked data service LINDAS for all FOEN stations.
+- **Air quality**: the FOEN NABEL table (~16 kB) once an hour.
+- **Snow and pressure trend**: today's 10-minute values of your station every 10 minutes (~8 kB), and of the 6 nearest snow stations once an hour.
 - **Lakes**: the Eawag Alplakes API is called once per hour per chosen lake, one request at a time; the cards' map layers are cached for 3 hours.
 - **Radar**: the radar images and the precipitation forecast are prepared by a server run by the project (`ha.jesaispas.ch`) from MeteoSwiss data; Home Assistant downloads them from there. If this server does not answer, the map says the radar is not available for the moment.
 - **Pictograms**: generated by `node scripts/generate_icons.mjs` (vivid and classic packs, `THEMES` / `SPEC`) and `scripts/animated_icons.mjs` (animated pack). The animations stop when the device asks for reduced motion.
 
-## 11. Data sources and license
+# Data sources and license
 
 Data: **Source: MeteoSwiss** — Open Government Data under [CC BY 4.0](https://opendatadocs.meteoswiss.ch/general/terms-of-use). Symbol descriptions are the official MeteoSwiss texts.
 Weather warnings: MeteoSwiss, published through [MeteoAlarm](https://meteoalarm.org) (EUMETNET, CC BY 4.0); they are not part of the MeteoSwiss Open Data catalogue. MeteoAlarm uses 4 colors, so MeteoSwiss levels 4 and 5 both show as level 4.
 Natural hazards: FOEN (forest fire, floods, drought) and SLF (avalanches). Base map © swisstopo.
+Rivers: FOEN (BAFU) hydrological data, provisional, through [LINDAS](https://lindas.admin.ch). Air quality: NABEL (FOEN / Empa), provisional data.
 Lakes: [Eawag Alplakes](https://www.alplakes.eawag.ch) (Simstrat, MITgcm and Delft3D models), CC BY 4.0. Lake facts (altitude, area, depth, volume) are rounded reference values.
 This project is not affiliated with or endorsed by MeteoSwiss. The pictograms are original artwork, not the official MeteoSwiss pictograms.
 
 Code and pictograms: MIT License.
+
+# What's new, version by version
+
+**2026.11.13** — the big one
+- **Rivers** (FOEN): the Aare in Bern and about 230 stations — water temperature with swimming comfort, discharge, level, flood danger. New *Rivers* card.
+- **Air quality** (NABEL): ozone, NO₂, PM10, PM2.5, overall level and an *Ozone peak* sensor. New *Air quality* card.
+- **Snow depth** at the stations around you, **feels-like temperature**, **pressure trend**. New *Snow* card.
+- New cards **Rain minute by minute**, **Climate stripes** (since 1864) and **Month summary**.
+- **Weather calendar** and your **solar forecast in the Energy dashboard**.
+- **Automations made easy**: yes / no sensors (*Raining now*, *Rain soon*, *Strong gusts*, *Weather warning in force*, *Frost risk tonight*, *Frozen windscreen tomorrow morning*, *Good day to mow*, *Cool night*, *Good for drying laundry*, *Fog at home*, *Watering needed*, *Air the rooms now*, *Ozone peak*), forecast numbers (maximum and minimum today and tomorrow, rain, gusts) and **6 one-click automations**.
+- **Sun, moon and ephemeris** in the cards: sunrise, sunset, day length, the moon drawn for the exact day, saint of the day. New *Ephemeris* card.
+- **Tips of the day**: laundry, frost, watering, stars, sunset, rainbow, foehn, bise, airing, solar production, the day in one sentence. **Station history**: yesterday, the 1991–2020 normal, records, first frost and snow.
+- **Escape the fog**: the nearest summit in the sun. **Lakes**: swimming comfort. **Fun**: postcard, guessing game, badge, ambiance color, live sky as background.
+- **No YAML, ever**: every card has a clear editor with sections; card names in your language; restart reminder and one-click restart in *Repairs*; new step-by-step guide.
+
+**2026.11.12** — The Switzerland map escapes the texts coming from the federal feeds (security).
+
+**2026.11.11** — Ready for the HACS default catalogue.
+
+**2026.11.10** — **Fog by region** (sea of fog now and for 3 days, with its top), **27 lakes** (water temperature, forecast, oxygen, currents drawn in color), the **Mountain** card (0 °C level, snow line, avalanches) and the everyday cards: **live sky**, **Should I go out?**, **My day**, **Compare my places**, **wall screen**.
+
+**2026.11.9** — A **monument** drawn for each town of the map.
+
+**2026.11.8** — **Watched places and followed persons** with their warnings, **ready-made automation triggers** in 5 languages, and the **Now**, **Days** and **Tiles** cards.
+
+**2026.11.7** — New presentation page, 24-hour times everywhere.
+
+**2026.11.6** — Everything in **5 languages**: German, French, Italian, Romansh and English.
+
+**2026.11.5** — The **pollen card** with a sketch of each plant.
+
+**2026.11.2 – 2026.11.4** — The **detailed weather card** (measurements of your choice, hourly chart with the uncertainty band, 9 days) and the logo.
+
+**2026.11.0 – 2026.11.1** — First release: weather entity, station measurements, forecast, pollen, natural hazards and weather warnings, **animated pictograms**, the **forecast card** and the **Switzerland map** with the radar.
+
+The details are in the [CHANGELOG](https://github.com/SashConnection/meteoswiss4HA/blob/main/CHANGELOG.md).

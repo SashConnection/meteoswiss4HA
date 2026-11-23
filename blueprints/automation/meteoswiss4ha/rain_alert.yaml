@@ -1,0 +1,52 @@
+blueprint:
+  name: MeteoSwiss – Rain is coming
+  description: >-
+    Sends a notification to your phone when the radar of MeteoSwiss Complete For HA
+    sees rain reaching your home (the delay is set in the integration options).
+    Perfect to bring in the laundry or close the windows.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/rain_alert.yaml
+  input:
+    rain_soon:
+      name: Rain soon sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    phone:
+      name: Phone to notify
+      description: A phone with the Home Assistant app.
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    title:
+      name: Title
+      default: "🌧️ Rain is coming"
+      selector:
+        text:
+    message:
+      name: Message
+      description: "{minutes} is replaced by the minutes before the rain."
+      default: "Rain reaches home in about {minutes} minutes."
+      selector:
+        text:
+          multiline: true
+mode: single
+max_exceeded: silent
+triggers:
+  - trigger: state
+    entity_id: !input rain_soon
+    from: "off"
+    to: "on"
+variables:
+  sensor: !input rain_soon
+  text: !input message
+actions:
+  - device_id: !input phone
+    domain: mobile_app
+    type: notify
+    title: !input title
+    message: >-
+      {{ text | replace('{minutes}', (state_attr(sensor, 'minutes') or 0) | string) }}

@@ -206,7 +206,7 @@ class MeteoSwissForecastCard extends HTMLElement {
     const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
     return sectionEditor({
       defaults: { forecast: "both", days: 7, hours: 12, show_current: true, show_details: true },
-      labels: L, astro: true, doc: { fr: "#3-carte-prévisions", en: "#3-forecast-card" },
+      labels: L, astro: true, doc: { fr: "#card-forecast", en: "#card-forecast" },
       top: () => [F.weather, F.text("name")],
       sections: [
         { key: "display", icon: "mdi:view-dashboard-outline", title: ST("Prognose", "Prévisions", "Previsioni", "Prognosas", "Forecast"), keys: ["forecast", "days", "hours"],

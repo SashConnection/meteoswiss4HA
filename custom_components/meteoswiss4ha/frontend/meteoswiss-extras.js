@@ -87,7 +87,7 @@ class MeteoSwissEphemerisCard extends HTMLElement {
   }
   getCardSize() { return 5; }
   static getStubConfig() { return {}; }
-  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#soleil-lune-et-éphéméride", en: "#sun-moon-and-ephemeris" }, sections: [] }); }
+  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#card-ephemeris", en: "#card-ephemeris" }, sections: [] }); }
 }
 
 // ================================================================= tips
@@ -160,7 +160,7 @@ class MeteoSwissTipsCard extends HTMLElement {
       rm: { summary: "Il di en ina frasa", rain_arrival: "Plievgia en … minutas", solar_today: "Solar oz", solar_tomorrow: "Solar damaun", drying: "Sitgar la rauba", frost_tonight: "Gelischun questa notg", watering: "Bagnar", stargazing: "Stailas", sunset_quality: "Rendida dal sulegl", rainbow: "Artg da la plievgia", foehn: "Föhn", bise: "Bisa", airing: "Aerar", temperature_anomaly: "Differenza da la norma", yesterday: "Ier", year_max_temperature: "Il pli chaud da l’onn", year_min_temperature: "Il pli fraid da l’onn", year_max_gust: "Il buf il pli ferm", first_frost: "Emprima gelischun", first_snow: "Emprima naiv", moon_phase: "Fasa da la glina", ephemeris: "Sogn dal di" },
       en: { summary: "Today in a sentence", rain_arrival: "Rain in … minutes", solar_today: "Solar today", solar_tomorrow: "Solar tomorrow", drying: "Laundry drying", frost_tonight: "Frost tonight", watering: "Watering", stargazing: "Stars", sunset_quality: "Sunset", rainbow: "Rainbow", foehn: "Foehn", bise: "Bise", airing: "Airing", temperature_anomaly: "Vs normal", yesterday: "Yesterday", year_max_temperature: "Warmest of the year", year_min_temperature: "Coldest of the year", year_max_gust: "Strongest gust", first_frost: "First frost", first_snow: "First snow", moon_phase: "Moon phase", ephemeris: "Saint of the day" },
     };
-    return sectionEditor({ defaults: { items: DEFAULT_TIPS }, labels: LABELS, doc: { fr: "#conseils-du-jour", en: "#tips-of-the-day" },
+    return sectionEditor({ defaults: { items: DEFAULT_TIPS }, labels: LABELS, doc: { fr: "#card-tips", en: "#card-tips" },
       top: () => [F.text("name")],
       sections: [{ key: "items", icon: "mdi:lightbulb-on-outline", title: ST("Tipps", "Conseils", "Consigli", "Cussegls", "Tips"), keys: ["items"],
         fields: ({ lang }) => [{ name: "items", selector: { select: { multiple: true, reorder: true, mode: "list", options: TIP_KEYS.map((k) => ({ value: k, label: TIPN[lang][k] })) } } }],
@@ -243,7 +243,7 @@ class MeteoSwissPostcardCard extends HTMLElement {
   }
   getCardSize() { return 8; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#carte-postale-météo", en: "#weather-postcard" }, top: () => [F.weather, F.text("name"), F.text("place")], sections: [] }); }
+  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#card-postcard", en: "#card-postcard" }, top: () => [F.weather, F.text("name"), F.text("place")], sections: [] }); }
 }
 
 // ================================================================ guess
@@ -308,7 +308,7 @@ class MeteoSwissGuessCard extends HTMLElement {
   }
   getCardSize() { return 3; }
   static getStubConfig(hass) { return {}; }
-  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#devinette", en: "#guessing-game" }, top: () => [F.weather, F.text("name")], sections: [] }); }
+  static getConfigElement() { return sectionEditor({ labels: LABELS, doc: { fr: "#card-postcard", en: "#card-postcard" }, top: () => [F.weather, F.text("name")], sections: [] }); }
 }
 
 // ================================================================ badge
@@ -338,7 +338,7 @@ class MeteoSwissBadge extends HTMLElement {
       this.dispatchEvent(new CustomEvent("hass-more-info", { bubbles: true, composed: true, detail: { entityId: id } })));
   }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
-  static getConfigElement() { return sectionEditor({ defaults: { show_rain: true }, labels: LABELS, doc: { fr: "#badge-météo", en: "#weather-badge" }, top: () => [F.weather, F.bool("show_rain")], sections: [] }); }
+  static getConfigElement() { return sectionEditor({ defaults: { show_rain: true }, labels: LABELS, doc: { fr: "#card-postcard", en: "#card-postcard" }, top: () => [F.weather, F.bool("show_rain")], sections: [] }); }
 }
 if (!customElements.get("meteoswiss-badge")) {
   customElements.define("meteoswiss-badge", MeteoSwissBadge);

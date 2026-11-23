@@ -156,14 +156,20 @@ def nowcast(old: list[list[float]], new: list[list[float]], geo: Geo, lat: float
         vals = [new[j][i] for j in range(yi - 1, yi + 2) for i in range(xi - 1, xi + 2) if 0 <= j < rows and 0 <= i < cols]
         return sum(vals) / len(vals) if vals else 0.0
     km = geo.km_per_cell()
-    if rain_at(cy, cx) >= 0.3:
-        return {"state": "raining", "minutes": 0}
     dy, dx, quality = motion(old, new, cy, cx, int(WINDOW_KM / km))
+    moving = quality >= 0.3 and bool(dx or dy)
+    # Share of rain around home every 5 minutes for the next hour (radar followed upstream).
+    timeline = []
+    for minutes in range(0, HORIZON + 1, 5):
+        k = minutes / minutes_between if moving else 0
+        timeline.append({"minutes": minutes, "rain": round(rain_at(cy - dy * k, cx - dx * k), 2)})
+    if rain_at(cy, cx) >= 0.3:
+        return {"state": "raining", "minutes": 0, "timeline": timeline}
     speed = math.hypot(dy, dx) * km / minutes_between * 60  # km/h
     # Direction the rain comes from (0 = north).
     bearing = (math.degrees(math.atan2(-dx, dy)) + 360) % 360 if (dx or dy) else None
     result: dict[str, Any] = {"state": "none", "minutes": None, "speed": round(speed), "from_bearing": round(bearing) if bearing is not None else None,
-                              "match": round(quality, 2)}
+                              "match": round(quality, 2), "timeline": timeline}
     if quality < 0.3 or not (dx or dy):
         return result
     for minutes in range(5, HORIZON + 1, 5):

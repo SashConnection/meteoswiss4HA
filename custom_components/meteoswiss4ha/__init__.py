@@ -17,7 +17,10 @@ from homeassistant.helpers.typing import ConfigType
 
 from .api import MeteoSwissClient, MeteoSwissError, distance_km
 from .const import (
+    AIR_OFF,
+    CONF_AIR_SITE,
     CONF_FOG,
+    CONF_RIVERS,
     CONF_LAKES,
     CONF_NOWCAST,
     CONF_STATION,
@@ -45,14 +48,18 @@ from .coordinator import (
 from .fog import FogCoordinator
 from .history import HistoryCoordinator
 from .nowcast import NowcastCoordinator
+from .air import AirCoordinator, nearest_site
+from .hydro import HydroCoordinator, default_stations
+from .station_now import StationNowCoordinator
 from .hazards import HazardClient
 from .lakes import LAKES_BY_KEY, AlplakesClient, LakeCoordinator, default_lakes
 from .overview import async_register_views
 from .places import Place, WarningsCoordinator, async_resolve_places
+from .repairs import async_ask_restart, async_clear_restart
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.WEATHER]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.CALENDAR, Platform.SENSOR, Platform.WEATHER]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -70,6 +77,12 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     # Cards: load the module on every dashboard.
     add_extra_js_url(hass, MODULE_URL)
+    # Set up while Home Assistant runs (first install): dashboards offer the
+    # cards after a restart, so ask for one in Repairs.
+    if hass.is_running:
+        async_ask_restart(hass)
+    else:
+        async_clear_restart(hass)
     return True
 
 
@@ -128,6 +141,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: MeteoSwissConfigEntry) -
         lakes=await _async_setup_lakes(hass, entry),
         history=await _async_setup_history(hass, entry),
         nowcast=await _async_setup_nowcast(hass, entry),
+        station_now=await _async_setup_station_now(hass, entry, client),
+        rivers=await _async_setup_rivers(hass, entry),
+        air=await _async_setup_air(hass, entry),
     )
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -176,6 +192,39 @@ async def _async_setup_nowcast(
     nowcast = NowcastCoordinator(hass, entry)
     await nowcast.async_refresh()
     return nowcast
+
+
+async def _async_setup_station_now(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry, client: MeteoSwissClient
+) -> StationNowCoordinator:
+    """Pressure trend at home and snow depth around (never blocking)."""
+    coordinator = StationNowCoordinator(hass, entry, client, entry.data[CONF_STATION])
+    await coordinator.async_refresh()
+    return coordinator
+
+
+async def _async_setup_rivers(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> HydroCoordinator | None:
+    """Rivers of the FOEN network (default: the nearest with a water temperature)."""
+    chosen = entry.options.get(CONF_RIVERS)
+    coordinator = HydroCoordinator(hass, entry, list(chosen or []))
+    await coordinator.async_refresh()
+    if chosen is None and coordinator.data:
+        coordinator.chosen = default_stations(coordinator.data, hass.config.latitude, hass.config.longitude)
+    return coordinator if coordinator.chosen else None
+
+
+async def _async_setup_air(
+    hass: HomeAssistant, entry: MeteoSwissConfigEntry
+) -> AirCoordinator | None:
+    """Air quality of the nearest NABEL site (or the chosen one, or off)."""
+    site = entry.options.get(CONF_AIR_SITE)
+    if site == AIR_OFF:
+        return None
+    coordinator = AirCoordinator(hass, entry, site or nearest_site(hass.config.latitude, hass.config.longitude))
+    await coordinator.async_refresh()
+    return coordinator
 
 
 async def _async_setup_lakes(

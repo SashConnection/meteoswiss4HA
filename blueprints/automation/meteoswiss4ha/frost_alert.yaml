@@ -1,0 +1,65 @@
+blueprint:
+  name: MeteoSwiss – Frost tonight
+  description: >-
+    In the evening, warns you when MeteoSwiss Complete For HA expects frost in the
+    coming night: bring the plants in, cover the windscreen.
+  domain: automation
+  source_url: https://github.com/SashConnection/meteoswiss4HA/blob/main/blueprints/automation/meteoswiss4ha/frost_alert.yaml
+  input:
+    frost:
+      name: Frost risk tonight sensor
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: binary_sensor
+    minimum:
+      name: Minimum tonight sensor (optional, shown in the message)
+      default: ""
+      selector:
+        entity:
+          filter:
+            - integration: meteoswiss4ha
+              domain: sensor
+    time:
+      name: Time of the check
+      default: "18:00:00"
+      selector:
+        time:
+    phone:
+      name: Phone to notify
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+    title:
+      name: Title
+      default: "❄️ Frost tonight"
+      selector:
+        text:
+    message:
+      name: Message
+      description: "{minimum} is replaced by the expected minimum."
+      default: "Frost is expected tonight ({minimum}). Bring the plants in and cover the windscreen."
+      selector:
+        text:
+          multiline: true
+mode: single
+triggers:
+  - trigger: time
+    at: !input time
+conditions:
+  - condition: state
+    entity_id: !input frost
+    state: "on"
+variables:
+  minimum_entity: !input minimum
+  text: !input message
+actions:
+  - device_id: !input phone
+    domain: mobile_app
+    type: notify
+    title: !input title
+    message: >-
+      {% set m = states(minimum_entity) if minimum_entity else 'unknown' %}
+      {{ text | replace('{minimum}', (m ~ ' °C') if m not in ['unknown', 'unavailable', ''] else '< 0 °C') }}

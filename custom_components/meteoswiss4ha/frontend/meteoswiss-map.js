@@ -19,6 +19,8 @@ import "./meteoswiss-panels.js";
 import "./meteoswiss-mountain.js";
 import "./meteoswiss-lake.js";
 import "./meteoswiss-extras.js";
+import "./meteoswiss-more.js";
+import { translateCardList } from "./meteoswiss-card-names.js";
 
 // Text from remote feeds (FOEN, SLF, MeteoSwiss) is always escaped before it goes into HTML.
 const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -976,7 +978,7 @@ class MeteoSwissMapCard extends HTMLElement {
     const layerOptions = (lang) => LAYERS.map((v) => ({ value: v, label: I18N[lang].heading[v] }));
     return sectionEditor({
       defaults: { area: "switzerland", legend: true, height: 420 },
-      labels: L, doc: { fr: "#4-carte-de-la-suisse", en: "#4-switzerland-map" },
+      labels: L, doc: { fr: "#card-map", en: "#card-map" },
       clean: (c) => { if (Array.isArray(c.layers) && !c.layers.length) delete c.layers; if (c.area !== "home") delete c.zoom; return c; },
       top: ({ lang }) => [F.select("layer", layerOptions(lang))],
       sections: [
@@ -1060,3 +1062,6 @@ if (!customElements.get("meteoswiss-map-card")) {
     description: "Switzerland or your region: weather, radar, weather warnings, forest fire, floods, drought, avalanches and pollen.",
   });
 }
+
+// All cards are registered: show their names in the Home Assistant language.
+translateCardList();

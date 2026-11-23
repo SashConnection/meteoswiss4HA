@@ -3,11 +3,30 @@
 Versions follow the calendar: `YEAR.MONTH.N` (N starts at 0 each month), like Home Assistant.
 The minimum Home Assistant version is a separate setting (2026.1).
 
+## 2026.11.13
+
+The big update: everything of the 2026.11.12b0 pre-release (below), plus:
+
+- **Rivers** (FOEN, via LINDAS): about 230 stations, water temperature with swimming comfort, discharge, level and flood danger; choose them in "Lakes, rivers and fog". New Rivers card.
+- **Air quality** (NABEL): ozone, NO2, PM10, PM2.5, overall level and an "Ozone peak" sensor; nearest site, another one or off in "Pollen, hazards and air". New Air quality card.
+- **Snow depth** at the 6 stations nearest to home, **feels-like temperature**, **pressure trend** over 3 hours. New Snow card.
+- New cards **Rain minute by minute** (radar timeline), **Climate stripes** (one stripe per year since the station opened) and **Month summary** (vs the 1991-2020 normal).
+- **Weather calendar** (warnings, full and new moons, hot days, frost, heavy rain) and the **solar forecast in the Energy dashboard**.
+- More yes / no sensors: *Frozen windscreen tomorrow morning*, *Good day to mow*, *Cool night: air tonight*, *Ozone peak*; new blueprint "Frozen windscreen".
+- User guide: what's new version by version at the bottom.
+- **Automations made easy**: new yes / no sensors — *Raining now*, *Rain soon*, *Strong gusts* (now or in the next 3 hours, threshold in the options), *Weather warning in force* (from the level you choose), *Frost risk tonight*, *Good for drying laundry*, *Fog at home*, *Watering needed*, *Air the rooms now*.
+- **Forecast numbers**: maximum and minimum today and tomorrow, precipitation and rain probability today and tomorrow, strongest gust today.
+- **Ready-made automations (blueprints)**, imported in one click: close the awning before strong gusts, rain is coming, frost tonight, weather warning, morning weather.
+- Options page "Rain alert, wind, solar and indoor": gust threshold and warning level.
+- **Cards in your language** in *Add card* (*MeteoSwiss Tiles*, *MeteoSwiss Tuiles*, *MeteoSwiss Kacheln*…): searching in your language finds them.
+- **Restart reminder**: the end of the setup says to restart Home Assistant, and after a first install *Settings → Repairs* offers a one-click restart, so the cards show up on every dashboard.
+- **New user guide**: one picture at the top, a table of contents, and a step-by-step part (install, add your home, add a card, show a sensor, create an automation, settings, another place, update). The cards' "Open the user guide" link goes to the right card.
+
 ## 2026.11.12
 
 - Security: the Switzerland map escapes the text coming from remote feeds (hazard regions and texts from FOEN, avalanche region names from SLF, pollen station names, place names) before showing it in tooltips and labels. (Released from 2026.11.11, without the pre-release features.)
 
-## 2026.11.12b0 (pre-release)
+## 2026.11.12b0 (pre-release, included in 2026.11.13)
 
 - **No YAML, ever**: every card has a new editor with clear sections (summary of what is on, ↺ reset, link to the guide); the language moves to "Advanced" and follows Home Assistant.
 - **Sun, moon and ephemeris** in the cards of your choice: sunrise, sunset, day length, moon phase drawn for the exact day (%, name), moon times, next full and new moon, saint of the day (5 languages). New Ephemeris card; Moon phase, Day length and Saint of the day sensors.

@@ -5,33 +5,36 @@
 🇬🇧 **[English version](../README.md)**
 
 **Toute la météo suisse dans Home Assistant, en une seule intégration.**
-Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à programmer — en **allemand, français, italien, romanche et anglais**.
+Données officielles de MétéoSuisse, panneaux et automatisations prêts à l’emploi, rien à programmer — en **allemand, français, italien, romanche et anglais**.
 
-## Prêt à l’emploi — sans une ligne de YAML
+**Prêt à l’emploi — sans une ligne de YAML.** On installe, on choisit sa station, on ajoute un panneau : c’est tout. Chaque panneau se règle à la souris dans un éditeur visuel, chaque automatisation se choisit dans des menus.
 
-**On installe, on choisit sa station, on ajoute un panneau : c’est tout.** Chaque panneau se règle en quelques clics dans l’éditeur visuel : des sections claires avec un résumé de ce qui est activé, un bouton ↺ pour revenir aux réglages d’origine et un lien vers la bonne page de ce mode d’emploi. Pas de code, pas de YAML, pas de modèle à recopier — et tout parle la langue de votre Home Assistant.
+<img src="images/overview.png" width="720" alt="MeteoSwiss Complete For HA">
 
-<table><tr>
-<td width="38%" valign="top"><img src="images/editor.png" width="100%" alt="Éditeur d’un panneau"></td>
-<td valign="top">
+## Sommaire
 
-- ✅ **Ça marche tout de suite** : la station, le point de prévision, la station pollen et la région d’avalanches sont trouvés pour votre domicile.
-- 🖱️ **Tout dans l’éditeur** : cochez les mesures voulues, glissez-les dans l’ordre, activez le graphique, les jours, le soleil et la lune d’un clic.
-- 🔔 **Automatisations par menus** : *La pluie arrive bientôt*, *Premier gel*, *Le brouillard se dissipe*, *Alerte orages annoncée*… on choisit un déclencheur, sans YAML.
-- 🌍 **5 langues** qui suivent Home Assistant toutes seules (allemand, français, italien, romanche, anglais).
-- 🎨 **Beau partout** : téléphone, tablette, écran mural, thème clair ou sombre.
+- [Ce que vous obtenez](#ce-que-vous-obtenez)
+- **Pas à pas**
+  1. [Installer](#etape-1)
+  2. [Ajouter votre domicile](#etape-2)
+  3. [Ajouter un panneau au tableau de bord](#etape-3)
+  4. [Afficher un capteur sur le tableau de bord](#etape-4)
+  5. [Créer une automatisation](#etape-5)
+  6. [Modifier les réglages](#etape-6)
+  7. [Ajouter un autre lieu](#etape-7)
+  8. [Mettre à jour](#etape-8)
+- [Les panneaux](#les-panneaux) : [Prévisions](#card-forecast) · [Météo détaillée](#card-weather) · [Pollen](#card-pollen) · [Maintenant, Jours, Tuiles](#card-now-days-tiles) · [Au quotidien](#card-everyday) · [Montagne](#card-mountain) · [Brouillard](#card-fog) · [Lacs](#card-lake) · [Conseils](#card-tips) · [Éphéméride](#card-ephemeris) · [Carte postale et plus](#card-postcard) · [Pluie minute par minute](#card-rain) · [Climat](#card-stripes) · [Rivières](#card-rivers) · [Air](#card-air) · [Neige](#card-snow)
+- [Soleil et lune](#soleil-et-lune)
+- [Carte de la Suisse](#card-map)
+- [Automatisations](#automatisations) : [capteurs oui / non](#capteurs-oui-non) · [chiffres des prévisions](#chiffres-previsions) · [déclencheurs prêts](#declencheurs) · [automatisations en un clic](#blueprints) · [calendrier et Énergie](#calendrier-energie)
+- [Toutes les entités](#toutes-les-entites)
+- [Langues, pictogrammes et monuments](#langues)
+- [En cas de problème](#en-cas-de-probleme)
+- [Les nouveautés, version par version](#nouveautes)
 
-</td></tr></table>
+<a id="ce-que-vous-obtenez"></a>
 
-![Nouveau : conseils du jour, éphéméride, carte postale](images/highlights2.png)
-
-<sub>Valeurs d’exemple.</sub>
-
-![Tout en un coup d’œil](images/highlights.png)
-
-![MeteoSwiss Complete For HA](images/overview.png)
-
-## Tout en un
+## Ce que vous obtenez
 
 | | |
 |---|---|
@@ -52,22 +55,159 @@ Données officielles de MétéoSuisse, cartes prêtes à l’emploi, rien à pro
 | 🌙 **Soleil, lune, éphéméride** | Lever, coucher, durée du jour, phase de lune dessinée au jour près (%, nom), saint du jour — dans les panneaux de votre choix |
 | 📈 **Historique** | Hier, la normale 1991–2020, les records de l’année, le premier gel et la première neige de la saison |
 | 🎁 **Pour le plaisir** | Une carte postale météo à partager, un jeu « devine le maximum », un badge pour le haut du tableau de bord, une couleur pour vos lampes |
+| 🏊 **Rivières** | Température de l’eau, débit, niveau et danger de crue des stations de l’OFEV — l’Aar à Berne, le Rhin, le Rhône… avec le confort de baignade |
+| 🌬️ **Qualité de l’air** | Ozone, NO₂ et particules fines de la station NABEL la plus proche, avec une alerte *Pic d’ozone* |
+| ❄️ **Neige** | Hauteur de neige aux stations proches, et ce qui est tombé aujourd’hui |
+| 📊 **Climat** | Les bandes du climat de votre station depuis 1864, et le mois en cours par rapport à la normale |
+| 🧭 **Ressenti, pression** | Température ressentie (vent, chaleur), tendance de la pression sur 3 heures |
+| 📅 **Calendrier et Énergie** | Un calendrier météo (avertissements, pleines lunes, journées chaudes, gel) et votre prévision solaire dans le tableau de bord Énergie |
+| 🤖 **Automatisations** | Capteurs oui / non (*Fortes rafales*, *Pluie imminente*, *Risque de gel cette nuit*, *Avertissement météo en cours*, *Pare-brise gelé demain matin*, *Bon jour pour tondre*, *Nuit fraîche*, *Pic d’ozone*…), chiffres des prévisions (maximum demain, pluie aujourd’hui…), déclencheurs prêts et automatisations en un clic |
 
-## Les nouveaux panneaux en un coup d’œil
+# Pas à pas
 
-| | |
+<a id="etape-1"></a>
+
+## 1. Installer
+
+Il faut Home Assistant **2026.1** ou plus récent, et [HACS](https://hacs.xyz).
+
+1. Ouvrez **HACS**, puis le menu **⋮ → Dépôts personnalisés**.
+2. Collez `https://github.com/SashConnection/meteoswiss4HA`, catégorie **Intégration**, puis **Ajouter**.
+3. Cherchez **MeteoSwiss Complete For HA** dans HACS, ouvrez-la et cliquez **Télécharger**.
+4. **Redémarrez Home Assistant** : *Paramètres → Système → ⏻ (en haut à droite) → Redémarrer Home Assistant*.
+
+<a id="etape-2"></a>
+
+## 2. Ajouter votre domicile
+
+1. **Paramètres → Appareils et services → Ajouter une intégration** (bouton en bas à droite).
+2. Cherchez **MeteoSwiss Complete For HA**.
+3. Choisissez la **station de mesure** (la plus proche est en tête de liste) et le **numéro postal** des prévisions, p. ex. `2000` pour Neuchâtel ou `3000` pour Berne.
+4. **Valider**. C’est fait : l’intégration crée un *service* au nom de votre lieu, avec une entité météo et ses capteurs.
+5. **Redémarrez Home Assistant** une fois, comme le rappelle le message de fin. Après une première installation, **Paramètres → Réparations** affiche aussi *Redémarrez Home Assistant pour terminer l’installation de MeteoSwiss*, avec un bouton qui le fait pour vous. Les panneaux apparaissent ensuite sur tous les tableaux de bord et dans l’application.
+
+Sur la page de l’intégration, vous voyez ensuite votre lieu (p. ex. *Neuchâtel (2000)*) et son nombre d’entités. Cliquez dessus pour toutes les voir.
+
+<a id="etape-3"></a>
+
+## 3. Ajouter un panneau au tableau de bord
+
+<img src="images/editor.png" width="300" align="right" alt="Éditeur d’un panneau">
+
+1. Ouvrez votre tableau de bord et cliquez le **✏️ crayon** (en haut à droite) pour le modifier.
+2. **+ Ajouter une carte**, puis tapez **MeteoSwiss** dans la recherche : tous les panneaux apparaissent avec un aperçu, nommés dans la langue de votre Home Assistant (*MeteoSwiss Tuiles*, *MeteoSwiss Ma journée*…).
+3. Cliquez le panneau voulu. Son éditeur s’ouvre : des sections claires, un résumé de ce qui est activé, **↺** pour revenir aux réglages d’origine, un lien vers ce mode d’emploi.
+4. Cochez ce que vous voulez voir, puis **Enregistrer**, et **Terminé** en haut.
+
+Rien à taper : chaque panneau trouve tout seul votre entité météo MeteoSwiss.
+
+> Aucun panneau MeteoSwiss dans la liste ? Redémarrez Home Assistant (voir l’étape 2), puis rechargez la page avec **Ctrl+F5** (dans l’application : *Paramètres → Application compagnon → Débogage → Recharger le frontend*).
+
+<br clear="right">
+
+<a id="etape-4"></a>
+
+## 4. Afficher un capteur sur le tableau de bord
+
+Chaque valeur (température, *Pluie imminente*, *Risque de gel cette nuit*, *Maximum demain*…) peut s’afficher seule :
+
+1. **Modifier le tableau de bord → + Ajouter une carte → Par entité**.
+2. Cherchez la valeur, p. ex. *Fortes rafales* ou *Maximum demain*, cochez-la, puis **Continuer → Ajouter au tableau de bord**.
+
+Ou dans l’autre sens : **Paramètres → Appareils et services → MeteoSwiss Complete For HA →** votre lieu → **Ajouter au tableau de bord** ajoute toutes ses valeurs d’un coup.
+
+> Une valeur introuvable est peut-être **désactivée** (p. ex. *Pression QNH*) : ouvrez-la dans la page de l’appareil, ⚙️ → **Activé** → Mettre à jour.
+
+<a id="etape-5"></a>
+
+## 5. Créer une automatisation
+
+Trois façons, toutes sans YAML :
+
+- **En un clic, toute faite** — les [automatisations prêtes](#blueprints) : *Rentrer le store avant les fortes rafales*, *La pluie arrive*, *Gel cette nuit*, *Avertissement météo*, *La météo du matin*. Cliquez **Importer**, choisissez votre capteur et votre téléphone, enregistrez.
+- **À partir d’un capteur oui / non** — **Paramètres → Automatisations et scènes → + Créer une automatisation → Créer une nouvelle automatisation → + Ajouter un déclencheur → Entité → État**, choisissez p. ex. *Fortes rafales*, **Vers : Activé**. Puis **+ Ajouter une action**, p. ex. *Volet → Fermer*.
+- **À partir d’un déclencheur prêt** — **+ Ajouter un déclencheur → Appareil →** votre lieu MeteoSwiss, puis *La pluie arrive bientôt*, *Alerte orages annoncée*, *Premier gel de la saison*, *Le brouillard se dissipe*…
+
+<a id="etape-6"></a>
+
+## 6. Modifier les réglages
+
+**Paramètres → Appareils et services → MeteoSwiss Complete For HA → ⚙️ Configurer**. Le menu propose six pages :
+
+| Page | Réglages |
 |---|---|
-| ![Ciel en direct](images/card-sky.png)<br>**Ciel en direct** — le ciel du moment dessiné et animé : soleil ou lune, nuages poussés par le vent, pluie, neige, brouillard, étoiles | ![Faut-il sortir ?](images/card-outing.png)<br>**Faut-il sortir ?** — un verdict clair, l’heure de la pluie, quoi mettre, rafales, alertes, pollen, brouillard, meilleur moment |
-| ![Ma journée](images/card-day.png)<br>**Ma journée** — nuit, matin, après-midi, soir, avec la courbe de température, le lever et le coucher du soleil | ![Comparer mes lieux](images/card-compare.png)<br>**Comparer mes lieux** — chez vous et vos lieux surveillés (p. ex. Berne) côte à côte, avec le meilleur endroit du jour |
-| ![Montagne](images/card-mountain.png)<br>**Montagne** — isotherme 0 °C, limite de la neige, températures par altitude, mer de brouillard, danger d’avalanche | ![Brouillard](images/card-fog.png)<br>**Brouillard par région** — stations repères de la plaine aux sommets (Neuchâtel, Chaumont, Chasseral…), sommet du brouillard, prévision sur 3 jours |
-| ![Lac de Neuchâtel](images/card-lake.png)<br>**Lacs** — 27 lacs : température de l’eau et prévision, oxygène, thermocline, glace, profil ; 13 lacs dessinés en couleur avec les courants | ![Écran mural](images/card-wall.png)<br>**Écran mural** — grande horloge, météo, prochaines heures, alertes<br><br>![Mode nuit](images/card-wall-night.png)<br>**… et son mode nuit** rouge sombre, qui n’éclaire pas la pièce |
+| **Affichage** | Pack de pictogrammes : **Animé** (par défaut), **Vif** ou **Classique**. Option **« Afficher la page carte dans la barre latérale »** (désactivée par défaut). |
+| **Prévisions** | Prévisions horaires oui/non, horizon (48 h par défaut) et fréquence de mise à jour. Les fichiers horaires de MétéoSuisse sont gros : réduisez l'horizon pour économiser de la bande passante. |
+| **Pollen, dangers et air** | Station pollen, région d’avalanches et station de qualité de l’air (NABEL). « Automatique » prend la plus proche du domicile ; la qualité de l’air peut être désactivée. |
+| **Lacs, rivières et brouillard** | Les lacs qui ont un capteur de température de l’eau (par défaut : le lac le plus proche du domicile, s’il est à moins de 15 km), les **rivières** (stations de l’OFEV ; par défaut la plus proche qui mesure la température de l’eau, à moins de 20 km) et le **brouillard par région** (activé par défaut). |
+| **Alerte pluie, vent, solaire et intérieur** | Alerte pluie d’après le radar (et combien de minutes à l’avance), le seuil de *Fortes rafales* (50 km/h par défaut) et le degré de *Avertissement météo en cours* (2 = jaune par défaut), vos panneaux solaires (puissance, inclinaison, orientation) et vos capteurs intérieurs (aérer). |
+| **Lieux et personnes surveillés** | Numéros postaux ou lieux, et personnes à suivre (voir [l’étape 7](#etape-7)). |
 
-<sub>Lac et brouillard : données réelles du 10 novembre 2026 (Eawag Alplakes, stations MétéoSuisse). Les autres valeurs sont des exemples.</sub>
+Après un changement, l'intégration se recharge toute seule.
 
+<a id="etape-7"></a>
 
-## Tout ce que vous trouvez dans les panneaux
+## 7. Ajouter un autre lieu
 
-Ajoutez-les par **Modifier le tableau de bord → Ajouter une carte → « MeteoSwiss »**, tout se règle ensuite à la souris.
+Deux possibilités :
+
+- **Alertes pour d’autres lieux et là où vous êtes** : *⚙️ Configurer → Lieux et personnes surveillés*. Indiquez des numéros postaux ou des lieux (`2053` ou `Cernier`, `3000` ou `Berne`) et des personnes à suivre (une personne ou le suivi de votre téléphone : les alertes vous suivent, en Suisse). Chacun devient un appareil avec les 7 capteurs d’alertes et ses propres déclencheurs, et apparaît dans le panneau *Comparer mes lieux*.
+- **Un deuxième lieu complet** (p. ex. votre chalet) : sur la page de l’intégration, **Ajouter un service**, puis choisissez sa station et son numéro postal. Vous obtenez un deuxième jeu d’entités, à choisir dans chaque panneau.
+
+<a id="etape-8"></a>
+
+## 8. Mettre à jour
+
+HACS propose la nouvelle version → **Télécharger** → **redémarrer Home Assistant** → dans le navigateur **Ctrl+F5** (dans l’application : *Paramètres → Application compagnon → Débogage → Recharger le frontend*). Les nouveautés sont dans le [CHANGELOG](../CHANGELOG.md). Les versions suivent le calendrier : **ANNÉE.MOIS.N**.
+
+<a id="les-panneaux"></a>
+
+# Les panneaux
+
+<table>
+<tr>
+<td width="33%" valign="top"><img src="images/card-weather.jpg" width="100%" alt="Météo détaillée"><br><b>Météo détaillée</b><br><sub>Lieu, mesures au choix, graphique horaire, 9 jours</sub></td>
+<td width="33%" valign="top"><img src="images/card-forecast.png" width="100%" alt="Prévisions"><br><b>Prévisions</b><br><sub>Météo actuelle, heures et jours</sub></td>
+<td width="33%" valign="top"><img src="images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>Une esquisse de chaque plante, colorée selon le niveau</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-now.png" width="100%" alt="Maintenant"><br><b>Maintenant</b><br><sub>Grand pictogramme et prochaines heures</sub></td>
+<td width="33%" valign="top"><img src="images/card-days.png" width="100%" alt="Jours"><br><b>Jours</b><br><sub>Une courbe de température et la pluie</sub></td>
+<td width="33%" valign="top"><img src="images/card-tiles.png" width="100%" alt="Tuiles"><br><b>Tuiles</b><br><sub>Mini-carte des intempéries, radar animé</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-sky.png" width="100%" alt="Ciel en direct"><br><b>Ciel en direct</b><br><sub>Soleil ou lune, nuages, pluie, neige — vivant</sub></td>
+<td width="33%" valign="top"><img src="images/card-outing.png" width="100%" alt="Faut-il sortir ?"><br><b>Faut-il sortir ?</b><br><sub>Un verdict, quoi mettre, le meilleur moment</sub></td>
+<td width="33%" valign="top"><img src="images/card-day.png" width="100%" alt="Ma journée"><br><b>Ma journée</b><br><sub>Matin, après-midi, soir, lever et coucher</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-compare.png" width="100%" alt="Comparer mes lieux"><br><b>Comparer mes lieux</b><br><sub>Chez vous et Berne côte à côte</sub></td>
+<td width="33%" valign="top"><img src="images/card-mountain.png" width="100%" alt="Montagne"><br><b>Montagne</b><br><sub>Isotherme 0 °C, limite de la neige, avalanches</sub></td>
+<td width="33%" valign="top"><img src="images/card-fog.png" width="100%" alt="Brouillard par région"><br><b>Brouillard par région</b><br><sub>Neuchâtel → Chaumont → Chasseral</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-lake.png" width="100%" alt="Lacs"><br><b>Lacs</b><br><sub>27 lacs, température de l’eau, courants</sub></td>
+<td width="33%" valign="top"><img src="images/card-tips.png" width="100%" alt="Conseils du jour"><br><b>Conseils du jour</b><br><sub>Linge, gel, arrosage, étoiles, solaire…</sub></td>
+<td width="33%" valign="top"><img src="images/card-ephemeris.png" width="100%" alt="Éphéméride"><br><b>Éphéméride</b><br><sub>Saint du jour, soleil, lune dessinée</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-wall.png" width="100%" alt="Écran mural"><br><b>Écran mural</b><br><sub>Grande horloge et météo, mode nuit rouge</sub></td>
+<td width="33%" valign="top"><img src="images/card-postcard.png" width="100%" alt="Carte postale"><br><b>Carte postale</b><br><sub>Le monument de votre ville et la météo</sub></td>
+<td width="33%" valign="top"><img src="images/map-weather.jpg" width="100%" alt="Carte de la Suisse"><br><b>Carte de la Suisse</b><br><sub>Météo, radar, alertes, dangers, pollen</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-rain.png" width="100%" alt="Pluie minute par minute"><br><b>Pluie minute par minute</b><br><sub>Les 60 prochaines minutes, d’après le radar</sub></td>
+<td width="33%" valign="top"><img src="images/card-stripes.png" width="100%" alt="Bandes du climat"><br><b>Bandes du climat</b><br><sub>Une bande par année depuis 1864</sub></td>
+<td width="33%" valign="top"><img src="images/card-month.png" width="100%" alt="Bilan du mois"><br><b>Bilan du mois</b><br><sub>Le mois par rapport à la normale</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-rivers.png" width="100%" alt="Rivières"><br><b>Rivières</b><br><sub>L’Aar à Berne : eau, débit, niveau</sub></td>
+<td width="33%" valign="top"><img src="images/card-air.png" width="100%" alt="Qualité de l’air"><br><b>Qualité de l’air</b><br><sub>Ozone, NO₂, particules fines</sub></td>
+<td width="33%" valign="top"><img src="images/card-snow.png" width="100%" alt="Neige"><br><b>Neige</b><br><sub>La hauteur de neige autour de vous</sub></td>
+</tr>
+</table>
+
+<sub>Exemples : Neuchâtel et Berne ; lac et brouillard montrent des données réelles du 10 novembre 2026, les autres valeurs sont des exemples.</sub>
 
 | Panneau | Ce qu’il montre | À régler d’un clic |
 |---|---|---|
@@ -91,90 +231,16 @@ Ajoutez-les par **Modifier le tableau de bord → Ajouter une carte → « Meteo
 | 💌 **Carte postale** | Le monument de votre ville, la météo et la lune, à partager ou télécharger | Lieu |
 | 🎯 **Devine le maximum** | Pariez sur la température maximale, résultat le soir, série de réussites | — |
 | 🏷️ **Badge** | Pictogramme et température en haut du tableau de bord, « ☂ Pluie dans 15 min » | Alerte pluie |
+| ☂️ **Pluie minute par minute** | La pluie chez vous dans les 60 prochaines minutes, barre par barre, quand elle commence ou s’arrête | — |
+| 📊 **Bandes du climat** | Une bande par année depuis l’ouverture de la station, les 10 dernières années par rapport à 1961–1990 | — |
+| 🗓️ **Bilan du mois** | Ce mois-ci et le mois passé : température moyenne, pluie, soleil, jours de pluie, de gel, d’été et de canicule, extrêmes, par rapport à la normale | — |
+| 🏊 **Rivières** | Vos stations de l’OFEV : température de l’eau et confort de baignade, débit, niveau, danger de crue | Stations dans les options |
+| 🌬️ **Qualité de l’air** | Niveau général, ozone, NO₂, PM10, PM2.5 par rapport aux valeurs limites suisses | Station dans les options |
+| ❄️ **Neige** | Hauteur de neige et changement du jour aux stations proches | — |
 
-### Le soleil : lever, coucher et durée du jour
+<a id="card-forecast"></a>
 
-Les heures de **lever et de coucher du soleil** sont calculées pour votre domicile, à la minute, sans rien télécharger. Vous les retrouvez :
-
-- dans la section **« Soleil et lune »** de la plupart des panneaux, avec la **durée du jour** et l’écart avec la veille (« 9 h 29, −3 min par rapport à hier ») ;
-- dans **l’éphéméride**, en grand ;
-- dans **« Ma journée »** : la nuit est ombrée sur la courbe de température, avec l’heure du lever ☀ et du coucher ☾ ;
-- dans le **ciel animé** : le soleil suit sa vraie course entre le lever et le coucher, l’aube et le crépuscule colorent le ciel, puis la lune et les étoiles prennent le relais ;
-- dans **« Faut-il sortir ? »** (« Coucher du soleil 16:58 ») et en **mode nuit automatique** de l’écran mural, qui passe au rouge sombre au coucher du soleil ;
-- dans les **conseils du jour** : « Coucher de soleil magnifique » quand les nuages s’annoncent colorés.
-
-Pour vos automatisations : le capteur **Durée du jour** (avec le lever, le coucher et l’écart avec hier) et le déclencheur **« Beau coucher de soleil prévu »**.
-
-### La lune, dessinée pour le jour exact
-
-La lune n’est pas une icône toute faite : elle est **dessinée pour la phase exacte du jour**, avec la partie éclairée au bon pourcentage, quelques cratères et la face sombre en bleu nuit. Elle apparaît dans l’éphéméride, dans la section « Soleil et lune » des panneaux, dans le ciel animé et sur la carte postale, avec le **nom de la phase dans votre langue** et le **% éclairé**.
-
-![Les phases de la lune](images/moon-phases.png)
-
-## Un monument pour chaque ville
-
-Chaque ville de la carte a son pictogramme dessiné de son monument le plus connu : la Zytglogge à Berne, le Jet d’eau à Genève, la Kapellbrücke à Lucerne, le château et la Collégiale à Neuchâtel, le Cervin à Zermatt… Ils apparaissent sur les étiquettes de la carte et à côté du nom du lieu dans les panneaux (option `monument: false` pour les masquer).
-
-![Monuments](images/monuments.png)
-
-## Cinq langues
-
-Tout — réglages, entités, cartes et carte de la Suisse — existe en **Deutsch, Français, Italiano, Rumantsch et English**. Les cartes suivent la langue de Home Assistant ; chaque carte peut aussi être réglée sur une autre langue.
-
-![La carte pollen en cinq langues](images/languages.jpg)
-
-## Animé ou fixe, au choix
-
-Trois packs de pictogrammes, un par symbole météo MétéoSuisse ; le pack animé est celui par défaut (réglages → Affichage).
-
-![Packs de pictogrammes](images/packs.jpg)
-
-> Exemples : Neuchâtel et Berne ; les panneaux lac et brouillard montrent des données réelles du 10 novembre 2026, certaines autres valeurs (prévisions, pollen) sont des exemples.
-
-## Sommaire
-
-1. [Installation](#1-installation)
-2. [Réglages](#2-réglages)
-3. [Carte Prévisions avec les pictogrammes animés](#3-carte-prévisions) · [Conseils du jour](#conseils-du-jour) · [Soleil, lune et éphéméride](#soleil-lune-et-éphéméride) · [Panneaux du quotidien](#panneaux-du-quotidien) · [Montagne](#montagne) · [Brouillard par région](#brouillard-par-région) · [Lacs](#lacs)
-4. [Carte de la Suisse](#4-carte-de-la-suisse)
-5. [Une carte par danger, ou zoomée sur votre région](#5-une-carte-par-danger-ou-zoomée-sur-votre-région)
-6. [Sur téléphone](#6-sur-téléphone)
-7. [Entités pour vos automatisations](#7-entités-pour-vos-automatisations)
-8. [Mises à jour et versions](#8-mises-à-jour-et-versions)
-9. [En cas de problème](#9-en-cas-de-problème)
-
----
-
-## 1. Installation
-
-Il faut Home Assistant **2026.1** ou plus récent, et [HACS](https://hacs.xyz).
-
-1. Dans HACS, menu **⋮ → Dépôts personnalisés**.
-2. Ajoutez `https://github.com/SashConnection/meteoswiss4HA`, catégorie **Intégration**.
-3. Cherchez **MeteoSwiss Complete For HA**, cliquez **Télécharger**, puis **redémarrez Home Assistant**.
-4. **Paramètres → Appareils et services → Ajouter une intégration**, cherchez **MeteoSwiss Complete For HA**.
-5. Choisissez :
-   - la **station de mesure** (la liste est triée de la plus proche à la plus éloignée de votre domicile) : elle donne la température, le vent, etc. actuels ;
-   - le **numéro postal** utilisé pour les prévisions locales.
-
-L'intégration crée une entité météo, des capteurs, et ajoute deux cartes pour les tableaux de bord.
-
-## 2. Réglages
-
-**Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer**. Le menu propose six pages :
-
-| Page | Réglages |
-|---|---|
-| **Affichage** | Pack de pictogrammes : **Animé** (par défaut), **Vif** ou **Classique**. Option **« Afficher la page carte dans la barre latérale »** (désactivée par défaut). |
-| **Prévisions** | Prévisions horaires oui/non, horizon (48 h par défaut) et fréquence de mise à jour. Les fichiers horaires de MétéoSuisse sont gros : réduisez l'horizon pour économiser de la bande passante. |
-| **Pollen et dangers** | Station pollen et région d'avalanches. « Automatique » prend la plus proche du domicile. |
-| **Lacs et brouillard** | Les lacs qui ont un capteur de température de l’eau (par défaut : le lac le plus proche du domicile, s’il est à moins de 15 km) et le **brouillard par région** (activé par défaut). |
-| **Alerte pluie, solaire et intérieur** | Alerte pluie d’après le radar (et combien de minutes à l’avance), vos panneaux solaires (puissance, inclinaison, orientation) et vos capteurs intérieurs (aérer). |
-| **Lieux et personnes surveillés** | Numéros postaux ou lieux, et personnes à suivre (voir plus bas). |
-
-Après un changement, l'intégration se recharge toute seule.
-
-## 3. Carte Prévisions
+## Prévisions
 
 La carte météo standard de Home Assistant utilise toujours ses propres icônes. Pour voir **nos pictogrammes** (animés par défaut), utilisez la carte **MeteoSwiss forecast** :
 
@@ -201,7 +267,9 @@ show_details: true    # humidité, vent, pression
 
 Les prévisions par heure demandent l'option **Prévisions horaires** activée (page Prévisions des réglages).
 
-### Carte météo détaillée
+<a id="card-weather"></a>
+
+## Météo détaillée
 
 <img src="images/card-weather.jpg" alt="Carte météo détaillée" width="360" align="right">
 
@@ -227,7 +295,9 @@ days: 9
 
 <br clear="right">
 
-### Carte pollen
+<a id="card-pollen"></a>
+
+## Pollen
 
 <img src="images/card-pollen.jpg" alt="Carte pollen" width="360" align="right">
 
@@ -244,7 +314,9 @@ language: auto        # ou de, fr, it, rm, en
 
 <br clear="right">
 
-### Panneaux « Maintenant », « Jours » et « Tuiles »
+<a id="card-now-days-tiles"></a>
+
+## Maintenant, Jours et Tuiles
 
 | Maintenant | Jours | Tuiles |
 |---|---|---|
@@ -254,18 +326,9 @@ language: auto        # ou de, fr, it, rm, en
 - **MeteoSwiss days** : les jours (pictogramme, min | max) au-dessus d’une courbe de température continue et de la pluie. La courbe utilise les prévisions horaires (48 h par défaut), puis passe par les minimum et maximum du jour ; réglez l’horizon horaire sur 120 h pour une courbe complète.
 - **MeteoSwiss tiles** : mini-carte des intempéries avec les pastilles des dangers, et radar animé de la dernière heure. Un toucher ouvre la page choisie (p. ex. `/meteoswiss`).
 
-### Alertes pour vos lieux et là où vous êtes
+<a id="card-tips"></a>
 
-**Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Lieux et personnes surveillés** :
-
-- **Numéros postaux ou lieux** : p. ex. `2053` ou `Cernier`, `3000` ou `Berne` (le point de prévision le plus proche est utilisé) ;
-- **Personnes à suivre** : une personne ou le suivi de votre téléphone (application Home Assistant). Les alertes suivent sa position (en Suisse).
-
-Chacun devient un appareil (p. ex. *MeteoSwiss Bern (3004)*) avec les 7 capteurs d’alertes.
-
-**Déclencheurs prêts à l’emploi** : Paramètres → Automatisations → Créer → Ajouter un déclencheur → **Appareil** → un appareil MeteoSwiss, puis p. ex. *Alerte orages annoncée*, *Alerte pluie en vigueur* / *Fin de l’alerte pluie*, *L’alerte vent atteint un degré* (2 à 5) ; sur l’appareil principal aussi les dangers (incendie, crues, sécheresse, avalanches), le pollen, *Le brouillard ou le stratus se forme* et *Le brouillard se dissipe*. Aucun YAML nécessaire.
-
-### Conseils du jour
+## Conseils du jour
 
 <img src="images/card-tips.png" alt="Conseils du jour" width="380" align="right">
 
@@ -275,7 +338,9 @@ Chaque conseil est aussi un capteur pour vos automatisations, et plusieurs ont u
 
 <br clear="right">
 
-### Soleil, lune et éphéméride
+<a id="card-ephemeris"></a>
+
+## Soleil, lune et éphéméride
 
 <img src="images/card-ephemeris.png" alt="Éphéméride" width="380" align="right">
 
@@ -285,7 +350,9 @@ Capteurs : *Phase de lune*, *Durée du jour*, *Saint du jour*.
 
 <br clear="right">
 
-### Pluie qui arrive, panneaux solaires, aérer
+<a id="pluie-solaire-aerer"></a>
+
+## Pluie qui arrive, panneaux solaires, aérer
 
 **Paramètres → Appareils et services → MeteoSwiss Complete For HA → Configurer → Alerte pluie, solaire et intérieur** :
 
@@ -293,7 +360,9 @@ Capteurs : *Phase de lune*, *Durée du jour*, *Saint du jour*.
 - **Panneaux solaires** : entrez la puissance crête (kWc), l’inclinaison et l’orientation — les capteurs *Production solaire aujourd’hui / demain* donnent les kWh et la meilleure heure, heure par heure dans leurs attributs. Idéal pour lancer le lave-vaisselle ou recharger la voiture au bon moment.
 - **Capteurs intérieurs** : choisissez vos capteurs de température et d’humidité ; *Aérer* dit quand ouvrir les fenêtres assèche la maison.
 
-### Carte postale, devinette, badge, couleur d’ambiance, fond animé
+<a id="card-postcard"></a>
+
+## Carte postale, devinette, badge, couleur d’ambiance, fond animé
 
 <img src="images/card-postcard.png" alt="Carte postale météo" width="300" align="right">
 
@@ -305,7 +374,9 @@ Capteurs : *Phase de lune*, *Durée du jour*, *Saint du jour*.
 
 <br clear="right">
 
-### Panneaux du quotidien
+<a id="card-everyday"></a>
+
+## Ciel en direct, Faut-il sortir ?, Ma journée, Comparer, Écran mural
 
 - **Ciel en direct** (`meteoswiss-sky-card`) : le ciel du moment, animé, derrière le lieu et la température — soleil ou lune sur sa course entre le lever et le coucher, nuages qui avancent avec le vent, pluie, neige, éclairs, bancs de brouillard, étoiles. `animate: false` pour une image fixe (aussi quand l’appareil demande moins d’animations).
 - **Faut-il sortir ?** (`meteoswiss-outing-card`) : un verdict (*Oui, vas-y !*, *avec un parapluie*, *plutôt plus tard*, *mieux vaut rester*) et les raisons : l’heure où la pluie commence, quoi mettre selon la température et le vent, rafales, alertes en vigueur, pollen, brouillard avec l’altitude du soleil, le meilleur créneau de 2 heures, le coucher du soleil. `hours: 12`.
@@ -322,7 +393,9 @@ night_mode: auto        # auto (soleil), on, off
 hours: 8
 ```
 
-### Montagne
+<a id="card-mountain"></a>
+
+## Montagne
 
 <img src="images/card-mountain.png" alt="Montagne" width="380" align="right">
 
@@ -341,7 +414,9 @@ avalanche_scope: home    # home, switzerland, jura, prealps, bernese, valais, ce
 
 <br clear="right">
 
-### Brouillard par région
+<a id="card-fog"></a>
+
+## Brouillard par région
 
 <img src="images/card-fog.png" alt="Brouillard" width="380" align="right">
 
@@ -375,7 +450,9 @@ La prévision lit trois fichiers horaires de MétéoSuisse toutes les 6 heures (
 
 <br clear="right">
 
-### Lacs
+<a id="card-lake"></a>
+
+## Lacs
 
 <img src="images/card-lake.png" alt="Lac de Neuchâtel" width="380" align="right">
 
@@ -399,9 +476,86 @@ depth: 1
 <br clear="right">
 
 
-## 4. Carte de la Suisse
+<a id="card-rain"></a>
 
-Ajoutez la carte **MeteoSwiss map** à un tableau de bord (ou activez la page dans la barre latérale, voir [Réglages](#2-réglages)). La barre de boutons en haut à gauche change de carte ; le **trait de couleur** au-dessus de chaque bouton donne le niveau de danger le plus élevé en ce moment en Suisse.
+## Pluie minute par minute
+
+<img src="images/card-rain.png" alt="Pluie minute par minute" width="320" align="right">
+
+Le radar suivi en amont de chez vous, toutes les 5 minutes pour l’heure qui vient : *Pluie dans 20 min*, *Il pleut — s’arrête dans environ 15 min* ou *Pas de pluie dans l’heure*. Il faut l’alerte pluie (activée par défaut).
+
+<br clear="right">
+
+<a id="card-stripes"></a>
+
+## Bandes du climat et bilan du mois
+
+<img src="images/card-stripes.png" alt="Bandes du climat" width="320" align="right">
+
+**Bandes du climat** : une bande par année depuis l’ouverture de votre station (depuis 1864 à Neuchâtel ou à Berne), du bleu (frais) au rouge (chaud), et de combien les 10 dernières années sont plus chaudes que 1961–1990.
+
+<a id="card-month"></a>**Bilan du mois** : le mois en cours et le mois passé — température moyenne, pluie, soleil, jours de pluie, de gel, d’été et de canicule, extrêmes — comparés à la normale 1991–2020 (pour le mois en cours, à la part de la normale des jours déjà passés).
+
+<br clear="right">
+
+<a id="card-rivers"></a>
+
+## Rivières
+
+<img src="images/card-rivers.png" alt="Rivières" width="320" align="right">
+
+L’OFEV mesure environ 230 rivières et lacs toutes les 10 minutes. Choisissez les vôtres dans *⚙️ Configurer → Lacs, rivières et brouillard* (par défaut la plus proche qui mesure la température de l’eau : l’Aar à Berne, la Broye à Payerne…). Chacune reçoit un capteur *Température de l’eau* (avec le confort de baignade) et un capteur *Débit* ou *Niveau* ; le panneau les montre toutes, avec le degré de danger de crue (1 à 5).
+
+<br clear="right">
+
+<a id="card-air"></a>
+
+## Qualité de l’air
+
+<img src="images/card-air.png" alt="Qualité de l’air" width="320" align="right">
+
+Le réseau national NABEL (16 stations, p. ex. Chaumont, Berne, Payerne) : l’ozone maintenant, NO₂, PM10 et PM2.5 sur 24 heures, par rapport aux valeurs limites suisses. Capteurs *Qualité de l’air* (bonne, accrue, élevée, très élevée), *Ozone*, *Dioxyde d’azote*, *PM10*, *PM2.5*, et *Pic d’ozone* (activé au-dessus de 120 µg/m³). La station la plus proche est utilisée ; choisissez-en une autre ou désactivez-la dans *Pollen, dangers et air*.
+
+<br clear="right">
+
+<a id="card-snow"></a>
+
+## Neige
+
+<img src="images/card-snow.png" alt="Neige" width="320" align="right">
+
+La hauteur de neige automatique des 6 stations MétéoSuisse les plus proches, avec le changement depuis minuit. Capteur *Hauteur de neige* (station la plus proche, les autres en attributs).
+
+<br clear="right">
+
+<a id="soleil-et-lune"></a>
+
+# Soleil et lune
+
+## Le soleil : lever, coucher et durée du jour
+
+Les heures de **lever et de coucher du soleil** sont calculées pour votre domicile, à la minute, sans rien télécharger. Vous les retrouvez :
+
+- dans la section **« Soleil et lune »** de la plupart des panneaux, avec la **durée du jour** et l’écart avec la veille (« 9 h 29, −3 min par rapport à hier ») ;
+- dans **l’éphéméride**, en grand ;
+- dans **« Ma journée »** : la nuit est ombrée sur la courbe de température, avec l’heure du lever ☀ et du coucher ☾ ;
+- dans le **ciel animé** : le soleil suit sa vraie course entre le lever et le coucher, l’aube et le crépuscule colorent le ciel, puis la lune et les étoiles prennent le relais ;
+- dans **« Faut-il sortir ? »** (« Coucher du soleil 16:58 ») et en **mode nuit automatique** de l’écran mural, qui passe au rouge sombre au coucher du soleil ;
+- dans les **conseils du jour** : « Coucher de soleil magnifique » quand les nuages s’annoncent colorés.
+
+Pour vos automatisations : le capteur **Durée du jour** (avec le lever, le coucher et l’écart avec hier) et le déclencheur **« Beau coucher de soleil prévu »**.
+
+## La lune, dessinée pour le jour exact
+
+La lune n’est pas une icône toute faite : elle est **dessinée pour la phase exacte du jour**, avec la partie éclairée au bon pourcentage, quelques cratères et la face sombre en bleu nuit. Elle apparaît dans l’éphéméride, dans la section « Soleil et lune » des panneaux, dans le ciel animé et sur la carte postale, avec le **nom de la phase dans votre langue** et le **% éclairé**.
+
+![Les phases de la lune](images/moon-phases.png)
+
+<a id="card-map"></a>
+
+# Carte de la Suisse
+
+Ajoutez la carte **MeteoSwiss map** à un tableau de bord (ou activez la page dans la barre latérale, voir [Modifier les réglages](#etape-6)). La barre de boutons en haut à gauche change de carte ; le **trait de couleur** au-dessus de chaque bouton donne le niveau de danger le plus élevé en ce moment en Suisse.
 
 Boutons sous le zoom : **⌖** recentre la carte, **+ / −** zooment.
 
@@ -445,7 +599,7 @@ Cartes de l'OFEV par région (et par cours d'eau pour les crues). Les couches **
 | 4 | rouge | Fort danger |
 | 5 | rouge foncé | Très fort danger |
 
-## 5. Une carte par danger, ou zoomée sur votre région
+## Une carte par danger, ou zoomée sur votre région
 
 Dans l'éditeur de la carte **MeteoSwiss map** :
 
@@ -468,13 +622,99 @@ legend: true
 height: 360
 ```
 
-## 6. Sur téléphone
+## Sur téléphone
 
 <img src="images/mobile.jpg" alt="Sur téléphone" width="300">
 
 Sur un écran étroit, la légende devient une ligne compacte et les onglets utilisent des icônes. Dans la page de la barre latérale, le bouton ☰ ouvre le menu de Home Assistant.
 
-## 7. Entités pour vos automatisations
+<a id="automatisations"></a>
+
+# Automatisations
+
+Tout se choisit dans des menus : voir [Créer une automatisation](#etape-5).
+
+<a id="capteurs-oui-non"></a>
+
+## Capteurs oui / non
+
+Ils sont **activés** quand quelque chose se passe ou qu’il faut agir — une automatisation n’a besoin que de *« quand il s’active »*.
+
+| Capteur | Activé quand… |
+|---|---|
+| ☔ **Il pleut** | la station a mesuré de la pluie dans les 10 dernières minutes, ou le radar voit de la pluie chez vous |
+| 🌧️ **Pluie imminente** | le radar voit la pluie arriver chez vous dans le délai d’alerte (20 min par défaut) ; attribut `minutes` |
+| 💨 **Fortes rafales** | les rafales atteignent le seuil (50 km/h par défaut) maintenant ou dans les 3 prochaines heures — rentrez le store ; attributs : pointe et son heure |
+| ⚠️ **Avertissement météo en cours** | un avertissement MétéoSuisse chez vous atteint le degré choisi (2 = jaune par défaut) ; attributs : lesquels, degré le plus haut, à venir |
+| ❄️ **Risque de gel cette nuit** | du gel est possible ou probable la nuit prochaine |
+| 👕 **Bon pour sécher le linge** | le reste de la journée est bon pour sécher le linge dehors |
+| 🌫️ **Brouillard à la maison** | brouillard ou stratus dans votre région maintenant |
+| 🪴 **Arrosage nécessaire** | le bilan d’eau des derniers jours dit que le jardin a soif |
+| 🪟 **Aérer maintenant** | ouvrir les fenêtres assèche la maison (seulement avec vos capteurs intérieurs) |
+| 🚗 **Pare-brise gelé demain matin** | le matin (5–8 h) sera sous zéro, ou proche de zéro par ciel dégagé |
+| 🌱 **Bon jour pour tondre** | de mars à octobre, sec maintenant et pour le reste de la journée, assez doux |
+| 🌙 **Nuit fraîche : aérer ce soir** | une journée chaude (25 °C ou plus) suivie d’une nuit à 18 °C ou moins — ouvrez les fenêtres pour rafraîchir la maison |
+| 🫁 **Pic d’ozone** | ozone au-dessus de la valeur limite suisse (120 µg/m³) à la station NABEL |
+
+Les seuils se règlent dans *⚙️ Configurer → Alerte pluie, vent, solaire et intérieur*.
+
+<a id="chiffres-previsions"></a>
+
+## Chiffres des prévisions
+
+De simples nombres, pour *« si le maximum de demain dépasse 30 °C… »* :
+
+| Capteur | Valeur |
+|---|---|
+| **Maximum aujourd’hui / demain**, **Minimum aujourd’hui / demain** | °C de la prévision locale |
+| **Précipitations aujourd’hui / demain** | mm |
+| **Probabilité de pluie aujourd’hui / demain** | % (probabilité horaire la plus haute de la journée) |
+| **Rafale la plus forte aujourd’hui** | km/h encore attendus aujourd’hui, avec l’heure |
+| **La pluie arrive dans** | minutes avant que la pluie atteigne votre domicile (radar) |
+| **Température ressentie** | °C : refroidissement éolien au froid, indice de chaleur au chaud |
+| **Tendance de la pression (3 h)** | hPa sur 3 heures : baisse rapide, baisse, stable, hausse, hausse rapide |
+| **Hauteur de neige** | cm à la station la plus proche qui la mesure |
+| **Température de l’eau / Débit / Niveau** *(rivière)* | °C, m³/s, m de vos stations de l’OFEV |
+| **Ozone**, **Dioxyde d’azote**, **PM10**, **PM2.5** | µg/m³ à la station NABEL |
+
+À utiliser avec **+ Ajouter un déclencheur → Entité → État numérique**, p. ex. *Minimum demain* sous 0 → couvrir les plantes.
+
+<a id="declencheurs"></a>
+
+## Déclencheurs prêts à l’emploi
+
+**+ Ajouter un déclencheur → Appareil →** votre lieu MeteoSwiss, puis :
+
+- alertes météo : *Alerte orages annoncée* (une alerte à venir est publiée), *Alerte pluie en vigueur* / *Fin de l’alerte pluie*, *L’alerte vent atteint un degré* (2 à 5) — aussi pour vos lieux et personnes surveillés ;
+- *Le danger d’incendie / de crues / de sécheresse / d’avalanches atteint un degré*, *Le pollen atteint un niveau* ;
+- *Le brouillard ou le stratus se forme*, *Le brouillard se dissipe* ;
+- *La pluie arrive bientôt*, *Premier gel de la saison*, *Première neige de la saison*, *Arc-en-ciel possible*, *Beau coucher de soleil attendu*, *Le foehn souffle*, *La bise souffle*.
+
+<a id="blueprints"></a>
+
+## Automatisations prêtes en un clic
+
+Cliquez **Importer**, confirmez, puis **Créer une automatisation** à partir du modèle : choisissez votre capteur, votre téléphone (application Home Assistant) ou vos stores, enregistrez. Les textes des messages se changent dans votre langue.
+
+| Automatisation | Ce qu’elle fait | |
+|---|---|---|
+| 💨 **Rentrer le store avant les fortes rafales** | Ferme stores, volets ou marquises quand *Fortes rafales* s’active (et, si vous voulez, quand il pleut) | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fclose_awning_wind.yaml) |
+| 🌧️ **La pluie arrive** | Prévient votre téléphone : *« La pluie arrive chez vous dans environ 15 minutes »* | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Frain_alert.yaml) |
+| ❄️ **Gel cette nuit** | Le soir, vous prévient quand du gel est attendu, avec le minimum | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Ffrost_alert.yaml) |
+| ⚠️ **Avertissement météo** | Vous prévient quand un avertissement entre en vigueur chez vous | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fweather_warning.yaml) |
+| 🚗 **Pare-brise gelé** | Le soir, vous prévient quand le pare-brise sera gelé demain matin | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fwindshield_frost.yaml) |
+| ☀️ **La météo du matin** | Chaque matin, la journée en une phrase, le maximum et la probabilité de pluie — sur votre téléphone et, si vous voulez, lue par un haut-parleur | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSashConnection%2Fmeteoswiss4HA%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fmeteoswiss4ha%2Fmorning_briefing.yaml) |
+
+<a id="calendrier-energie"></a>
+
+## Calendrier et tableau de bord Énergie
+
+- **Calendrier météo** : avertissements en cours et annoncés, pleines et nouvelles lunes, journées chaudes (30 °C ou plus), gel et fortes pluies de la prévision. Il s’affiche dans le calendrier de Home Assistant et peut déclencher des automatisations (*Début d’un événement du calendrier*).
+- **Tableau de bord Énergie** : quand vos panneaux solaires sont réglés (*Alerte pluie, vent, solaire et intérieur*), **Paramètres → Tableaux de bord → Énergie → Panneaux solaires → Prévision de production solaire** propose *MeteoSwiss Complete For HA* : la production estimée apparaît dans les graphiques Énergie.
+
+<a id="toutes-les-entites"></a>
+
+# Toutes les entités
 
 | Entité | Contenu |
 |---|---|
@@ -492,8 +732,15 @@ Sur un écran étroit, la légende devient une ligne compacte et les onglets uti
 | Écart à la normale, Maximum d’hier, Plus chaud / Plus froid de l’année, Plus forte rafale de l’année, Premier gel, Première neige | Historique de votre station : normale 1991–2020, hier, records, premiers gel et neige. |
 | `sensor.<lieu>_fog`, `_fog_top` | Brouillard / stratus dans votre région et sommet estimé (m). |
 | `sensor.<lieu>_water_temperature_<lac>` | Température de l’eau d’un lac (1 m), avec prévision, oxygène, thermocline, glace et données du lac en attributs. |
+| Il pleut, Pluie imminente, Fortes rafales, Avertissement météo en cours, Risque de gel cette nuit, Bon pour sécher le linge, Brouillard à la maison, Arrosage nécessaire, Aérer maintenant | Capteurs oui / non (`binary_sensor`) pour les automatisations (voir [plus haut](#capteurs-oui-non)). |
+| Maximum / Minimum aujourd’hui et demain, Précipitations aujourd’hui / demain, Probabilité de pluie aujourd’hui / demain, Rafale la plus forte aujourd’hui | Chiffres des prévisions. |
+| Pare-brise gelé demain matin, Bon jour pour tondre, Nuit fraîche, Pic d’ozone | Autres capteurs oui / non. |
+| Température ressentie, Tendance de la pression (3 h), Hauteur de neige | Ressenti, tendance de la pression (attribut `trend`), neige (stations alentour en attributs). |
+| Température de l’eau / Débit / Niveau *<station>* | Rivières (OFEV) : valeurs, danger de crue, confort de baignade. |
+| Qualité de l’air, Ozone, Dioxyde d’azote, PM10, PM2.5 | Qualité de l’air (NABEL). |
+| Calendrier météo | Le calendrier (`calendar.`). |
 
-Exemple : être averti dès qu'une alerte orage est annoncée.
+Pour les amateurs de YAML : être averti dès qu’une alerte orage est annoncée.
 
 ```yaml
 triggers:
@@ -509,16 +756,29 @@ actions:
       message: "Alerte orages annoncée : {{ state_attr('sensor.maison_thunderstorm_warning', 'upcoming')[0].event }}"
 ```
 
-## 8. Mises à jour et versions
+<a id="langues"></a>
 
-Les versions suivent le calendrier : **ANNÉE.MOIS.N**, par exemple 2026.11.0, puis 2026.11.1 pour la mise à jour suivante du même mois, 2026.12.0 le mois suivant. Les nouveautés de chaque version sont dans le [CHANGELOG](../CHANGELOG.md).
+# Langues, pictogrammes et monuments
 
-Pour mettre à jour : HACS propose la nouvelle version → **Télécharger** → **redémarrer Home Assistant** → dans le navigateur, **Ctrl+F5** pour recharger les cartes.
+Tout — réglages, entités, cartes et carte de la Suisse — existe en **Deutsch, Français, Italiano, Rumantsch et English**. Les cartes suivent la langue de Home Assistant ; chaque carte peut aussi être réglée sur une autre langue.
 
-## 9. En cas de problème
+![La carte pollen en cinq langues](images/languages.jpg)
+
+Trois packs de pictogrammes, un par symbole météo MétéoSuisse ; le pack animé est celui par défaut (réglages → Affichage).
+
+![Packs de pictogrammes](images/packs.jpg)
+
+Chaque ville de la carte a son pictogramme dessiné de son monument le plus connu : la Zytglogge à Berne, le Jet d’eau à Genève, la Kapellbrücke à Lucerne, le château et la Collégiale à Neuchâtel, le Cervin à Zermatt… Ils apparaissent sur les étiquettes de la carte et à côté du nom du lieu dans les panneaux (option `monument: false` pour les masquer).
+
+![Monuments](images/monuments.png)
+
+<a id="en-cas-de-probleme"></a>
+
+# En cas de problème
 
 | Problème | Solution |
 |---|---|
+| Aucun panneau MeteoSwiss dans *Ajouter une carte* | Redémarrez Home Assistant une fois après l’installation (*Paramètres → Réparations* propose un bouton), puis Ctrl+F5. Cherchez **MeteoSwiss**. |
 | Les cartes n'ont pas changé après une mise à jour | Ctrl+F5 dans le navigateur ; sur l'application mobile, *Paramètres de l'application → Débogage → Recharger le frontend*. |
 | La carte est décentrée | Bouton **⌖** sous le zoom. |
 | « Le radar n'est pas disponible pour le moment » | Le serveur radar du projet ne répond pas ; il se rétablit tout seul, réessayez plus tard. |
@@ -527,4 +787,42 @@ Pour mettre à jour : HACS propose la nouvelle version → **Télécharger** →
 | Le panneau brouillard dit « indisponible » | Activez *Brouillard et stratus par région* dans *Lacs et brouillard*. |
 | Un panneau lac reste vide | Le serveur de l’Eawag limite le nombre de requêtes ; le panneau réessaie à la mise à jour suivante. |
 
-Sources : MétéoSuisse (Open Data, CC BY 4.0), alertes MétéoSuisse via MeteoAlarm, OFEV, SLF, lacs Eawag Alplakes (CC BY 4.0 ; données des lacs arrondies), fond de carte swisstopo. Ce projet n'est pas affilié à MétéoSuisse.
+Sources : MétéoSuisse (Open Data, CC BY 4.0), alertes MétéoSuisse via MeteoAlarm, OFEV, SLF, rivières OFEV via LINDAS et qualité de l’air NABEL (OFEV / Empa ; données provisoires), lacs Eawag Alplakes (CC BY 4.0 ; données des lacs arrondies), fond de carte swisstopo. Ce projet n'est pas affilié à MétéoSuisse.
+
+<a id="nouveautes"></a>
+
+# Les nouveautés, version par version
+
+**2026.11.13** — la grosse mise à jour
+- **Rivières** (OFEV) : l’Aar à Berne et environ 230 stations — température de l’eau avec le confort de baignade, débit, niveau, danger de crue. Nouveau panneau *Rivières*.
+- **Qualité de l’air** (NABEL) : ozone, NO₂, PM10, PM2.5, niveau général et capteur *Pic d’ozone*. Nouveau panneau *Qualité de l’air*.
+- **Hauteur de neige** aux stations autour de chez vous, **température ressentie**, **tendance de la pression**. Nouveau panneau *Neige*.
+- Nouveaux panneaux **Pluie minute par minute**, **Bandes du climat** (depuis 1864) et **Bilan du mois**.
+- **Calendrier météo** et votre **prévision solaire dans le tableau de bord Énergie**.
+- **Automatisations faciles** : capteurs oui / non (*Il pleut*, *Pluie imminente*, *Fortes rafales*, *Avertissement météo en cours*, *Risque de gel cette nuit*, *Pare-brise gelé demain matin*, *Bon jour pour tondre*, *Nuit fraîche*, *Bon pour sécher le linge*, *Brouillard à la maison*, *Arrosage nécessaire*, *Aérer maintenant*, *Pic d’ozone*), chiffres des prévisions (maximum et minimum aujourd’hui et demain, pluie, rafales) et **6 automatisations en un clic**.
+- **Soleil, lune et éphéméride** dans les panneaux : lever, coucher, durée du jour, la lune dessinée pour le jour exact, saint du jour. Nouveau panneau *Éphéméride*.
+- **Conseils du jour** : linge, gel, arrosage, étoiles, coucher de soleil, arc-en-ciel, foehn, bise, aérer, production solaire, la journée en une phrase. **Historique de la station** : hier, la normale 1991–2020, les records, le premier gel et la première neige.
+- **Échapper au brouillard** : le sommet ensoleillé le plus proche. **Lacs** : confort de baignade. **Pour le plaisir** : carte postale, devinette, badge, couleur d’ambiance, ciel animé en fond d’écran.
+- **Sans YAML, jamais** : chaque panneau a un éditeur clair par sections ; noms des panneaux dans votre langue ; rappel de redémarrage et redémarrage en un clic dans *Réparations* ; nouveau mode d’emploi pas à pas.
+
+**2026.11.12** — La carte de la Suisse protège les textes venant des sources fédérales (sécurité).
+
+**2026.11.11** — Prête pour le catalogue HACS par défaut.
+
+**2026.11.10** — **Brouillard par région** (mer de brouillard maintenant et sur 3 jours, avec son sommet), **27 lacs** (température de l’eau, prévision, oxygène, courants dessinés en couleur), le panneau **Montagne** (isotherme 0 °C, limite de la neige, avalanches) et les panneaux du quotidien : **ciel en direct**, **Faut-il sortir ?**, **Ma journée**, **Comparer mes lieux**, **écran mural**.
+
+**2026.11.9** — Un **monument** dessiné pour chaque ville de la carte.
+
+**2026.11.8** — **Lieux surveillés et personnes suivies** avec leurs alertes, **déclencheurs d’automatisation prêts** en 5 langues, et les panneaux **Maintenant**, **Jours** et **Tuiles**.
+
+**2026.11.7** — Nouvelle page de présentation, heures sur 24 h partout.
+
+**2026.11.6** — Tout en **5 langues** : allemand, français, italien, romanche et anglais.
+
+**2026.11.5** — Le **panneau pollen** avec une esquisse de chaque plante.
+
+**2026.11.2 – 2026.11.4** — Le panneau **météo détaillée** (mesures au choix, graphique horaire avec la bande d’incertitude, 9 jours) et le logo.
+
+**2026.11.0 – 2026.11.1** — Première version : entité météo, mesures de la station, prévisions, pollen, dangers naturels et alertes météo, **pictogrammes animés**, le panneau **Prévisions** et la **carte de la Suisse** avec le radar.
+
+Les détails sont dans le [CHANGELOG](../CHANGELOG.md).

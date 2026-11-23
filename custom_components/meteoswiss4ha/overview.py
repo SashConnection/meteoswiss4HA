@@ -6,6 +6,8 @@ GET /api/meteoswiss4ha/fog                fog / low stratus by region
 GET /api/meteoswiss4ha/lakes              lakes (facts, temperature of the chosen ones)
 GET /api/meteoswiss4ha/lake/<key>         one lake: forecast, profile, 3D map layer
 GET /api/meteoswiss4ha/places             home and watched places (compare card)
+GET /api/meteoswiss4ha/climate            yearly means (climate stripes) and month summaries
+GET /api/meteoswiss4ha/rivers             FOEN river stations (chosen ones first)
 
 Both require a logged-in Home Assistant user.
 """
@@ -55,6 +57,7 @@ from .hazards import (
     flood_to_wgs84,
     warnings_at,
 )
+from .history import month_stats
 from .lakes import LAKES, LAKES_BY_KEY, AlplakesClient, lake_facts, value_at
 from .pollen import SPECIES, level_index, summarize
 
@@ -596,6 +599,57 @@ class PlacesView(_BaseView):
         return self.json({"icons_url": f"{ICONS_URL}/{entry.options.get(CONF_ICON_PACK, DEFAULT_ICON_PACK)}", "places": places})
 
 
+class ClimateView(_BaseView):
+    """Climate of the station: mean temperature of every year, this month and last month."""
+
+    url = f"/api/{DOMAIN}/climate"
+    name = f"api:{DOMAIN}:climate"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the yearly means and the month summaries."""
+        entry = self._entry(request)
+        history = entry.runtime_data.history if entry is not None else None
+        if history is None or history.data is None:
+            return self.json_message("Station history unavailable", 404)
+        data = history.data
+        days = {d.day: d for d in data.past}
+        days.update({d.day: d for d in data.days})
+        ordered = [days[k] for k in sorted(days)]
+        today = dt_util.now().date()
+        last = (today.replace(day=1) - timedelta(days=1))
+        months = [
+            month_stats(ordered, today.year, today.month, data.month_normals.get(today.month)),
+            month_stats(ordered, last.year, last.month, data.month_normals.get(last.month)),
+        ]
+        years = sorted(data.years.items())
+        ref = [t for y, t in years if 1961 <= y <= 1990]
+        return self.json({
+            "station": history.station.upper(),
+            "name": entry.title,
+            "years": [{"year": y, "t": t} for y, t in years],
+            "reference": round(sum(ref) / len(ref), 2) if len(ref) >= 20 else None,
+            "months": [m for m in months if m],
+            "source": "MeteoSwiss (SwissMetNet daily values)",
+        })
+
+
+class RiversView(_BaseView):
+    """FOEN river and lake stations with their latest values."""
+
+    url = f"/api/{DOMAIN}/rivers"
+    name = f"api:{DOMAIN}:rivers"
+
+    async def get(self, request: web.Request) -> web.Response:
+        """Return the chosen stations (or all with ?all=1)."""
+        entry = self._entry(request)
+        rivers = entry.runtime_data.rivers if entry is not None else None
+        if rivers is None or not rivers.data:
+            return self.json_message("Rivers are not set up", 404)
+        wanted = rivers.chosen if request.query.get("all") != "1" else list(rivers.data)
+        return self.json({"stations": [rivers.data[s].as_dict() for s in wanted if s in rivers.data],
+                          "source": "FOEN (BAFU), provisional data"})
+
+
 def async_register_views(hass: HomeAssistant) -> None:
     """Register the map API views (once)."""
     cache = _Cache()
@@ -610,3 +664,5 @@ def async_register_views(hass: HomeAssistant) -> None:
     hass.http.register_view(LakesView(hass, cache))
     hass.http.register_view(LakeView(hass, cache))
     hass.http.register_view(PlacesView(hass, cache))
+    hass.http.register_view(ClimateView(hass, cache))
+    hass.http.register_view(RiversView(hass, cache))

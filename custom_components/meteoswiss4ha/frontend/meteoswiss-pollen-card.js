@@ -233,7 +233,7 @@ class MeteoSwissPollenCard extends HTMLElement {
     const L = Object.fromEntries(Object.entries(T).map(([l, t]) => [l, t.f]));
     return sectionEditor({
       defaults: { layout: "table", value: "mean", show_names: true },
-      labels: L, doc: { fr: "#carte-pollen", en: "#pollen-card" },
+      labels: L, doc: { fr: "#card-pollen", en: "#card-pollen" },
       load: (hass) => loadPollen(hass).then((d) => d.stations || []),
       top: () => [F.text("title")],
       sections: [

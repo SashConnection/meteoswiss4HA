@@ -17,9 +17,53 @@
     "abort": {
       "cannot_connect": "Impussibel da cuntanscher las datas averts da MeteoSvizra.",
       "already_configured": "Questa staziun e quest numer postal èn gia configurads."
+    },
+    "create_entry": {
+      "default": "Voss lieu è pront. **Reaviai Home Assistant** (Parameters → System → ⏻ → Reaviar) per che tut ils tablas da bord porschian ils panels MeteoSwiss: lura **Modifitgar la tabla da bord → Agiuntar ina carta → tschertgar «MeteoSwiss»**. Gia reavià? Rechargiai la pagina (Ctrl+F5)."
     }
   },
   "entity": {
+    "binary_sensor": {
+      "raining": {
+        "name": "I plova"
+      },
+      "strong_gusts": {
+        "name": "Ferms buffs da vent"
+      },
+      "frost_risk": {
+        "name": "Privel da gelischun questa notg"
+      },
+      "good_drying": {
+        "name": "Bun per sitgar la rauba"
+      },
+      "rain_soon": {
+        "name": "Plievgia en curt"
+      },
+      "warning_active": {
+        "name": "Avertiment da l’aura en vigur"
+      },
+      "fog_home": {
+        "name": "Tschajera a chasa"
+      },
+      "watering_needed": {
+        "name": "Bagnar necessari"
+      },
+      "airing_recommended": {
+        "name": "Ventilar ussa"
+      },
+      "windshield_frost": {
+        "name": "Vaider gelà damaun marvegl"
+      },
+      "mowing_day": {
+        "name": "Bun di per segar"
+      },
+      "cool_night": {
+        "name": "Notg fraida: ventilar questa saira"
+      },
+      "ozone_peak": {
+        "name": "Piz d’ozon"
+      }
+    },
     "sensor": {
       "temperature": {
         "name": "Temperatura"
@@ -350,6 +394,77 @@
       },
       "rain_arrival": {
         "name": "La plievgia arriva en"
+      },
+      "temperature_max_today": {
+        "name": "Maximum oz"
+      },
+      "temperature_min_today": {
+        "name": "Minimum oz"
+      },
+      "temperature_max_tomorrow": {
+        "name": "Maximum damaun"
+      },
+      "temperature_min_tomorrow": {
+        "name": "Minimum damaun"
+      },
+      "precipitation_today": {
+        "name": "Precipitaziun oz"
+      },
+      "precipitation_tomorrow": {
+        "name": "Precipitaziun damaun"
+      },
+      "rain_probability_today": {
+        "name": "Probabilitad da plievgia oz"
+      },
+      "rain_probability_tomorrow": {
+        "name": "Probabilitad da plievgia damaun"
+      },
+      "gust_max_today": {
+        "name": "Il buf da vent il pli ferm oz"
+      },
+      "feels_like": {
+        "name": "Temperatura sentida"
+      },
+      "pressure_trend": {
+        "name": "Tendenza da la pressiun (3 h)"
+      },
+      "snow_depth": {
+        "name": "Autezza da la naiv"
+      },
+      "river_temperature": {
+        "name": "Temperatura da l’aua {station}"
+      },
+      "river_discharge": {
+        "name": "Debit {station}"
+      },
+      "river_level": {
+        "name": "Nivel {station}"
+      },
+      "air_o3": {
+        "name": "Ozon"
+      },
+      "air_no2": {
+        "name": "Dioxid da nitrogen"
+      },
+      "air_pm10": {
+        "name": "PM10"
+      },
+      "air_pm25": {
+        "name": "PM2.5"
+      },
+      "air_quality": {
+        "name": "Qualitad da l’aria",
+        "state": {
+          "good": "Buna",
+          "elevated": "Augmentada",
+          "high": "Auta",
+          "very_high": "Fitg auta"
+        }
+      }
+    },
+    "calendar": {
+      "weather_calendar": {
+        "name": "Chalender da l’aura"
       }
     }
   },
@@ -360,10 +475,10 @@
         "menu_options": {
           "display": "Preschentaziun",
           "forecast": "Prognosas",
-          "environment": "Pollen e privels",
+          "environment": "Pollen, privels ed aria",
           "places": "Lieus e persunas survegliads",
-          "lakes": "Lais e tschajera",
-          "extras": "Alarm da plievgia, solar ed intern"
+          "lakes": "Lais, flums e tschajera",
+          "extras": "Alarm da plievgia, vent, solar ed intern"
         }
       },
       "display": {
@@ -383,11 +498,12 @@
         }
       },
       "environment": {
-        "title": "Pollen e privels",
-        "description": "Sco standard vegnan duvradas la staziun da pollen la pli datiers e la regiun da lavinas da vossa chasa.",
+        "title": "Pollen, privels ed aria",
+        "description": "Sco standard vegnan duvradas la staziun da pollen la pli datiers e la regiun da lavinas da vossa chasa. Qualitad da l’aria: ozon, NO2 e pulvra fina da la staziun NABEL la pli datiera (UFAM), u deactivada.",
         "data": {
           "pollen_station": "Staziun da pollen",
-          "avalanche_region": "Regiun da lavinas (SLF)"
+          "avalanche_region": "Regiun da lavinas (SLF)",
+          "air_site": "Qualitad da l’aria (staziun NABEL)"
         }
       },
       "places": {
@@ -399,19 +515,22 @@
         }
       },
       "lakes": {
-        "title": "Lais e tschajera",
-        "description": "Lais: in sensor da la temperatura da l’aua per lai (models Eawag Alplakes, cun prognosa da 4 dis). Tschajera: tschajera e tschajera auta en tia regiun, stimadas cun staziuns da referenza da la planira fin a las piztas (p. ex. Neuchâtel, Chaumont, Chasseral); la prognosa legia ~90 MB mintga 6 uras.",
+        "title": "Lais, flums e tschajera",
+        "description": "Lais: in sensor da la temperatura da l’aua per lai (models Eawag Alplakes, cun prognosa da 4 dis). Tschajera: tschajera e tschajera auta en tia regiun, stimadas cun staziuns da referenza da la planira fin a las piztas (p. ex. Neuchâtel, Chaumont, Chasseral); la prognosa legia ~90 MB mintga 6 uras. Flums: temperatura da l’aua, debit e nivel da las staziuns UFAM tschernidas (sco standard la pli datiera che mesira la temperatura da l’aua, p. ex. l’Aare a Berna).",
         "data": {
           "lakes": "Lais",
+          "rivers": "Flums (staziuns UFAM)",
           "fog": "Tschajera e tschajera auta tenor regiun"
         }
       },
       "extras": {
-        "title": "Alarm da plievgia, panels solars e sensors interns",
-        "description": "Alarm da plievgia: il radar di cura che la plievgia arriva tar tai. Solar: la prestaziun maximala (kWp), l’inclinaziun (0 = plat) e l’orientaziun (180 = sid, 90 = ost, 270 = vest) dattan ina prognosa da producziun; lascha vida la prestaziun sche ti n’has nagins panels. Intern: in sensor da temperatura ed in d’umiditad en chasa din cura aerar.",
+        "title": "Alarm da plievgia, vent, panels solars e sensors interns",
+        "description": "Alarm da plievgia: il radar di cura che la plievgia arriva tar tai. Solar: la prestaziun maximala (kWp), l’inclinaziun (0 = plat) e l’orientaziun (180 = sid, 90 = ost, 270 = vest) dattan ina prognosa da producziun; lascha vida la prestaziun sche ti n’has nagins panels. Intern: in sensor da temperatura ed in d’umiditad en chasa din cura aerar. Automatisaziuns: il sensor «Ferms buffs da vent» s’envida a partir da la sveltezza dals buffs sutvart (ussa u en las proximas 3 uras), il sensor «Avertiment da l’aura en vigur» a partir dal grad d’avertiment sutvart (2 = mellen, 3 = oransch, 4 = cotschen, 5 = cotschen stgir).",
         "data": {
           "nowcast": "Alarm da plievgia dal radar",
           "rain_alert_minutes": "Alarmar cura che la plievgia è pli datiers che …",
+          "gust_threshold": "Ferms buffs da vent a partir da",
+          "warning_level": "Avertiment da l’aura a partir dal grad",
           "solar_kwp": "Panels solars: prestaziun maximala",
           "solar_tilt": "Inclinaziun dals panels",
           "solar_azimuth": "Orientaziun dals panels",
@@ -467,6 +586,19 @@
     },
     "extra_fields": {
       "level": "Grad (u pli aut)"
+    }
+  },
+  "issues": {
+    "restart_required": {
+      "title": "Reaviai Home Assistant per terminar l’installaziun da MeteoSwiss",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Reaviar Home Assistant",
+            "description": "MeteoSwiss Complete For HA è vegnì installà gist ussa. Reaviai Home Assistant ina giada per che ils panels MeteoSwiss cumparian en **Agiuntar ina carta** sin tut las tablas da bord ed en l’app.\n\nCliccai **Trametter** per reaviar Home Assistant (circa ina minuta). Rechargiai lura la pagina (Ctrl+F5) e tschertgai «MeteoSwiss» en **Agiuntar ina carta**."
+          }
+        }
+      }
     }
   }
 }

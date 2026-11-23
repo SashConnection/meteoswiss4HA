@@ -305,7 +305,7 @@ class MeteoSwissSkyCard extends ForecastCard {
   getCardSize() { return 4; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { animate: true, background: false }, labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+    return sectionEditor({ defaults: { animate: true, background: false }, labels: LABELS, astro: true, doc: { fr: "#card-everyday", en: "#card-everyday" },
       top: () => [F.weather, F.text("name")],
       sections: [{ key: "display", icon: "mdi:weather-partly-snowy-rainy", title: ST("Himmel", "Ciel", "Cielo", "Tschiel", "Sky"), keys: ["animate", "background"],
         fields: () => [F.bool("animate"), F.bool("background")],
@@ -422,7 +422,7 @@ class MeteoSwissOutingCard extends ForecastCard {
   getCardSize() { return 5; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { hours: 12 }, labels: LABELS, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+    return sectionEditor({ defaults: { hours: 12 }, labels: LABELS, doc: { fr: "#card-everyday", en: "#card-everyday" },
       top: () => [F.weather, F.text("name")],
       sections: [{ key: "hours", icon: "mdi:clock-outline", title: ST("Zeitraum", "Période", "Periodo", "Perioda", "Period"), keys: ["hours"],
         fields: () => [F.num("hours", 3, 24)], summary: (c, { lang }) => `${c.hours} h` }] });
@@ -507,7 +507,7 @@ class MeteoSwissDayCard extends ForecastCard {
   getCardSize() { return 4; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" }, top: () => [F.weather, F.text("name")], sections: [] });
+    return sectionEditor({ labels: LABELS, astro: true, doc: { fr: "#card-everyday", en: "#card-everyday" }, top: () => [F.weather, F.text("name")], sections: [] });
   }
 }
 
@@ -567,7 +567,7 @@ class MeteoSwissCompareCard extends HTMLElement {
   getCardSize() { return 4; }
   static getStubConfig() { return {}; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { days: 3 }, labels: LABELS, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" }, top: () => [F.text("name")],
+    return sectionEditor({ defaults: { days: 3 }, labels: LABELS, doc: { fr: "#card-everyday", en: "#card-everyday" }, top: () => [F.text("name")],
       sections: [{ key: "days", icon: "mdi:calendar-week", title: ST("Tage", "Jours", "Giorni", "Dis", "Days"), keys: ["days"],
         fields: () => [F.num("days", 1, 5)], summary: (c, { lang }) => `${c.days} ${String(T[lang].f.days).toLowerCase()}` }] });
   }
@@ -642,7 +642,7 @@ class MeteoSwissWallCard extends ForecastCard {
   getCardSize() { return 6; }
   static getStubConfig(hass) { return { entity: findWeather(hass) }; }
   static getConfigElement() {
-    return sectionEditor({ defaults: { night_mode: "auto", hours: 8, show_seconds: false }, labels: LABELS, astro: true, doc: { fr: "#panneaux-du-quotidien", en: "#3d-everyday-panels" },
+    return sectionEditor({ defaults: { night_mode: "auto", hours: 8, show_seconds: false }, labels: LABELS, astro: true, doc: { fr: "#card-everyday", en: "#card-everyday" },
       top: () => [F.weather],
       sections: [
         { key: "night", icon: "mdi:weather-night", title: ST("Nachtmodus", "Mode nuit", "Modalità notte", "Modus da notg", "Night mode"), keys: ["night_mode"],
