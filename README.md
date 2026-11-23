@@ -146,44 +146,44 @@ HACS shows the new version → **Download** → **restart Home Assistant** → i
 
 <table>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="100%" alt="Detailed weather"><br><b>Detailed weather</b><br><sub>Place, measurements you choose, hourly chart, 9 days</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="100%" alt="Forecast"><br><b>Forecast</b><br><sub>Compact current weather, hours and days</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>A sketch of each plant, colored by the level</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One temperature curve and rain over the next days</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map, animated radar</sub></td>
-</tr>
-<tr>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-sky-en.png" width="100%" alt="Live sky"><br><b>Live sky</b><br><sub>Sun or moon, clouds, rain, snow — alive</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing-en.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A verdict, what to wear, the best time</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tiles.png" width="100%" alt="Tiles"><br><b>Tiles</b><br><sub>Severe weather mini map, animated radar</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain-en.png" width="100%" alt="Rain minute by minute"><br><b>Rain minute by minute</b><br><sub>The next 60 minutes, from the radar</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air-en.png" width="100%" alt="Air quality"><br><b>Air quality</b><br><sub>Ozone, NO₂, fine particles</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes-en.png" width="100%" alt="Climate stripes"><br><b>Climate stripes</b><br><sub>One stripe per year since 1864</sub></td>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-day-en.png" width="100%" alt="My day"><br><b>My day</b><br><sub>Morning, afternoon, evening, sunrise and sunset</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare-en.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and Bern side by side</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain-en.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, sea of fog, avalanches</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog-en.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Neuchâtel → Chaumont → Chasseral, top and forecast</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake-en.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes, water temperature, currents</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips-en.png" width="100%" alt="Tips of the day"><br><b>Tips of the day</b><br><sub>Laundry, frost, watering, stars, solar…</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris-en.png" width="100%" alt="Ephemeris"><br><b>Ephemeris</b><br><sub>Saint of the day, sun, moon drawn exactly</sub></td>
-</tr>
-<tr>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-wall-en.png" width="100%" alt="Wall screen"><br><b>Wall screen</b><br><sub>Big clock and weather, red night mode</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard-en.png" width="100%" alt="Postcard"><br><b>Postcard</b><br><sub>Your town's monument and the weather, to share</sub></td>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/map-weather.jpg" width="100%" alt="Switzerland map"><br><b>Switzerland map</b><br><sub>Weather, radar, warnings, hazards, pollen</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow-en.png" width="100%" alt="Snow"><br><b>Snow</b><br><sub>Snow depth around you</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rain-en.png" width="100%" alt="Rain minute by minute"><br><b>Rain minute by minute</b><br><sub>The next 60 minutes, from the radar</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-stripes-en.png" width="100%" alt="Climate stripes"><br><b>Climate stripes</b><br><sub>One stripe per year since 1864</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-month-en.png" width="100%" alt="Month summary"><br><b>Month summary</b><br><sub>This month vs the normal</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-days.png" width="100%" alt="Days"><br><b>Days</b><br><sub>One temperature curve and rain over the next days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-ephemeris-en.png" width="100%" alt="Ephemeris"><br><b>Ephemeris</b><br><sub>Saint of the day, sun, moon drawn exactly</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-compare-en.png" width="100%" alt="Compare my places"><br><b>Compare my places</b><br><sub>Home and Bern side by side</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-mountain-en.png" width="100%" alt="Mountain"><br><b>Mountain</b><br><sub>0 °C level, snow line, sea of fog, avalanches</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-outing-en.png" width="100%" alt="Should I go out?"><br><b>Should I go out?</b><br><sub>A verdict, what to wear, the best time</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>A sketch of each plant, colored by the level</sub></td>
 </tr>
 <tr>
 <td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-rivers-en.png" width="100%" alt="Rivers"><br><b>Rivers</b><br><sub>The Aare in Bern: water, flow, level</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-air-en.png" width="100%" alt="Air quality"><br><b>Air quality</b><br><sub>Ozone, NO₂, fine particles</sub></td>
-<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-snow-en.png" width="100%" alt="Snow"><br><b>Snow</b><br><sub>Snow depth around you</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-forecast.png" width="100%" alt="Forecast"><br><b>Forecast</b><br><sub>Compact current weather, hours and days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-now.png" width="100%" alt="Now"><br><b>Now</b><br><sub>Big pictogram and the next hours</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-tips-en.png" width="100%" alt="Tips of the day"><br><b>Tips of the day</b><br><sub>Laundry, frost, watering, stars, solar…</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-month-en.png" width="100%" alt="Month summary"><br><b>Month summary</b><br><sub>This month vs the normal</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-postcard-en.png" width="100%" alt="Postcard"><br><b>Postcard</b><br><sub>Your town's monument and the weather, to share</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-weather.jpg" width="100%" alt="Detailed weather"><br><b>Detailed weather</b><br><sub>Place, measurements you choose, hourly chart, 9 days</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-lake-short-en.png" width="100%" alt="Lakes"><br><b>Lakes</b><br><sub>27 lakes, water temperature, currents</sub></td>
+<td width="33%" valign="top"><img src="https://raw.githubusercontent.com/SashConnection/meteoswiss4HA/main/docs/images/card-fog-en.png" width="100%" alt="Fog by region"><br><b>Fog by region</b><br><sub>Neuchâtel → Chaumont → Chasseral, top and forecast</sub></td>
 </tr>
 </table>
 

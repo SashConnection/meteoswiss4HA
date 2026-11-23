@@ -166,44 +166,44 @@ HACS propose la nouvelle version → **Télécharger** → **redémarrer Home As
 
 <table>
 <tr>
-<td width="33%" valign="top"><img src="images/card-weather.jpg" width="100%" alt="Météo détaillée"><br><b>Météo détaillée</b><br><sub>Lieu, mesures au choix, graphique horaire, 9 jours</sub></td>
-<td width="33%" valign="top"><img src="images/card-forecast.png" width="100%" alt="Prévisions"><br><b>Prévisions</b><br><sub>Météo actuelle, heures et jours</sub></td>
-<td width="33%" valign="top"><img src="images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>Une esquisse de chaque plante, colorée selon le niveau</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><img src="images/card-now.png" width="100%" alt="Maintenant"><br><b>Maintenant</b><br><sub>Grand pictogramme et prochaines heures</sub></td>
-<td width="33%" valign="top"><img src="images/card-days.png" width="100%" alt="Jours"><br><b>Jours</b><br><sub>Une courbe de température et la pluie</sub></td>
-<td width="33%" valign="top"><img src="images/card-tiles.png" width="100%" alt="Tuiles"><br><b>Tuiles</b><br><sub>Mini-carte des intempéries, radar animé</sub></td>
-</tr>
-<tr>
 <td width="33%" valign="top"><img src="images/card-sky.png" width="100%" alt="Ciel en direct"><br><b>Ciel en direct</b><br><sub>Soleil ou lune, nuages, pluie, neige — vivant</sub></td>
-<td width="33%" valign="top"><img src="images/card-outing.png" width="100%" alt="Faut-il sortir ?"><br><b>Faut-il sortir ?</b><br><sub>Un verdict, quoi mettre, le meilleur moment</sub></td>
+<td width="33%" valign="top"><img src="images/card-tiles.png" width="100%" alt="Tuiles"><br><b>Tuiles</b><br><sub>Mini-carte des intempéries, radar animé</sub></td>
+<td width="33%" valign="top"><img src="images/card-rain.png" width="100%" alt="Pluie minute par minute"><br><b>Pluie minute par minute</b><br><sub>Les 60 prochaines minutes, d’après le radar</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-air.png" width="100%" alt="Qualité de l’air"><br><b>Qualité de l’air</b><br><sub>Ozone, NO₂, particules fines</sub></td>
+<td width="33%" valign="top"><img src="images/card-stripes.png" width="100%" alt="Bandes du climat"><br><b>Bandes du climat</b><br><sub>Une bande par année depuis 1864</sub></td>
 <td width="33%" valign="top"><img src="images/card-day.png" width="100%" alt="Ma journée"><br><b>Ma journée</b><br><sub>Matin, après-midi, soir, lever et coucher</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="images/card-compare.png" width="100%" alt="Comparer mes lieux"><br><b>Comparer mes lieux</b><br><sub>Chez vous et Berne côte à côte</sub></td>
-<td width="33%" valign="top"><img src="images/card-mountain.png" width="100%" alt="Montagne"><br><b>Montagne</b><br><sub>Isotherme 0 °C, limite de la neige, avalanches</sub></td>
-<td width="33%" valign="top"><img src="images/card-fog.png" width="100%" alt="Brouillard par région"><br><b>Brouillard par région</b><br><sub>Neuchâtel → Chaumont → Chasseral</sub></td>
-</tr>
-<tr>
-<td width="33%" valign="top"><img src="images/card-lake.png" width="100%" alt="Lacs"><br><b>Lacs</b><br><sub>27 lacs, température de l’eau, courants</sub></td>
-<td width="33%" valign="top"><img src="images/card-tips.png" width="100%" alt="Conseils du jour"><br><b>Conseils du jour</b><br><sub>Linge, gel, arrosage, étoiles, solaire…</sub></td>
-<td width="33%" valign="top"><img src="images/card-ephemeris.png" width="100%" alt="Éphéméride"><br><b>Éphéméride</b><br><sub>Saint du jour, soleil, lune dessinée</sub></td>
-</tr>
-<tr>
 <td width="33%" valign="top"><img src="images/card-wall.png" width="100%" alt="Écran mural"><br><b>Écran mural</b><br><sub>Grande horloge et météo, mode nuit rouge</sub></td>
-<td width="33%" valign="top"><img src="images/card-postcard.png" width="100%" alt="Carte postale"><br><b>Carte postale</b><br><sub>Le monument de votre ville et la météo</sub></td>
 <td width="33%" valign="top"><img src="images/map-weather.jpg" width="100%" alt="Carte de la Suisse"><br><b>Carte de la Suisse</b><br><sub>Météo, radar, alertes, dangers, pollen</sub></td>
+<td width="33%" valign="top"><img src="images/card-snow.png" width="100%" alt="Neige"><br><b>Neige</b><br><sub>La hauteur de neige autour de vous</sub></td>
 </tr>
 <tr>
-<td width="33%" valign="top"><img src="images/card-rain.png" width="100%" alt="Pluie minute par minute"><br><b>Pluie minute par minute</b><br><sub>Les 60 prochaines minutes, d’après le radar</sub></td>
-<td width="33%" valign="top"><img src="images/card-stripes.png" width="100%" alt="Bandes du climat"><br><b>Bandes du climat</b><br><sub>Une bande par année depuis 1864</sub></td>
-<td width="33%" valign="top"><img src="images/card-month.png" width="100%" alt="Bilan du mois"><br><b>Bilan du mois</b><br><sub>Le mois par rapport à la normale</sub></td>
+<td width="33%" valign="top"><img src="images/card-days.png" width="100%" alt="Jours"><br><b>Jours</b><br><sub>Une courbe de température et la pluie</sub></td>
+<td width="33%" valign="top"><img src="images/card-ephemeris.png" width="100%" alt="Éphéméride"><br><b>Éphéméride</b><br><sub>Saint du jour, soleil, lune dessinée</sub></td>
+<td width="33%" valign="top"><img src="images/card-compare.png" width="100%" alt="Comparer mes lieux"><br><b>Comparer mes lieux</b><br><sub>Chez vous et Berne côte à côte</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-mountain.png" width="100%" alt="Montagne"><br><b>Montagne</b><br><sub>Isotherme 0 °C, limite de la neige, avalanches</sub></td>
+<td width="33%" valign="top"><img src="images/card-outing.png" width="100%" alt="Faut-il sortir ?"><br><b>Faut-il sortir ?</b><br><sub>Un verdict, quoi mettre, le meilleur moment</sub></td>
+<td width="33%" valign="top"><img src="images/card-pollen.jpg" width="100%" alt="Pollen"><br><b>Pollen</b><br><sub>Une esquisse de chaque plante, colorée selon le niveau</sub></td>
 </tr>
 <tr>
 <td width="33%" valign="top"><img src="images/card-rivers.png" width="100%" alt="Rivières"><br><b>Rivières</b><br><sub>L’Aar à Berne : eau, débit, niveau</sub></td>
-<td width="33%" valign="top"><img src="images/card-air.png" width="100%" alt="Qualité de l’air"><br><b>Qualité de l’air</b><br><sub>Ozone, NO₂, particules fines</sub></td>
-<td width="33%" valign="top"><img src="images/card-snow.png" width="100%" alt="Neige"><br><b>Neige</b><br><sub>La hauteur de neige autour de vous</sub></td>
+<td width="33%" valign="top"><img src="images/card-forecast.png" width="100%" alt="Prévisions"><br><b>Prévisions</b><br><sub>Météo actuelle, heures et jours</sub></td>
+<td width="33%" valign="top"><img src="images/card-now.png" width="100%" alt="Maintenant"><br><b>Maintenant</b><br><sub>Grand pictogramme et prochaines heures</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-tips.png" width="100%" alt="Conseils du jour"><br><b>Conseils du jour</b><br><sub>Linge, gel, arrosage, étoiles, solaire…</sub></td>
+<td width="33%" valign="top"><img src="images/card-month.png" width="100%" alt="Bilan du mois"><br><b>Bilan du mois</b><br><sub>Le mois par rapport à la normale</sub></td>
+<td width="33%" valign="top"><img src="images/card-postcard.png" width="100%" alt="Carte postale"><br><b>Carte postale</b><br><sub>Le monument de votre ville et la météo</sub></td>
+</tr>
+<tr>
+<td width="33%" valign="top"><img src="images/card-weather.jpg" width="100%" alt="Météo détaillée"><br><b>Météo détaillée</b><br><sub>Lieu, mesures au choix, graphique horaire, 9 jours</sub></td>
+<td width="33%" valign="top"><img src="images/card-lake-short.png" width="100%" alt="Lacs"><br><b>Lacs</b><br><sub>27 lacs, température de l’eau, courants</sub></td>
+<td width="33%" valign="top"><img src="images/card-fog.png" width="100%" alt="Brouillard par région"><br><b>Brouillard par région</b><br><sub>Neuchâtel → Chaumont → Chasseral</sub></td>
 </tr>
 </table>
 
