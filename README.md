@@ -63,9 +63,7 @@ Official MeteoSwiss data, ready-made cards and automations, nothing to program �
 
 # Step by step
 
-<a id="1-install"></a>
-<details>
-<summary><b>1. Install</b></summary>
+## 1. Install
 
 You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 
@@ -74,11 +72,7 @@ You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 3. Search **MeteoSwiss Complete For HA** in HACS, open it and click **Download**.
 4. **Restart Home Assistant**: *Settings → System → ⏻ (top right) → Restart Home Assistant*.
 
-</details>
-
-<a id="2-add-your-home"></a>
-<details>
-<summary><b>2. Add your home</b></summary>
+## 2. Add your home
 
 1. **Settings → Devices & services → Add integration** (button at the bottom right).
 2. Search **MeteoSwiss Complete For HA**.
@@ -87,8 +81,6 @@ You need Home Assistant **2026.1** or newer and [HACS](https://hacs.xyz).
 5. **Restart Home Assistant** once, as the message at the end reminds you. After a first install, **Settings → Repairs** also shows *Restart Home Assistant to finish installing MeteoSwiss*, with a button that does it for you. Then the cards appear on every dashboard and in the app.
 
 On the integration page you then see your place (e.g. *Neuchâtel (2000)*) with its number of entities. Click it to see them all.
-
-</details>
 
 ## 3. Add a card to a dashboard
 
